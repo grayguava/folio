@@ -1,0 +1,10 @@
+/* ── responsive ── */
+@media (max-width: 700px) {
+  .wrap { padding: 1.5rem 1.5rem 3rem; }
+  h1 { font-size: 2.5rem; }
+  nav { gap: 1.25rem; }
+  .key { display: none; }
+  .blog-item { grid-template-columns: 7rem 1fr; }
+  .hint { display: none; }
+  .theme-toggle { display: block; }
+}

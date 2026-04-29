@@ -1,0 +1,58 @@
+/* ── fonts ── */
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../fonts/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../fonts/JetBrainsMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ── reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── tokens ── */
+:root {
+  --bg:       #111111;
+  --fg:       #d1d5db;
+  --muted:    #6b7280;
+  --dim:      #4b5563;
+  --border:   #262626;
+  --white:    #ffffff;
+  --accent:   #ff6b35;
+  --hover-bg: #181818;
+  --font:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+}
+
+[data-theme="light"] {
+  --bg:       #fdf6e3;
+  --fg:       #3d3d3d;
+  --muted:    #7a7a7a;
+  --dim:      #9a9a9a;
+  --border:   #e6dfd0;
+  --white:    #2d2d2d;
+  --accent:   #a04030;
+  --hover-bg: #f5edd8;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.accent { color: var(--accent); }

@@ -1,0 +1,122 @@
+/* ── layout ── */
+.wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+}
+
+/* ── nav ── */
+nav {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  font-size: 15px;
+  align-items: center;
+}
+
+.nav-link { color: var(--muted); transition: color 0.15s; cursor: pointer; }
+.nav-link:hover { color: var(--fg); }
+.nav-link.active { color: var(--accent); }
+.key { color: #383838; }
+
+/* ── theme toggle ── */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  margin-left: auto;
+  font-family: var(--font);
+  transition: color 0.15s;
+}
+.theme-toggle:hover { color: var(--fg); }
+.theme-toggle { display: none; }
+
+/* ── page transition ── */
+#content {
+  animation: fadeUp 0.18s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── header ── */
+header { margin-bottom: 2.5rem; }
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  min-height: 3.5rem;
+}
+
+.page-header { margin-bottom: 2.5rem; }
+.page-header h1 { font-size: 2.5rem; min-height: unset; }
+
+.sub {
+  color: var(--muted);
+  font-size: 16px;
+  margin-bottom: 1.25rem;
+}
+
+.bio {
+  max-width: 54ch;
+  line-height: 1.85;
+  font-size: 15px;
+}
+
+/* ── sections ── */
+section {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.sec-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.view-all {
+  font-size: 14px;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+  transition: text-decoration 0.15s;
+}
+.view-all:hover { text-decoration: underline; }
+
+/* ── elsewhere ── */
+.links-row { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; }
+.links-row a { color: var(--muted); font-size: 15px; transition: color 0.15s; }
+.links-row a:hover { color: var(--accent); }
+
+/* ── kbd / hint ── */
+kbd {
+  background: var(--hover-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--font);
+}
+.hint { color: var(--dim); font-size: 12px; margin-top: 3.5rem; }

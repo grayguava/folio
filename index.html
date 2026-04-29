@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>grayguava</title>
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="stylesheet" href="assets/css/markdown.css" />
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <a href="javascript:void(0)" class="nav-link" data-nav="home" id="nav-home"><span class="key">[h]</span> home</a>
+      <a href="#blog" class="nav-link" data-nav="blog"><span class="key">[b]</span> blog</a>
+      <a href="#projects" class="nav-link" data-nav="projects"><span class="key">[p]</span> projects</a>
+      <a href="#work" class="nav-link" data-nav="work"><span class="key">[w]</span> work</a>
+      <button class="theme-toggle" id="theme-toggle">◐</button>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <section id="page-home" class="page">
+      <header>
+        <h1><span id="scramble">grayguava</span></h1>
+        <p class="sub">cs undergrad · networking / security / infrastructure</p>
+        <p class="bio">
+          i build open-source tooling and poke at how systems work. into network
+          internals, security, and cli ux. if i'm not coding i'm probably reading
+          rfcs or obsessing over my terminal config.
+        </p>
+      </header>
+
+      <section>
+        <div class="sec-head">
+          <h2 class="sec-title"><span class="accent">*</span> projects</h2>
+          <a href="#projects" class="view-all">all projects ↗</a>
+        </div>
+        <div class="item-list" id="home-projects"></div>
+      </section>
+
+      <section>
+        <h2 class="sec-title" style="margin-bottom:1.25rem"><span class="accent">*</span> elsewhere</h2>
+        <div class="links-row">
+          <a href="mailto:you@example.com">email</a>
+          <a href="https://github.com/grayguava" target="_blank" rel="noopener">github</a>
+          <a href="https://linkedin.com/in/grayguava" target="_blank" rel="noopener">linkedin</a>
+        </div>
+      </section>
+
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+    </section>
+
+    <!-- BLOG PAGE -->
+    <section id="page-blog" class="page" style="display:none">
+      <header class="page-header">
+        <h1><span class="accent">*</span> <span id="scramble-blog">writing</span></h1>
+        <p class="sub">occasional posts on systems, networking, and tooling</p>
+      </header>
+      <div class="blog-list" id="blog-list"></div>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+    </section>
+
+    <!-- BLOG POST -->
+    <section id="page-post" class="page" style="display:none">
+      <article id="post-content"></article>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+    </section>
+
+    <!-- PROJECTS PAGE -->
+    <section id="page-projects" class="page" style="display:none">
+      <header class="page-header">
+        <h1><span class="accent">*</span> <span id="scramble-projects">projects</span></h1>
+        <p class="sub">things i've built</p>
+      </header>
+      <div class="item-list" id="projects-list"></div>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+    </section>
+
+    <!-- WORK PAGE -->
+    <section id="page-work" class="page" style="display:none">
+      <header class="page-header">
+        <h1><span class="accent">*</span> <span id="scramble-work">work</span></h1>
+        <p class="sub">where i've worked</p>
+      </header>
+      <div class="item-list" id="work-list"></div>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+    </section>
+  </div>
+
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/vendor/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="assets/js/scramble.js"></script>
+  <script src="content/projects.js"></script>
+  <script src="content/work.js"></script>
+  <script src="content/posts.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/router.js"></script>
+</body>
+</html>
