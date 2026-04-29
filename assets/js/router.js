@@ -98,4 +98,5 @@ window.addEventListener('hashchange', route);
   });
 
   route();
+  if (window.loadQuote) window.loadQuote();
 })();
