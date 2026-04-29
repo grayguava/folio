@@ -1,6 +1,6 @@
 function scramble(el, target, duration) {
   if (!el) return;
-  duration = duration || 900;
+  duration = duration || 600;
   var chars = 'abcdefghijklmnopqrstuvwxyz-_#*/\!~{[}]^?.';
   var steps = Math.ceil(duration / 16);
   var frame = 0;

@@ -57,6 +57,8 @@ function initPost(query) {
   var post = POSTS.find(function(p) { return p.slug === slug; });
   if (!post) return;
 
+  setTitle(post.title);
+
   var content = document.getElementById('post-content');
   if (content) {
     content.innerHTML = '<p class="loading">loading...</p>';

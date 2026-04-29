@@ -1,6 +1,11 @@
 /* ── page initializers ── */
 
+function setTitle(pageTitle) {
+  document.title = pageTitle ? pageTitle + ' · grayguava' : 'grayguava';
+}
+
 function initHome(query) {
+  setTitle('');
   var el = document.getElementById('scramble');
   if (el) scramble(el, el.textContent);
 
@@ -14,6 +19,7 @@ function initHome(query) {
 }
 
 function initBlog(query) {
+  setTitle('blog');
   var el = document.getElementById('scramble-blog');
   if (el) scramble(el, el.textContent);
 
@@ -24,6 +30,7 @@ function initBlog(query) {
 }
 
 function initProjects(query) {
+  setTitle('projects');
   var el = document.getElementById('scramble-projects');
   if (el) scramble(el, el.textContent);
 
@@ -34,6 +41,7 @@ function initProjects(query) {
 }
 
 function initWork(query) {
+  setTitle('work');
   var el = document.getElementById('scramble-work');
   if (el) scramble(el, el.textContent);
 
