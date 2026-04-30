@@ -1,58 +1,47 @@
-/* ── weighted quote system ── */
+/* ── simple quote system ── */
 
-var CATEGORY_WEIGHTS = [
-  { name: 'networking', weight: 30 },
-  { name: 'security', weight: 25 },
-  { name: 'systems', weight: 25 },
-  { name: 'fun-tech', weight: 20 },
-];
-
-var quoteCache = {};
-
-function pickCategory() {
-  var total = CATEGORY_WEIGHTS.reduce(function(sum, c) { return sum + c.weight; }, 0);
-  var rand = Math.random() * total;
-  var cumulative = 0;
-
-  for (var i = 0; i < CATEGORY_WEIGHTS.length; i++) {
-    cumulative += CATEGORY_WEIGHTS[i].weight;
-    if (rand <= cumulative) {
-      return CATEGORY_WEIGHTS[i].name;
-    }
-  }
-  return CATEGORY_WEIGHTS[0].name;
-}
-
-function loadQuoteFile(category, callback) {
-  if (quoteCache[category]) {
-    callback(quoteCache[category]);
-    return;
-  }
-
-  var script = document.createElement('script');
-  script.src = 'content/quotes/' + category + '.js';
-  script.onload = function() {
-    var quotes = window.QUOTES_DATA;
-    quoteCache[category] = quotes;
-    callback(quotes);
-  };
-  script.onerror = function() {
-    callback(null);
-  };
-  document.head.appendChild(script);
-}
-
-window.loadQuote = function() {
-  var category = pickCategory();
-  loadQuoteFile(category, function(quotes) {
-    if (!quotes) return;
-    var idx = Math.floor(Math.random() * quotes.length);
-    var q = quotes[idx];
-    var el = document.getElementById('footer-quote');
-    if (el) {
-      el.innerHTML = '<span class="quote-text">"' + q.text + '"</span><span class="quote-attr">— ' + q.attr + '</span>';
-    }
-  });
+var QUOTES = {
+  networking: [
+    { text: "the network is the computer", attr: "sun microsystems" },
+    { text: "ip is just addresses. routing is the interesting part.", attr: "vint cerf" },
+    { text: "everything is a file descriptor. everything is a stream of bytes.", attr: "unix philosophy" },
+    { text: "layer 8: the user layer. where all problems actually originate.", attr: "unknown" },
+    { text: "packets don't lie, but they can be delayed, duplicated, or dropped.", attr: "network wisdom" },
+  ],
+  security: [
+    { text: "security is not a product, but a process.", attr: "bruce schneier" },
+    { text: "the only secure system is one that is powered off, unplugged, and locked in a vault.", attr: "unknown" },
+    { text: "if you think technology can solve your security problems, then you don't understand the problems.", attr: "bruce schneier" },
+    { text: "attacks always get better, they never get worse.", attr: "unknown" },
+    { text: "there are two types of companies: those that have been hacked and those that don't know yet.", attr: "john chambers" },
+  ],
+  systems: [
+    { text: "simplicity is the soul of efficiency.", attr: "unknown" },
+    { text: "there is no spoon. there is no silver bullet. there is only hard work.", attr: "unknown" },
+    { text: "premature optimization is the root of all evil.", attr: "donald knuth" },
+    { text: "the best code is no code. the second best is code that is clear and simple.", attr: "unknown" },
+    { text: "build it right, then build it fast. not the other way around.", attr: "unknown" },
+  ],
+  funTech: [
+    { text: "it works on my machine is not a valid bug report.", attr: "unknown" },
+    { text: "sudo rm -rf / is not a joke. it's a career ender.", attr: "unknown" },
+    { text: "documentation? we don't need no stinking documentation.", attr: "developer folklore" },
+    { text: "tcp is reliable. userland is not.", attr: "network saying" },
+  ],
 };
 
-window.addEventListener('hashchange', window.loadQuote);
+window.loadQuote = function() {
+  if (window.__quoteLoaded) return;
+  window.__quoteLoaded = true;
+
+  var categories = Object.keys(QUOTES);
+  var category = categories[Math.floor(Math.random() * categories.length)];
+  var quotes = QUOTES[category];
+  var idx = Math.floor(Math.random() * quotes.length);
+  var q = quotes[idx];
+
+  var el = document.getElementById('footer-quote');
+  if (el) {
+    el.innerHTML = '<span class="quote-text">"' + q.text + '"</span><span class="quote-attr">— ' + q.attr + '</span>';
+  }
+};

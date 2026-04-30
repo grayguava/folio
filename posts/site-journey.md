@@ -1,31 +1,31 @@
-# from forking to static — my site journey
+# From forking to static — my site journey
 
-**29 apr 2026**
+**Apr 29, 2026**
 
-i started building this site the way most people do — grabbed someone else's and tried to make it mine. forked [nexxel.dev's portfolio](https://github.com/nexxeln/nexxel.dev), cloned it down, and figured i'd just swap in my content. how hard could it be?
+I started building this site the way most people do — grabbed someone else's and tried to make it mine. forked [nexxel.dev's portfolio](https://github.com/nexxeln/nexxel.dev), cloned it down, and figured i'd just swap in my content. how hard could it be?
 
-## the starting point
+## The starting point
 
-next.js. tailwind. mdx blog. the works. it looked clean, had keyboard shortcuts, dark mode, all the things i wanted. i thought i'd just:
+next.js. tailwind. mdx blog. the works. it looked clean, had keyboard shortcuts, dark mode, all the things I wanted. I thought i'd just:
 
 - replace the content in the data files
 - swap the projects and posts
 - deploy and done
 
-i was wrong.
+I was wrong.
 
-## the problems
+## The problems
 
-### routing hell
+### Routing hell
 
-the first thing that broke was routing. next.js app router does its own thing with paths, and when i tried to add client-side routing for smooth transitions, things got messy. i'd click a link and either get a 404 or the server would redirect `.html` to no-extension or vice versa. nothing quite resolved.
+the first thing that broke was routing. next.js app router does its own thing with paths, and when I tried to add client-side routing for smooth transitions, things got messy. i'd click a link and either get a 404 or the server would redirect `.html` to no-extension or vice versa. nothing quite resolved.
 
-### the fetch loops
+### The fetch loops
 
-i tried to add a json + markdown system for posts. thought i'd fetch `.md` files on the client, parse them with marked, show them inline. simple enough, right?
+I tried to add a json + markdown system for posts. thought i'd fetch `.md` files on the client, parse them with marked, show them inline. simple enough, right?
 
 ```javascript
-// what i tried
+// what I tried
 function loadPost(slug) {
   fetch(`/posts/${slug}.md`)
     .then(r => r.text())
@@ -35,44 +35,44 @@ function loadPost(slug) {
 }
 ```
 
-wrong. the fetches kept looping — the router would intercept, try to load, fail, redirect, and trigger again. i watched the network tab spiral into infinity. memory caches, pre-fetching, nothing helped. the architecture just didn't want to play nice.
+wrong. the fetches kept looping — the router would intercept, try to load, fail, redirect, and trigger again. I watched the network tab spiral into infinity. memory caches, pre-fetching, nothing helped. the architecture just didn't want to play nice.
 
-### overengineered for what i needed
+### Overengineered for what I needed
 
-the thing is, i didn't need most of it. i wanted:
+the thing is, I didn't need most of it. I wanted:
 - a homepage with my projects
 - a blog section
 - dark mode
 - keyboard nav
 
-i didn't need:
+I didn't need:
 - server-side rendering
 - dynamic routes
 - build pipelines
 - mdx with components
 
-every time i tried to simplify, something else broke. the framework kept pulling me back in.
+every time I tried to simplify, something else broke. the framework kept pulling me back in.
 
-| what i wanted | what the framework gave me |
+| what I wanted | what the framework gave me |
 |---------------|---------------------------|
 | simple nav    | 12 different routing modes |
 | dark mode     | theme provider with context |
 | fast load     | hydration, pre-rendering |
 | easy deploy   | build scripts, node server |
 
-## the realization
+## The realization
 
-at some point i sat back and asked myself: why am i fighting the framework to make it do less?
+at some point I sat back and asked myself: why am I fighting the framework to make it do less?
 
-a static site with client-side routing can do everything i need. one html file, a little js, hash-based navigation. no server, no build, no routing conflicts. just files in a folder.
+a static site with client-side routing can do everything I need. one html file, a little js, hash-based navigation. no server, no build, no routing conflicts. just files in a folder.
 
-## the switch
+## The switch
 
-i rebuilt everything from scratch:
+I rebuilt everything from scratch:
 
-### syntax highlighting
+### Syntax highlighting
 
-code blocks now have syntax highlighting via highlight.js. i picked colors that match the site's dark theme — bright orange for keywords, green for strings, blue for functions.
+code blocks now have syntax highlighting via highlight.js. I picked colors that match the site's dark theme — bright orange for keywords, green for strings, blue for functions.
 
 ```javascript
 var ROUTES = {
@@ -84,23 +84,23 @@ var ROUTES = {
 
 each code block also gets a copy button — click to copy the contents to clipboard.
 
-### style separation
+### Style separation
 
-i split markdown/article styles into their own `markdown.css` file. keeps things organized — components.css for UI elements, markdown.css for prose.
+I split markdown/article styles into their own `markdown.css` file. keeps things organized — components.css for UI elements, markdown.css for prose.
 
 ### 404 page
 
 added a dedicated 404 page that's centered and clean. pressing h takes you home.
 
-### default dark theme
+### Default dark theme
 
 the site now defaults to dark theme on first load. if you've visited before, it remembers your choice in localStorage.
 
-### no back button
+### No back button
 
 kept the post view clean — no back button, just the content. navigate with h/b/p/w or the nav.
 
-### single html, hash routing
+### Single html, hash routing
 
 everything lives in one `index.html`. each "page" is a `<section>` that's shown or hidden based on the hash — simple, intentional architecture:
 
@@ -114,7 +114,7 @@ everything lives in one `index.html`. each "page" is a `<section>` that's shown 
 
 no server needed. no `.htaccess` tricks. no redirects. the hash is the entire routing layer.
 
-### the router
+### The router
 
 ```javascript
 var ROUTES = {
@@ -140,9 +140,9 @@ function route() {
 }
 ```
 
-### content modularization
+### Content modularization
 
-i split the data into `content/`:
+I split the data into `content/`:
 - `projects.js` — project list with tags
 - `work.js` — work experience
 - `posts.js` — post metadata (slug, title, date)
@@ -161,7 +161,7 @@ function initPost(query) {
 }
 ```
 
-### keyboard shortcuts
+### Keyboard shortcuts
 
 pressing h/b/p/w navigates. t toggles theme. it's snappy and works offline after first load.
 
@@ -172,23 +172,23 @@ document.addEventListener('keydown', e => {
 });
 ```
 
-### clean urls
+### Clean URLs
 
 homepage has no hash — `yoursite.com` stays `yoursite.com`. other pages get hashes — `yoursite.com#blog`. i used `history.pushState` to strip the hash when going home so the urlbar stays clean.
 
-## what i learned
+## What I learned
 
-1. **less is more** — the best code is the code you don't write. i didn't need a framework; i needed a few functions.
+1. **less is more** — the best code is the code you don't write. I didn't need a framework; I needed a few functions.
 
-2. **hash routing is underrated** — for a static site, it's the simplest way to do spa-style navigation without server config.
+2. **hash routing is underrated** — for a static site, it's the simplest way to do SPAF-style navigation without server config.
 
 3. **content should be portable** — keeping posts as markdown and data as js files means no cms lock-in. edit locally, refresh, done.
 
 4. **deployment should be boring** — `cp -r` to a folder and done. no builds, no pipelines.
 
-## where i am now
+## Where I am now
 
-the site does exactly what i want:
+the site does exactly what I want:
 
 | feature | how it works |
 |---------|--------------|
@@ -200,6 +200,6 @@ the site does exactly what i want:
 
 the original fork pulled in multiple MBs of dependencies — building locally pulled around ~177 MB of node_modules. the final version ships at roughly 300 KB total. that's the difference between fighting a framework and owning your stack.
 
-after a day of fighting routing issues, i realized i was solving the wrong problem. now i have something simpler, faster, and entirely mine.
+after a day of fighting routing issues, I realized I was solving the wrong problem. now I have something simpler, faster, and entirely mine.
 
 > if you're building a personal site and you just want something that works — try static first. you might be surprised how far a single html file can take you.

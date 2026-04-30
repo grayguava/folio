@@ -5,9 +5,10 @@
   h1 { font-size: 2.5rem; }
   nav { gap: 1.25rem; }
   .key { display: none; }
-  .blog-item { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem; }
-  .blog-date { display: block; font-size: 10px; width: 100%; color: var(--dim); order: -1; }
-  .blog-title { font-size: 14px; }
+  .blog-item { display: flex; flex-direction: column; gap: 0.25rem; }
+  .blog-date { display: block; font-size: 10px; color: var(--dim); }
+  .blog-title { font-size: 11px; }
+  .blog-arrow { display: none; }
   .hint { display: none; }
   .theme-toggle { display: block; }
 }

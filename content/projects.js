@@ -1,3 +1,4 @@
+// slugs
 var PROJECTS = [
   {
     title: 'formseal ecosystem',

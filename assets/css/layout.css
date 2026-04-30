@@ -32,7 +32,7 @@ nav {
 }
 .theme-toggle:hover { color: var(--fg); }
 .theme-toggle { display: none; }
-.theme-toggle svg { width: 1em; height: 1em; display: block; }
+.theme-toggle svg { display: block; }
 
 /* ── page transition ── */
 #content {
@@ -105,8 +105,8 @@ section {
 .view-all:hover { text-decoration: underline; }
 
 /* ── elsewhere ── */
-.links-row { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; }
-.links-row a { color: var(--muted); font-size: 15px; transition: color 0.15s; }
+.links-row { display: flex; flex-wrap: wrap; gap: 2rem; }
+.links-row a { color: var(--muted); transition: color 0.15s; display: flex; align-items: center; }
 .links-row a:hover { color: var(--accent); }
 
 /* ── kbd / hint ── */
@@ -130,3 +130,7 @@ kbd {
 .site-footer p { margin: 0; }
 .quote-text { color: var(--muted); font-style: italic; }
 .quote-attr { color: var(--dim); font-size: 11px; margin-left: 0.5rem; }
+
+@media (max-width: 700px) {
+  .site-footer { display: none; }
+}

@@ -56,3 +56,13 @@ body {
 a { color: inherit; text-decoration: none; }
 
 .accent { color: var(--accent); }
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+::-moz-selection {
+  background: var(--accent);
+  color: var(--bg);
+}
