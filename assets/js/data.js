@@ -16,6 +16,14 @@ function initHome(query) {
       homeProjects.appendChild(renderItem(p));
     });
   }
+
+  var homePosts = document.getElementById('home-posts');
+  if (homePosts) {
+    homePosts.innerHTML = '';
+    POSTS.slice(0, 4).forEach(function(p) {
+      homePosts.appendChild(renderBlogItem(p));
+    });
+  }
 }
 
 function initBlog(query) {

@@ -1,7 +1,9 @@
 // slugs
 var POSTS = [
+  { slug: 'fsi-to-fsd-migration', title: 'From fsi to fsd: rebuilding formseal-decrypt', date: 'May 07, 2026' },
+  { slug: 'moving-formseal-to-a-github-org', title: 'Why I moved formseal to a GitHub organisation', date: 'May 06, 2026' },
+  { slug: 'building-formseal-fetch', title: 'Building formseal-fetch — a CLI tool for fetching encrypted ciphertexts', date: 'May 02, 2026' },
   { slug: 'site-updates', title: 'Site updates — final polishes', date: 'Apr 30, 2026' },
-  { slug: 'designing-cli-tools', title: 'Designing CLI tools that feel right', date: 'Apr 30, 2026' },
   { slug: 'site-journey', title: 'From forking to static — my site journey', date: 'Apr 29, 2026' },
 ];
 

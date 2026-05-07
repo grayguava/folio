@@ -4,7 +4,7 @@ var PROJECTS = [
     title: 'formseal ecosystem',
     role: 'creator',
     description: 'form backend with multiple storage providers — cloudflare kv, supabase, redis. includes fsf (cli fetch) and fse (self-hosted embed).',
-    href: 'https://github.com/grayguava/formseal',
+    href: 'https://github.com/useFormseal',
     tags: ['go', 'cloudflare', 'redis', 'supabase'],
   },
   {

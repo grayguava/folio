@@ -160,6 +160,15 @@ article tr:hover td {
   background: var(--bg-secondary);
 }
 
+article img { 
+  max-width: 100%; 
+  height: auto; 
+  max-height: 500px; 
+  object-fit: contain; 
+  border-radius: 6px; 
+  margin: 1rem 0; 
+}
+
 /* highlight.js */
 .hljs {
   background: transparent;

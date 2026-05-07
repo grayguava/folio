@@ -53,7 +53,7 @@ I didn't need:
 
 every time I tried to simplify, something else broke. the framework kept pulling me back in.
 
-| what I wanted | what the framework gave me |
+| What I wanted | What the framework gave me |
 |---------------|---------------------------|
 | simple nav    | 12 different routing modes |
 | dark mode     | theme provider with context |
@@ -190,7 +190,7 @@ homepage has no hash — `yoursite.com` stays `yoursite.com`. other pages get ha
 
 the site does exactly what I want:
 
-| feature | how it works |
+| Feature | How it works |
 |---------|--------------|
 | fast load | single html, no framework |
 | offline | works after first load |

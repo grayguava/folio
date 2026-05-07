@@ -33,6 +33,16 @@ after getting the basic static site working, i spent the last day on the details
 - quote system simplified — no weights, just random pick, loads once per session
 - removed unnecessary complexity throughout
 
+## Homepage updates
+
+- homepage now shows latest posts in a "writing" section
+- blog list integrated on homepage (latest 4 posts)
+
+## Bug fixes
+
+- 404 page title fixed (was showing old name)
+- image sizing handled properly (max-height to prevent blowout on large images)
+
 ## Why it matters
 
 this site started as an escape from overengineered frameworks. but "simple" can become "rough" if you're not careful. these updates are about making it feel finished without adding back what we escaped from.

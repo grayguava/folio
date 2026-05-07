@@ -65,6 +65,10 @@
 /* ── blog items ── */
 .blog-list { display: flex; flex-direction: column; }
 
+#home-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+#home-posts .blog-item { padding: 0.25rem 0; }
+#home-posts .blog-date { font-size: 11px; }
+
 .blog-item {
   display: grid;
   grid-template-columns: auto 1fr auto;
