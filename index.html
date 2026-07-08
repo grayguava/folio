@@ -1,34 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+
+  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>grayguava</title>
+ 
   <link rel="stylesheet" href="assets/css/entrypoint.css" />
 </head>
+  
+  
 <body>
+  <div id="site-loader">
+    <pre class="boot"><span class="p">&gt;</span><span class="cursor">_</span></pre>
+  </div>
+
+  <script>
+    // apply saved theme before paint to avoid flash
+    (function() {
+      var t = localStorage.getItem('theme');
+      if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    })();
+    var _loaded = false, _timerDone = false;
+    function _hideLoader() {
+      if (!_loaded || !_timerDone) return;
+      var l = document.getElementById('site-loader');
+      l.classList.add('loaded');
+      setTimeout(function() { l.style.display = 'none'; }, 350);
+    }
+    setTimeout(function() { _timerDone = true; _hideLoader(); }, 2000);
+    window.addEventListener('load', function() {
+      _loaded = true;
+      _hideLoader();
+    });
+  </script>
   <div class="wrap">
     <nav>
       <a href="javascript:void(0)" class="nav-link" data-nav="home" id="nav-home"><span class="key">[h]</span> home</a>
       <a href="#blog" class="nav-link" data-nav="blog"><span class="key">[b]</span> blog</a>
       <a href="#projects" class="nav-link" data-nav="projects"><span class="key">[p]</span> projects</a>
+      <a href="#skills" class="nav-link" data-nav="skills"><span class="key">[s]</span> skills</a>
       <a href="#work" class="nav-link" data-nav="work"><span class="key">[w]</span> work</a>
-      <button class="theme-toggle" id="theme-toggle">
-    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-  </button>
     </nav>
 
-    <!-- HOME PAGE -->
+    <!-- ── home ── -->
     <section id="page-home" class="page">
       <header>
-        <h1><span id="scramble">grayguava</span></h1>
-        <p class="sub">cs undergrad · networking / security / infrastructure</p>
-        <p class="bio">
-          i build open-source tooling and poke at how systems work. into network
-          internals, security, and cli ux. if i'm not coding i'm probably reading
-          rfcs or obsessing over my terminal config.
-        </p>
+        <h1><span id="scramble"></span></h1>
+        <p class="sub" id="home-sub"></p>
+        <p class="bio" id="home-bio"></p>
       </header>
 
       <section>
@@ -49,66 +69,65 @@
 
       <section>
         <h2 class="sec-title" style="margin-bottom:1.25rem"><span class="accent">*</span> elsewhere</h2>
-        <div class="links-row">
-          <a href="mailto:you@example.com" title="email">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          </a>
-          <a href="https://github.com/grayguava" target="_blank" rel="noopener" title="github">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-          </a>
-          <a href="https://x.com/neutralguava" target="_blank" rel="noopener" title="x">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733 -16z"></path><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path></svg>
-          </a>
-          <a href="https://linkedin.com/in/grayguava" target="_blank" rel="noopener" title="linkedin">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-          </a>
-        </div>
+        <div class="links-row" id="social-links"></div>
       </section>
 
-      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
-    <!-- BLOG PAGE -->
+    <!-- ── writing ── -->
     <section id="page-blog" class="page" style="display:none">
       <header class="page-header">
         <h1><span class="accent">*</span> <span id="scramble-blog">writing</span></h1>
-        <p class="sub">occasional posts on systems, networking, and tooling</p>
+        <p class="sub" id="blog-sub"></p>
       </header>
       <div class="blog-list" id="blog-list"></div>
-      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
-    <!-- BLOG POST -->
+    <!-- ── writing - posts ── -->
     <section id="page-post" class="page" style="display:none">
       <article id="post-content"></article>
-      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
-    <!-- PROJECTS PAGE -->
+    <!-- ── projects ── -->
     <section id="page-projects" class="page" style="display:none">
       <header class="page-header">
         <h1><span class="accent">*</span> <span id="scramble-projects">projects</span></h1>
-        <p class="sub">things i've built</p>
+        <p class="sub" id="projects-sub"></p>
       </header>
       <div class="item-list" id="projects-list"></div>
-      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
-    <!-- WORK PAGE -->
+    <!-- ── skills ── -->
+    <section id="page-skills" class="page" style="display:none">
+      <header class="page-header">
+        <h1><span class="accent">*</span> <span id="scramble-skills">skills</span></h1>
+        <p class="sub" id="skills-sub"></p>
+      </header>
+      <div id="skills-list"></div>
+      <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
+    </section>
+
+    <!-- ── work ── -->
     <section id="page-work" class="page" style="display:none">
       <header class="page-header">
         <h1><span class="accent">*</span> <span id="scramble-work">work</span></h1>
-        <p class="sub">where i've worked</p>
+        <p class="sub" id="work-sub"></p>
       </header>
       <div class="item-list" id="work-list"></div>
       <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
   </div>
 
-  <footer class="site-footer">
-    <p id="footer-quote"><span class="quote-text">loading...</span></p>
-  </footer>
-
+  
+  
 <script src="assets/js/entrypoint.js"></script>
+  
+  
 </body>
+  
+  
 </html>

@@ -1,0 +1,52 @@
+[
+  { "name": "Python", "category": "languages", "href": "https://python.org" },
+  { "name": "JavaScript", "category": "languages" },
+  { "name": "HTML · CSS", "category": "languages" },
+
+  
+
+  { "name": "TCP/IP", "category": "networking" },
+  { "name": "DNS · DoH · DoT", "category": "networking" },
+  { "name": "HTTP · TLS", "category": "networking" },
+  { "name": "VPNs · SOCKS5 · reverse proxies", "category": "networking" },
+  { "name": "SSH · SFTP", "category": "networking" },
+  { "name": "network diagnostics", "category": "networking" },
+  { "name": "Wireshark", "category": "networking", "href": "https://wireshark.org" },
+ { "name": "Nmap", "category": "networking", "href": "https://nmap.org" },
+ { "name": "traceroute", "category": "networking" },
+
+
+  { "name": "Linux", "category": "systems" },
+  { "name": "Windows", "category": "systems" },
+  { "name": "Termux", "category": "systems", "href": "https://termux.dev" },
+  { "name": "ADB", "category": "systems", "href": "https://developer.android.com/tools/adb" },
+  { "name": "Windows troubleshooting & recovery", "category": "systems" },
+  { "name": "scheduled automation", "category": "systems" },
+
+
+  { "name": "Cloudflare Workers", "category": "cloud & infrastructure", "href": "https://developers.cloudflare.com/workers/" },
+  { "name": "Cloudflare Pages", "category": "cloud & infrastructure", "href": "https://pages.cloudflare.com/" },
+  { "name": "Cloudflare KV", "category": "cloud & infrastructure", "href": "https://developers.cloudflare.com/kv/" },
+  { "name": "Supabase", "category": "cloud & infrastructure", "href": "https://supabase.com/" },
+  { "name": "Redis", "category": "cloud & infrastructure", "href": "https://redis.io/" },
+  { "name": "Backblaze B2", "category": "cloud & infrastructure", "href": "https://www.backblaze.com/cloud-storage" },
+
+
+  { "name": "E2EE", "category": "security & privacy" },
+  { "name": "X25519", "category": "security & privacy" },
+  { "name": "Web Crypto API", "category": "security & privacy", "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API" },
+  { "name": "Tor", "category": "security & privacy", "href": "https://www.torproject.org/" },
+  { "name": "VeraCrypt", "category": "security & privacy", "href": "https://www.veracrypt.fr/" },
+  { "name": "Cryptomator", "category": "security & privacy", "href": "https://cryptomator.org/" },
+  { "name": "KeePass", "category": "security & privacy", "href": "https://keepass.info/" },
+
+
+
+  { "name": "Git", "category": "tooling", "href": "https://git-scm.com/" },
+  { "name": "GitHub Actions", "category": "tooling", "href": "https://github.com/features/actions" },
+  { "name": "Wrangler", "category": "tooling", "href": "https://developers.cloudflare.com/workers/wrangler/" },
+  { "name": "rclone", "category": "tooling", "href": "https://rclone.org/" },
+  { "name": "WinSCP", "category": "tooling", "href": "https://winscp.net/" },
+  { "name": "ExifTool", "category": "tooling", "href": "https://exiftool.org/" }
+
+]
