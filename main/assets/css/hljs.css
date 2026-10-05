@@ -1,0 +1,247 @@
+/*
+  Role → color mapping:
+  keyword / control flow  →  soft coral/orange   (stands out, not harsh)
+  string / type           →  muted sage green     (readable, not lime)
+  comment                 →  slate                (clearly secondary)
+  number / regexp         →  warm amber           (distinct from strings)
+  function name           →  sky blue             (primary identifier)
+  variable / name         →  dusty rose           (distinct from function)
+  built_in                →  peach                (close to keyword, softer)
+  meta / decorator        →  teal                 (special, rare)
+  params                  →  soft warm grey       (not competing with text)
+  literal (true/false)    →  same as number       (values look alike)
+  deletion / addition     →  red / green          (diff only)
+*/
+
+.hljs {
+  background: transparent;
+}
+
+/* keywords: if, for, return, func, class, import … */
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #e8845a;
+  font-weight: 600;
+}
+
+/* built-ins: print, len, make, append … */
+.hljs-built_in {
+  color: #d4956e;
+}
+
+/* strings */
+.hljs-string,
+.hljs-template-tag,
+.hljs-template-variable {
+  color: #8fbf7f;
+}
+
+/* types: int, string, bool, struct … */
+.hljs-type,
+.hljs-title.class_,
+.hljs-title.class_.inherited__ {
+  color: #7ec8a0;
+  font-weight: 600;
+}
+
+/* comments */
+.hljs-comment,
+.hljs-quote {
+  color: #5a6a7a;
+  font-style: italic;
+}
+
+/* numbers, booleans, null */
+.hljs-number,
+.hljs-literal {
+  color: #e8b46a;
+}
+
+/* regexp */
+.hljs-regexp {
+  color: #d4a06a;
+}
+
+/* function / method names at definition */
+.hljs-title.function_,
+.hljs-function > .hljs-title {
+  color: #72afd4;
+  font-weight: 600;
+}
+
+/* section headings (markdown h inside code) */
+.hljs-title,
+.hljs-section {
+  color: #72afd4;
+  font-weight: 700;
+}
+
+/* attributes: html attrs, object keys */
+.hljs-attribute,
+.hljs-attr {
+  color: #a8c4d8;
+}
+
+/* variables, identifiers */
+.hljs-variable,
+.hljs-name {
+  color: #d48aa0;
+}
+
+/* meta: @decorator, #pragma, shebang */
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: #5bbfbf;
+  font-style: italic;
+}
+
+/* params in function signatures */
+.hljs-params {
+  color: #c8cdd2;
+}
+
+/* links */
+.hljs-link {
+  color: #72afd4;
+  text-decoration: underline;
+}
+
+/* diff */
+.hljs-addition {
+  color: #7ec87e;
+  background: rgba(126, 200, 126, 0.1);
+}
+
+.hljs-deletion {
+  color: #d47a7a;
+  background: rgba(212, 122, 122, 0.1);
+}
+
+/* symbols, tags */
+.hljs-symbol,
+.hljs-bullet {
+  color: #e8b46a;
+}
+
+.hljs-tag {
+  color: #e8845a;
+}
+
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #d48aa0;
+}
+
+.hljs-selector-pseudo,
+.hljs-selector-attr {
+  color: #a8c4d8;
+}
+
+/*
+  Warm cream background (~#f5f0e8) needs lower saturation and darker values.
+  Avoid pure GitHub colors — they're designed for white bg and look garish on cream.
+*/
+
+[data-theme="light"] .hljs-keyword,
+[data-theme="light"] .hljs-selector-tag {
+  color: #b84040;
+  font-weight: 600;
+}
+
+[data-theme="light"] .hljs-built_in {
+  color: #c05a30;
+}
+
+[data-theme="light"] .hljs-string,
+[data-theme="light"] .hljs-template-tag,
+[data-theme="light"] .hljs-template-variable {
+  color: #3a7a40;
+}
+
+[data-theme="light"] .hljs-type,
+[data-theme="light"] .hljs-title.class_,
+[data-theme="light"] .hljs-title.class_.inherited__ {
+  color: #2e7a5a;
+  font-weight: 600;
+}
+
+[data-theme="light"] .hljs-comment,
+[data-theme="light"] .hljs-quote {
+  color: #8a9aaa;
+  font-style: italic;
+}
+
+[data-theme="light"] .hljs-number,
+[data-theme="light"] .hljs-literal {
+  color: #a05a10;
+}
+
+[data-theme="light"] .hljs-regexp {
+  color: #8a4a10;
+}
+
+[data-theme="light"] .hljs-title.function_,
+[data-theme="light"] .hljs-function > .hljs-title {
+  color: #1a5a90;
+  font-weight: 600;
+}
+
+[data-theme="light"] .hljs-title,
+[data-theme="light"] .hljs-section {
+  color: #1a5a90;
+  font-weight: 700;
+}
+
+[data-theme="light"] .hljs-attribute,
+[data-theme="light"] .hljs-attr {
+  color: #3a6a8a;
+}
+
+[data-theme="light"] .hljs-variable,
+[data-theme="light"] .hljs-name {
+  color: #90304a;
+}
+
+[data-theme="light"] .hljs-meta,
+[data-theme="light"] .hljs-meta .hljs-keyword {
+  color: #1a7a7a;
+  font-style: italic;
+}
+
+[data-theme="light"] .hljs-params {
+  color: #4a5560;
+}
+
+[data-theme="light"] .hljs-link {
+  color: #1a5a90;
+  text-decoration: underline;
+}
+
+[data-theme="light"] .hljs-addition {
+  color: #2a6a2a;
+  background: rgba(42, 106, 42, 0.1);
+}
+
+[data-theme="light"] .hljs-deletion {
+  color: #8a2a2a;
+  background: rgba(138, 42, 42, 0.08);
+}
+
+[data-theme="light"] .hljs-symbol,
+[data-theme="light"] .hljs-bullet {
+  color: #a05a10;
+}
+
+[data-theme="light"] .hljs-tag {
+  color: #b84040;
+}
+
+[data-theme="light"] .hljs-selector-id,
+[data-theme="light"] .hljs-selector-class {
+  color: #90304a;
+}
+
+[data-theme="light"] .hljs-selector-pseudo,
+[data-theme="light"] .hljs-selector-attr {
+  color: #3a6a8a;
+}

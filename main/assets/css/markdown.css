@@ -1,0 +1,508 @@
+
+article {
+  max-width: 90ch;
+  margin: 0 auto;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+article hr {
+  border: none;
+  margin: 2.5rem auto;
+}
+
+article h1 {
+  font-size: 1.75rem;
+  min-height: unset;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+article h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--white);
+  margin: 2.75rem 0 1.15rem;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  scroll-margin-top: 4rem;
+}
+
+article h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--white);
+  margin: 2.25rem 0 0.85rem;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  scroll-margin-top: 4rem;
+}
+
+article h1 code, article h2 code, article h3 code,
+article h4 code, article h5 code, article h6 code {
+  font-size: 0.85em;
+}
+
+article .post-meta {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 2.25rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  align-items: center;
+}
+
+article .post-meta time,
+article .post-meta .reading-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+article p {
+  margin-bottom: 1.75rem;
+  line-height: 1.85;
+  font-size: 0.9rem;
+}
+
+article a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+/* text gets the underline; the ↗ arrow never does */
+article a .link-text {
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+article a:hover {
+  opacity: 0.85;
+}
+
+article a:hover .link-text {
+  border-bottom-color: var(--accent);
+}
+
+article a:visited {
+  opacity: 0.9;
+}
+
+/* ↗ arrow on external-style links, drifts up on hover */
+article a:not(:has(img))::after {
+  content: "↗";
+  display: inline-block;
+  margin-left: 0.45em;
+  transform: translate(1px, -1px);
+  transition: transform 0.15s;
+}
+
+article a:not(:has(img)):hover::after {
+  transform: translate(1px, -3px);
+}
+
+article code {
+  background: var(--hover-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 0.9rem;
+  font-variant-ligatures: none;
+}
+
+.code-wrapper {
+  margin: 1.75rem 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.code-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: color-mix(in srgb, var(--bg-secondary) 75%, black);
+  border-bottom: 1px solid var(--border);
+  padding: 0.01rem 1rem;
+}
+
+.code-lang {
+  font-size: 12.35px;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--muted) 70%, white);
+  font-family: inherit;
+  line-height: 1;
+}
+
+/* light theme: mixing with black turns the cream bar muddy, so use the raw token */
+[data-theme="light"] .code-bar {
+  background: var(--bg-secondary);
+}
+
+[data-theme="light"] .code-lang {
+  color: var(--muted);
+}
+
+article pre {
+  background: var(--bg);
+  border: none;
+  border-radius: 0;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.65;
+  tab-size: 2;
+  -moz-tab-size: 2;
+}
+
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.75rem 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  display: block;
+  overflow-x: auto;
+}
+
+article thead th {
+  text-align: left;
+  font-weight: 700;
+  color: var(--white);
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--accent);
+  white-space: nowrap;
+}
+
+article tbody td {
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+article tbody tr:nth-child(even) {
+  background: var(--bg-secondary);
+}
+
+article tbody tr:hover {
+  background: var(--hover-bg);
+}
+
+/* thin internal vertical borders */
+article th,
+article td {
+  border-left: 0.5px solid var(--border);
+}
+article th:first-child,
+article td:first-child {
+  border-left: none;
+}
+
+article .table-ascii {
+  font-family: var(--mono);
+  white-space: pre;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  margin-bottom: 3rem;
+  overflow-x: auto;
+}
+
+article pre code {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  padding: 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.copy-btn:hover {
+  color: var(--text);
+}
+
+.copy-btn.copied {
+  color: #62c862;
+}
+
+article ul,
+article ol {
+  padding-left: 1.75rem;
+  margin-bottom: 1.75rem;
+}
+
+article li {
+  padding-left: 0.5rem;
+}
+
+article li {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+article ul li::marker {
+  color: var(--accent);
+}
+
+article ol li::marker {
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+/* Nested lists */
+article li > ul,
+article li > ol {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Definition lists */
+article dl {
+  margin-bottom: 1.5rem;
+}
+
+article dt {
+  font-weight: 600;
+  color: var(--white);
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+article dd {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.7;
+}
+
+article blockquote {
+  border-left: 2px solid var(--accent);
+  padding: 0.5rem 1rem 0.5rem 1.15rem;
+  margin: 1.5rem 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+article blockquote > p:last-child {
+  margin-bottom: 0;
+}
+
+article blockquote.callout-info {
+  font-style: normal;
+  border-left-color: #4a8ad6;
+  padding: 0.5rem 1rem 0.5rem 1.15rem;
+}
+
+[data-theme="light"] article blockquote.callout-info {
+  border-left-color: #2a6ab0;
+}
+
+article img {
+  max-width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 6px;
+  margin: 1.15rem 0;
+  display: block;
+}
+
+/* layout wrapper produced by upgradeImages() */
+article .img-wrap {
+  margin: 1.15rem 0;
+  display: block;
+}
+
+article .img-float-left {
+  float: left;
+  margin: 0.25rem 1.75rem 1rem 0;
+  max-width: 45%;
+}
+
+article .img-float-right {
+  float: right;
+  margin: 0.25rem 0 1rem 1.75rem;
+  max-width: 45%;
+}
+
+article .img-center {
+  margin-left: auto;
+  margin-right: auto;
+  display: table; /* shrink-wraps around img */
+}
+
+article .img-small  img { max-width: 200px;  max-height: 200px;  }
+article .img-medium img { max-width: 380px;  max-height: 320px;  }
+article .img-large  img { max-width: 560px;  max-height: 460px;  }
+article .img-full   img { max-width: 100%;   max-height: none;   }
+
+/* floated size variants: constrain the wrapper, not just the img */
+article .img-float-left.img-small,
+article .img-float-right.img-small  { max-width: 200px; }
+article .img-float-left.img-medium,
+article .img-float-right.img-medium { max-width: 380px; }
+article .img-float-left.img-large,
+article .img-float-right.img-large  { max-width: 560px; }
+article .img-float-left.img-full,
+article .img-float-right.img-full   { max-width: 50%;   }
+
+/* img inside any wrapper fills the wrapper */
+article .img-wrap img {
+  max-width: 100%;
+  max-height: inherit;
+  width: 100%;
+  height: auto;
+  margin: 0;
+}
+
+/* clearfix so following content doesn't underflow floats unexpectedly */
+article .img-float-left::after,
+article .img-float-right::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media (max-width: 600px) {
+  article .img-float-left,
+  article .img-float-right {
+    float: none;
+    max-width: 100%;
+    margin: 1rem 0;
+  }
+}
+
+article details {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 1.75rem 0;
+  overflow: hidden;
+}
+
+article summary {
+  padding: 0.85rem 1.15rem;
+  background: var(--bg-secondary);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+  list-style: none;
+  transition: background 0.15s;
+}
+
+article summary::-webkit-details-marker { display: none; }
+
+article summary::before {
+  content: "▶";
+  font-size: 0.6rem;
+  transition: transform 0.2s;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+article details[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+article summary:hover {
+  background: var(--hover-bg);
+}
+
+article details > *:not(summary) {
+  padding: 1.15rem;
+  border-top: 1px solid var(--border);
+}
+
+/* code wrappers inside details need no extra padding — they manage their own spacing */
+article details > .code-wrapper {
+  padding: 0;
+  margin: 0;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
+}
+
+/* pre inside details inherits the details border-radius at the bottom */
+article details > .code-wrapper pre {
+  border-radius: 0 0 5px 5px;
+  border: none;
+  border-top: none;
+  margin: 0;
+}
+
+/* content that follows a code block inside details */
+article details > p,
+article details > ul,
+article details > ol,
+article details > blockquote {
+  padding: 1.15rem 1.5rem;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+article details > ul,
+article details > ol {
+  padding-left: 2rem;
+}
+
+article details > ul li,
+article details > ol li {
+  margin-bottom: 0.65rem;
+  line-height: 1.75;
+}
+
+article details > p:first-of-type {
+  margin-top: 0;
+}
+
+@media (max-width: 700px) {
+  article p, article li { font-size: 1rem; }
+  article code, article pre { font-size: 0.9rem; }
+
+}
+
+@media print {
+  article a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #666;
+  }
+
+  article pre,
+  article blockquote {
+    page-break-inside: avoid;
+  }
+
+  article h2,
+  article h3 {
+    page-break-after: avoid;
+  }
+
+  .copy-btn { display: none; }
+}
