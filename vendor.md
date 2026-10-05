@@ -3,13 +3,13 @@
 ## marked.min.js
 
 - **Version:** 15.0.12
-- ** GitHub:** https://github.com/markedjs/marked
+- **GitHub:** https://github.com/markedjs/marked
 - **Source:** https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js
-- **SHA256:** `742ee84b0d5a1f6376aeda1bb495c3bf35ddfc7e332f20d3698e9e676b99f714`
+- **SHA256:** `3e7e7d7feb3e5d58cb6c804f68ab5c24cc7e5eb6270fd6e5cbb9124739217d0c`
 
 ## highlight.min.js
 
 - **Version:** 11.9.0
-- ** GitHub:** https://github.com/highlightjs/highlight.js
-- **Source:** https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js
-- **SHA256:** `30ecef6c6f78426a75fa5f60f92780501a3619ec11367e3b67331576f3370812`
+- **GitHub:** https://github.com/highlightjs/highlight.js
+- **Source:** https://highlightjs.org/download
+- **SHA256:** `7382f285a7804605479fd7e5b7cb227eae388b9693a969dea08ea3d20f12eb00`
