@@ -35,8 +35,8 @@ site/
 ## Quick start
 
 ```bat
-git clone <repo> site
-cd site
+git clone https://github.com/grayguava/folio.git
+cd folio
 cd .scripts && npm install && cd ..
 :: add your content:
 ::   files/blogs/<slug>.md   one markdown file per post
