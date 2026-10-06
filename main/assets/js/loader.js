@@ -1,3 +1,4 @@
+// ── data loader ──
 
 (function() {
   function fetchText(url) {
@@ -15,30 +16,10 @@
     });
   }
 
-  function loadRaw() {
-    return Promise.all([
-      fetchText('slugs/meta/posts.ini'),
-      fetchText('slugs/meta/projects.ini'),
-      fetchText('slugs/profile/skills.ini'),
-      fetchText('slugs/meta/work.ini'),
-      fetchText('slugs/profile/about.ini'),
-      fetchText('slugs/profile/socials.ini'),
-      fetchText('slugs/meta/pages.ini'),
-    ]).then(function(texts) {
-      var paths = [
-        'meta/posts', 'meta/projects', 'profile/skills', 'meta/work',
-        'profile/about', 'profile/socials', 'meta/pages',
-      ];
-      var g = {};
-      for (var i = 0; i < paths.length; i++) {
-        g[paths[i]] = parseSlug(texts[i] || '');
-      }
-      return g;
-    });
-  }
-
-  window._dataReady = fetchText('assets/slugs.min.ini').then(function(t) {
-    return t ? parseSlugsMin(t) : loadRaw();
+  // the merged ini is emitted by the build; if it's ever missing the site
+  // degrades to empty lists rather than firing a wall of /slugs/* requests
+  window._dataReady = fetchText('/assets/slugs.min.ini').then(function(t) {
+    return t ? parseSlugsMin(t) : {};
   }).then(function(d) {
     var posts = ((d['meta/posts'] || {}).sections || []).map(function(s) {
       return { slug: s.section, title: s.kv.title || '', date: s.kv.date || '' };

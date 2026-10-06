@@ -7,7 +7,6 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const main = path.join(root, 'main');
-const blogsDir = path.join(root, 'files', 'blogs');
 
 // ── pull the real parsers out of the shipped frontend code ──
 const iniSrc = fs.readFileSync(path.join(main, 'assets/js/ini.js'), 'utf8');
@@ -16,7 +15,7 @@ new Function('module', 'exports', 'window', iniSrc + '\nmodule.exports = { parse
 const { parseSlug, parseSlugsMin } = mod.exports;
 
 const SLUG_FILES = [
-  ['meta/posts', 'slugs/meta/posts.ini'],
+  ['meta/posts', null], // generated from md frontmatter — no posts.ini
   ['meta/projects', 'slugs/meta/projects.ini'],
   ['profile/skills', 'slugs/profile/skills.ini'],
   ['meta/work', 'slugs/meta/work.ini'],
@@ -27,7 +26,6 @@ const SLUG_FILES = [
 
 let errors = 0;
 function fail(msg) { console.log('✗ ' + msg); errors++; }
-function note(msg) { console.log('✗ ' + msg); }
 function ok(msg) { console.log('✓ ' + msg); }
 
 console.log('> Validating...');
@@ -35,28 +33,37 @@ console.log('> Validating...');
 function hasBadValue(v) { return /\t|\n/.test(v); }
 
 // same merging logic as build.js minifySlugs
+const { discoverPosts, postsIniText, parseIso } = require('./frontmatter.js');
+const posts = discoverPosts();
+
+// meta/posts is generated from md frontmatter — there is no posts.ini anymore
+const generated = { 'meta/posts': postsIniText(posts) };
+function groupText(rel) {
+  return rel === null ? generated['meta/posts'] : fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
+}
+
 function buildMerged() {
   const out = [];
   for (const [gpath, rel] of SLUG_FILES) {
-    const text = fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
+    const text = groupText(rel);
     const d = parseSlug(text);
 
     // group-level kv tab/newline check (build gap #8)
     for (const k of Object.keys(d.kv)) {
-      if (hasBadValue(d.kv[k])) fail(rel + ': group-level kv "' + k + '" contains tab/newline');
+      if (hasBadValue(d.kv[k])) fail((rel || gpath) + ': group-level kv "' + k + '" contains tab/newline');
       if (k.includes(']') || d.kv[k].includes('\t')) {}
     }
 
     out.push('[m:' + gpath + ']');
     for (const k of Object.keys(d.kv)) {
-      if (hasBadValue(d.kv[k])) fail(rel + ': kv "' + k + '" contains tab/newline');
+      if (hasBadValue(d.kv[k])) fail((rel || gpath) + ': kv "' + k + '" contains tab/newline');
       out.push(k + '=' + d.kv[k]);
     }
     for (const s of d.sections) {
-      if (s.section.indexOf(']') !== -1) fail(rel + ': section name contains "]": ' + s.section);
+      if (s.section.indexOf(']') !== -1) fail((rel || gpath) + ': section name contains "]": ' + s.section);
       const parts = [];
       for (const k of Object.keys(s.kv)) {
-        if (hasBadValue(s.kv[k])) fail(rel + ' [' + s.section + '] ' + k + ' contains tab/newline');
+        if (hasBadValue(s.kv[k])) fail((rel || gpath) + ' [' + s.section + '] ' + k + ' contains tab/newline');
         parts.push(k + '=' + s.kv[k]);
       }
       out.push('[' + s.section + ']' + parts.concat(s.items).join('\t'));
@@ -65,49 +72,29 @@ function buildMerged() {
   return out.join('\n');
 }
 
-const postsText = fs.readFileSync(path.join(main, 'slugs/meta/posts.ini'), 'utf8').replace(/^\uFEFF/, '');
-const posts = parseSlug(postsText);
+// 1. every md file is auto-discovered with valid frontmatter — there is
+//    no posts.ini left to keep in sync, the filename IS the slug
+if (!posts.length) fail('no .md files found in posts/');
+for (const p of posts) {
+  const where = p.slug + '.md';
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(p.slug)) {
+    fail(where + ': filename must be a URL-safe slug (lowercase letters, digits, hyphens)');
+  }
+  if (!p.hasFrontmatter) { fail(where + ': missing frontmatter block (--- / title / date / ---)'); continue; }
+  if (!p.title) fail(where + ': frontmatter title missing/empty');
+  if (!p.date) fail(where + ': frontmatter date missing/empty');
+  if (p.title && hasBadValue(p.title)) fail(where + ': title contains tab/newline');
+  if (p.date && hasBadValue(p.date)) fail(where + ': date contains tab/newline');
+  if (p.date && !parseIso(p.date)) fail(where + ': date "' + p.date + '" is not a real ISO date (yyyy-mm-dd)');
+}
+if (posts.length) ok(posts.length + ' md files auto-discovered, frontmatter valid');
 
-// 1. slug uniqueness across posts.ini (#10)
-const seen = new Set();
-for (const s of posts.sections) {
-  if (seen.has(s.section)) fail('duplicate slug in posts.ini: ' + s.section);
-  seen.add(s.section);
-}
-ok(posts.sections.length + ' post slugs, all unique');
-
-// 2. slug ↔ md sync, both directions (kills bug #2)
-const mdSlugs = new Set(
-  fs.existsSync(blogsDir)
-    ? fs.readdirSync(blogsDir).filter(f => f.endsWith('.md')).map(f => path.basename(f, '.md'))
-    : []
-);
-const missingIniEntry = [];
-const missingMd = [];
-for (const slug of seen) {
-  if (!mdSlugs.has(slug)) missingMd.push(slug + '.md');
-}
-for (const slug of mdSlugs) {
-  if (!seen.has(slug)) missingIniEntry.push(slug + '.md');
-}
-if (missingIniEntry.length) {
-  note(missingIniEntry.length + ' md file(s) have no posts.ini entry: ' + missingIniEntry.join(', '));
-}
-if (missingMd.length) {
-  note(missingMd.length + ' posts.ini entr(y/ies) have no md file: ' + missingMd.join(', '));
-}
-if (missingIniEntry.length || missingMd.length) {
-  fail(mdSlugs.size + ' md files, ' + (missingIniEntry.length + missingMd.length) + ' file(s) not synced with posts.ini');
-} else {
-  ok(mdSlugs.size + ' md files, synced with posts.ini');
-}
-
-// 3. merged-merge dry run: prove parseSlugsMin reads back what we built
+// 2. merged-merge dry run: prove parseSlugsMin reads back what we built
 const merged = buildMerged();
 const groups = parseSlugsMin(merged);
 const builtPosts = (groups['meta/posts'] || {}).sections || [];
-if (builtPosts.length !== posts.sections.length) {
-  fail('parseSlugsMin round-trip: expected ' + posts.sections.length + ' post sections, got ' + builtPosts.length);
+if (builtPosts.length !== posts.length) {
+  fail('parseSlugsMin round-trip: expected ' + posts.length + ' post sections, got ' + builtPosts.length);
 } else {
   ok('parseSlugsMin round-trip OK');
 }

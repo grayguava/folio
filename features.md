@@ -1,118 +1,102 @@
-# Features
+# features
 
-Everything the markdown pipeline and article chrome support, so post
-authors don't have to grep `posts.js`. The markdown engine is
-[marked](https://github.com/markedjs/marked) v15 with GFM enabled, code
-highlighting via [highlight.js](https://highlightjs.org/) v11, and a
-thin layer of upgrade hooks in `main/assets/js/posts.js`.
+what the site does as a whole — routing, pages, theme, chrome.
+for what a post body supports, see [markdown.md](markdown.md);
+for the build pipeline, see [README.md](README.md).
 
-## Code blocks
+## clean urls
 
-Triple-backtick fences with an optional language get a copy button and a
-small toolbar:
+every page is a real path, prerendered into `dist/`:
 
-    ```go
-    func main() {}
-    ```
-
-- The toolbar label shows the language.
-- No language (or `plaintext`/`nohighlight`) = no highlighting, just a
-  bare `<pre>` with the copy button.
-- If a fence contains a known language, hljs highlights it at render
-  time; otherwise the block stays as-is.
-
-## Inline code
-
-Backticks render as a `border`-outlined pill. Inside headings they
-shrink to 85%.
-
-## Callouts
-
-A blockquote whose first paragraph starts with `[!NOTE]` upgrades to a
-blue-left-border callout and strips the marker:
-
-    > [!NOTE] Remember to validate before deploying.
-
-## Images
-
-`![alt](src)` plus optional pipe flags for layout and size:
-
-```md
-![diagram of the pipeline|center|large](/api/diagrams/pipeline.svg)
+```
+/               home
+/blog/          post list
+/blog/<slug>/   one post, fully rendered html
+/projects/      /skills/ /work/
 ```
 
-| Position flag | Effect |
-| --- | --- |
-| `left` | floated left, text wraps |
-| `right` | floated right, text wraps |
-| `center` | centered, no wrap |
-| (none) | block, natural width |
+no hash fragments, no query params. each `dist/blog/<slug>/`
+directory has its own `index.html` with the finished article
+(bright content included), so crawlers and feed readers get the
+whole page with zero javascript.
 
-| Size flag | Max box |
-| --- | --- |
-| `small` | 200×200 |
-| `medium` | 380×320 |
-| `large` | 560×460 |
-| `full` | 100% width, uncapped height |
+## client router
 
-Every image is wrapped in a clickable link that opens the original in a
-new tab. Floated images collapse to a single column under ~600px.
+`main/assets/js/app.js` is a small pathname router on top of the
+prerendered pages:
 
-## Tables
+- internal `/...` links are fetched and swapped in without a full
+  reload; `history.pushState` keeps the url honest.
+- `popstate` walks back/forward through the same cache.
+- pages are prefetched after load (`_prefetchPages()`), so
+  hopping between sections feels instant.
+- external links, modified clicks (ctrl/meta/shift) and the 404
+  page fall through to a normal full load.
+- on a prerendered post path the router leaves the inlined html
+  alone and just runs post chrome.
 
-GFM pipe tables just work, and get the styled zebra/hover treatment from
-`markdown.css`:
+## keyboard nav
 
-| Path | Policy |
-| --- | --- |
-| `/assets/*` | `no-cache` |
+available on every page:
 
-If you need an ASCII-table block for monospace layout, wrap it in
-`<div class="table-ascii">` — the renderer escapes it, allows links and
-`**bold**` inside, and lets it scroll horizontally.
+```
+h home   b blog   p projects   s skills   w work   t theme
+```
 
-## Links
+ignored while typing in an input/textarea, and with any modifier
+held. on the 404 page only `h` works (plain full load).
 
-Inside article text, external-looking links get an auto-appended `↗`
-that drifts up on hover, plus `target="_blank"` and
-`rel="noopener noreferrer"` set automatically. The underline animates
-in on the text span only.
+## theme
 
-## Details / summary
+light/dark toggle, persisted in `localStorage` and applied before
+first paint (no flash). `t` is the shortcut.
 
-Native collapsibles are styled as bordered cards with a rotating `▶`:
+## boot loader
 
-    <details>
-    <summary>More</summary>
+a terminal-style loader (`> _` with a blinking cursor) shows on
+the first visit of a session, then stays out of the way —
+later navigations in the same session skip it.
 
-    Hidden content.
-    </details>
+## nav highlighting
 
-## Lists & typography
+the active section in the top nav is set from the current
+pathname (`_sectionKey()`), including on direct loads and
+refreshes of a prerendered `/blog/<slug>/` page — the post's
+section key resolves to `blog`.
 
-- Unordered markers are accent-colored; ordered markers are muted.
-- `<dl>` definitions render muted `<dd>` blocks.
-- Headings get `scroll-margin-top` so anchor links don't clip under the
-  fixed header.
-- Reading time and word count are estimated from the raw markdown and
-  shown next to the date on every post.
+## slugs
 
-## Keyboard navigation
+site data lives in six plain INI files under `main/slugs/`:
 
-While reading (or anywhere on the site):
+```
+meta/pages      meta/projects      meta/work
+profile/about   profile/skills     profile/socials
+```
 
-| Key | Action |
-| --- | --- |
-| `h` | home |
-| `b` | blog |
-| `p` | projects |
-| `s` | skills |
-| `w` | work |
-| `t` | toggle light/dark theme (persisted in `localStorage`) |
+at build they are minified into a single `assets/slugs.min.ini`
+(section contents tab-joined, values round-trip checked by
+`validate.js`). post metadata is *not* here — it comes from
+`posts/*.md` frontmatter (see [markdown.md](markdown.md)).
 
-## Post page chrome
+## chrome upgrades
 
-The rendered body is wrapped in a `.post-meta` row — title pulled from
-the slug section, then date chip and `n min read` chip. Scripts and
-styles needed for a given post (marked, highlight.js) are lazy-loaded on
-first visit, not fetched on every page.
+on post pages only, `posts.js` runs on top of the prerendered
+html: copy-button toolbars, callouts, image flags. lists, item
+arrows (`↗`) and reading-time chips are all emitted at build
+time, not assembled in the browser.
+
+## styling
+
+- single bundled `assets/guava.min.css` (+ `guava.min.js`),
+  built by esbuild — no css/js framework, no runtime deps.
+- accent-colored list markers, zebra/hover tables, bordered
+  collapsibles, chip-style inline code (details in
+  [markdown.md](markdown.md)).
+- JetBrains Mono for the terminal-ish chrome; floated images
+  collapse to one column under ~600px.
+
+## headers
+
+`main/_headers` (copied to `dist/`): fonts and any vendored
+asset get `immutable` caching, everything else under `/assets/*`
+gets `no-cache` + `nosniff`.

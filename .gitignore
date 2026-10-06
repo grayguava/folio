@@ -1,5 +1,8 @@
+bower_components/
 node_modules/
 .wrangler/
+functions/
 temp/
-bower_components/
+wrangler.toml
+files/
 dist/

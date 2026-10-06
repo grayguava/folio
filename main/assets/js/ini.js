@@ -1,3 +1,4 @@
+// ── custom slug parser (ini-like) ──
 
 function parseSlug(text) {
   var lines = text.split('\n');
@@ -32,6 +33,7 @@ function parseSlug(text) {
   return { sections: sections, kv: kv };
 }
 
+// ── compact minified slug parser (single merged file) ──
 // [m:path]           → group marker; everything after belongs to that path
 // [name]k=v\ti=j     → section with kv pairs on one line (tab separated)
 // [name]item1\titem2 → section with bare items

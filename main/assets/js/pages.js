@@ -1,4 +1,6 @@
+// ── page initializers ──
 
+// ── scramble animation ──
 
 function scramble(el, target, duration) {
   if (!el) return;
@@ -33,6 +35,8 @@ function scramble(el, target, duration) {
   tick();
 }
 
+// ── project item renderer ──
+
 function renderItem(p) {
   var hasLink = !!p.href;
   var el = document.createElement(hasLink ? 'a' : 'div');
@@ -61,10 +65,14 @@ function renderItem(p) {
   return el;
 }
 
+// ── set page title ──
+
 function setTitle(pageTitle) {
   var name = (window.PROFILE && PROFILE.name) || 'grayguava';
   document.title = pageTitle ? pageTitle + ' · ' + name : name;
 }
+
+// ── init home page ──
 
 function initHome(query) {
   setTitle('');
@@ -113,9 +121,9 @@ function initHome(query) {
       homePosts.appendChild(renderBlogItem(p));
     });
   }
-
-  if (window.installBlogHoverPrefetch) installBlogHoverPrefetch();
 }
+
+// ── init blog page ──
 
 function initBlog(query) {
   setTitle('blog');
@@ -134,8 +142,9 @@ function initBlog(query) {
   if (!list) return;
   list.innerHTML = '';
   POSTS.forEach(function(p) { list.appendChild(renderBlogItem(p)); });
-  if (window.installBlogHoverPrefetch) installBlogHoverPrefetch();
 }
+
+// ── init projects page ──
 
 function initProjects(query) {
   setTitle('projects');
@@ -156,6 +165,8 @@ function initProjects(query) {
   PROJECTS.forEach(function(p) { list.appendChild(renderItem(p)); });
 }
 
+// ── init work page ──
+
 function initWork(query) {
   setTitle('work');
   var profile = window.PROFILE;
@@ -174,6 +185,8 @@ function initWork(query) {
   list.innerHTML = '';
   WORK.forEach(function(p) { list.appendChild(renderItem(p)); });
 }
+
+// ── init skills page ──
 
 function initSkills(query) {
   setTitle('skills');
@@ -233,6 +246,8 @@ function initSkills(query) {
     list.appendChild(details);
   });
 }
+
+// ── page init registry ──
 
 window.pageInits = {
   home: initHome,

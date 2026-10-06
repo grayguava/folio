@@ -1,4 +1,6 @@
+/* ── markdown / article styles ── */
 
+/* ── Typography & Base ── */
 article {
   max-width: 90ch;
   margin: 0 auto;
@@ -12,6 +14,7 @@ article hr {
   margin: 2.5rem auto;
 }
 
+/* ── Headings ── */
 article h1 {
   font-size: 1.75rem;
   min-height: unset;
@@ -45,6 +48,7 @@ article h4 code, article h5 code, article h6 code {
   font-size: 0.85em;
 }
 
+/* ── Post Meta ── */
 article .post-meta {
   color: var(--muted);
   font-size: 13px;
@@ -64,19 +68,21 @@ article .post-meta .reading-time {
   gap: 0.3rem;
 }
 
+/* ── Paragraphs ── */
 article p {
   margin-bottom: 1.75rem;
   line-height: 1.85;
   font-size: 0.9rem;
 }
 
+/* ── Links ── */
 article a {
   color: var(--accent);
   text-decoration: none;
   transition: opacity 0.15s;
 }
 
-/* text gets the underline; the ↗ arrow never does */
+/* text gets the underline on hover */
 article a .link-text {
   border-bottom: 1px solid transparent;
   transition: border-color 0.15s;
@@ -94,19 +100,7 @@ article a:visited {
   opacity: 0.9;
 }
 
-/* ↗ arrow on external-style links, drifts up on hover */
-article a:not(:has(img))::after {
-  content: "↗";
-  display: inline-block;
-  margin-left: 0.45em;
-  transform: translate(1px, -1px);
-  transition: transform 0.15s;
-}
-
-article a:not(:has(img)):hover::after {
-  transform: translate(1px, -3px);
-}
-
+/* ── Inline Code ── */
 article code {
   background: var(--hover-bg);
   border: 1px solid var(--border);
@@ -116,6 +110,7 @@ article code {
   font-variant-ligatures: none;
 }
 
+/* ── Code Blocks ── */
 .code-wrapper {
   margin: 1.75rem 0;
   border: 1px solid var(--border);
@@ -162,6 +157,7 @@ article pre {
   -moz-tab-size: 2;
 }
 
+/* ── Tables ── */
 article table {
   width: 100%;
   border-collapse: collapse;
@@ -205,21 +201,13 @@ article td:first-child {
   border-left: none;
 }
 
-article .table-ascii {
-  font-family: var(--mono);
-  white-space: pre;
-  line-height: 1.5;
-  font-size: 0.9rem;
-  margin-bottom: 3rem;
-  overflow-x: auto;
-}
-
 article pre code {
   background: none;
   border: none;
   padding: 0;
 }
 
+/* ── Copy Button (lives in the code bar) ── */
 .copy-btn {
   background: none;
   border: none;
@@ -245,6 +233,7 @@ article pre code {
   color: #62c862;
 }
 
+/* ── Lists ── */
 article ul,
 article ol {
   padding-left: 1.75rem;
@@ -297,6 +286,7 @@ article dd {
   line-height: 1.7;
 }
 
+/* ── Blockquotes ── */
 article blockquote {
   border-left: 2px solid var(--accent);
   padding: 0.5rem 1rem 0.5rem 1.15rem;
@@ -309,6 +299,7 @@ article blockquote > p:last-child {
   margin-bottom: 0;
 }
 
+/* ── Callouts ── */
 article blockquote.callout-info {
   font-style: normal;
   border-left-color: #4a8ad6;
@@ -319,6 +310,7 @@ article blockquote.callout-info {
   border-left-color: #2a6ab0;
 }
 
+/* ── Images & Media ── */
 article img {
   max-width: 100%;
   height: auto;
@@ -335,6 +327,7 @@ article .img-wrap {
   display: block;
 }
 
+/* ── float variants ── */
 article .img-float-left {
   float: left;
   margin: 0.25rem 1.75rem 1rem 0;
@@ -353,6 +346,7 @@ article .img-center {
   display: table; /* shrink-wraps around img */
 }
 
+/* ── size variants ── */
 article .img-small  img { max-width: 200px;  max-height: 200px;  }
 article .img-medium img { max-width: 380px;  max-height: 320px;  }
 article .img-large  img { max-width: 560px;  max-height: 460px;  }
@@ -385,6 +379,7 @@ article .img-float-right::after {
   clear: both;
 }
 
+/* ── responsive: collapse floats on narrow screens ── */
 @media (max-width: 600px) {
   article .img-float-left,
   article .img-float-right {
@@ -394,6 +389,7 @@ article .img-float-right::after {
   }
 }
 
+/* ── Details / Summary (collapsible) ── */
 article details {
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -481,12 +477,14 @@ article details > p:first-of-type {
   margin-top: 0;
 }
 
+/* ── Responsive ── */
 @media (max-width: 700px) {
   article p, article li { font-size: 1rem; }
   article code, article pre { font-size: 0.9rem; }
 
 }
 
+/* ── Print ── */
 @media print {
   article a[href]::after {
     content: " (" attr(href) ")";

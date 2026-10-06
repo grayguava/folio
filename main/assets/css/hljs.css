@@ -1,3 +1,4 @@
+/* ── highlight.js — dark mode (default) ── */
 /*
   Role → color mapping:
   keyword / control flow  →  soft coral/orange   (stands out, not harsh)
@@ -137,6 +138,7 @@
   color: #a8c4d8;
 }
 
+/* ── highlight.js — light mode ── */
 /*
   Warm cream background (~#f5f0e8) needs lower saturation and darker values.
   Avoid pure GitHub colors — they're designed for white bg and look garish on cream.

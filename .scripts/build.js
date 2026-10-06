@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..');
 const main = path.join(root, 'main');
 const dist = path.join(root, 'dist');
 
-const EXCLUDE = new Set(['dist']);
+const EXCLUDE = new Set(['.wrangler', 'node_modules', 'temp', '.gitignore', 'dist', 'wrangler.toml', 'vendor']);
 
 function rmrf(dir) {
   fs.rmSync(dir, { recursive: true, force: true });
@@ -56,8 +56,11 @@ function parseIni(text) {
 }
 
 function minifySlugs() {
+  const { discoverPosts, postsIniText } = require('./frontmatter.js');
+  // meta/posts is generated from md frontmatter — there is no posts.ini anymore
+  const generated = { 'meta/posts': postsIniText(discoverPosts()) };
   const files = [
-    ['meta/posts', 'slugs/meta/posts.ini'],
+    ['meta/posts', null],
     ['meta/projects', 'slugs/meta/projects.ini'],
     ['profile/skills', 'slugs/profile/skills.ini'],
     ['meta/work', 'slugs/meta/work.ini'],
@@ -66,18 +69,22 @@ function minifySlugs() {
     ['meta/pages', 'slugs/meta/pages.ini'],
   ];
   const out = [];
+  let rawSize = 0;
   for (const [gpath, rel] of files) {
-    const text = fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
+    const text = rel === null
+      ? generated[gpath]
+      : fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
+    rawSize += Buffer.byteLength(text);
     const d = parseIni(text);
     out.push('[m:' + gpath + ']');
     for (const k of Object.keys(d.kv)) out.push(k + '=' + d.kv[k]);
     for (const s of d.sections) {
-      if (s.section.indexOf(']') !== -1) throw new Error('section name contains "]" in ' + rel + ': ' + s.section);
+      if (s.section.indexOf(']') !== -1) throw new Error('section name contains "]" in ' + gpath + ': ' + s.section);
       const parts = [];
       for (const k of Object.keys(s.kv)) {
         const v = s.kv[k];
         if (v.indexOf('\t') !== -1 || v.indexOf('\n') !== -1) {
-          throw new Error('value contains tab/newline in ' + rel + ' [' + s.section + '] ' + k);
+          throw new Error('value contains tab/newline in ' + gpath + ' [' + s.section + '] ' + k);
         }
         parts.push(k + '=' + v);
       }
@@ -89,7 +96,6 @@ function minifySlugs() {
   fs.writeFileSync(dest, out.join('\n'));
   fs.rmSync(path.join(dist, 'slugs'), { recursive: true, force: true });
 
-  const rawSize = files.reduce((n, [, rel]) => n + fs.statSync(path.join(main, rel)).size, 0);
   return { dest, rawSize, size: fs.statSync(dest).size };
 }
 
@@ -99,7 +105,6 @@ async function build() {
 
   console.log('\n> Minifying assets...');
   cleanDir(dist);
-  if (!fs.existsSync(dist)) fs.mkdirSync(dist, { recursive: true });
   copyDir(main, dist);
 
   const cssFiles = ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']
@@ -123,11 +128,14 @@ async function build() {
     bundle: false,
   });
 
-  rewriteHtml(path.join(dist, 'index.html'), '');
+  rewriteHtml(path.join(dist, 'index.html'), '/');
   rewriteHtml(path.join(dist, '404.html'), '/');
 
   const slugsOut = minifySlugs();
   console.log(`✓ Slugs:  ${(slugsOut.rawSize / 1024).toFixed(1)} kB -> ${(slugsOut.size / 1024).toFixed(1)} kB`);
+
+  console.log('\n> Prerendering clean URLs...');
+  require('./prerender.js');
 
   // remove only the bundled source files — leave any non-bundled asset
   // (future fonts, extra css, etc.) intact in dist/

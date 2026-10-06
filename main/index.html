@@ -6,18 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>grayguava</title>
 
-  <link rel="stylesheet" href="assets/css/theme.css" />
-  <link rel="stylesheet" href="assets/css/skills.css" />
-  <link rel="stylesheet" href="assets/css/base.css" />
-  <link rel="stylesheet" href="assets/css/markdown.css" />
-  <link rel="stylesheet" href="assets/css/hljs.css" />
+
+  <link rel="stylesheet" href="/assets/css/theme.css" />
+  <link rel="stylesheet" href="/assets/css/skills.css" />
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/markdown.css" />
+  <link rel="stylesheet" href="/assets/css/hljs.css" />
 </head>
+
 
 <body>
 
   <div id="site-loader">
     <pre class="boot"><span class="p">&gt;</span><span class="cursor">_</span></pre>
   </div>
+
 
   <script>
     // apply saved theme before paint to avoid flash
@@ -27,27 +30,30 @@
       if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
     })();
     var _loaded = false, _timerDone = false;
+    try { if (sessionStorage.getItem('site_seen')) _timerDone = true; } catch (_) {}
     function _hideLoader() {
       if (!_loaded || !_timerDone) return;
       var l = document.getElementById('site-loader');
       l.classList.add('loaded');
       setTimeout(function() { l.style.display = 'none'; }, 350);
     }
-    setTimeout(function() { _timerDone = true; _hideLoader(); }, 1500);
+    setTimeout(function() { _timerDone = true; try { sessionStorage.setItem('site_seen', '1'); } catch (_) {} _hideLoader(); }, _timerDone ? 0 : 1200);
     window.addEventListener('load', function() {
       _loaded = true;
       _hideLoader();
     });
   </script>
 
+
   <div class="wrap">
     <nav>
-      <a href="javascript:void(0)" class="nav-link" data-nav="home" id="nav-home"><span class="key">[h]</span> home</a>
-      <a href="#blog" class="nav-link" data-nav="blog"><span class="key">[b]</span> blog</a>
-      <a href="#projects" class="nav-link" data-nav="projects"><span class="key">[p]</span> projects</a>
-      <a href="#skills" class="nav-link" data-nav="skills"><span class="key">[s]</span> skills</a>
-      <a href="#work" class="nav-link" data-nav="work"><span class="key">[w]</span> work</a>
+      <a href="/" class="nav-link" data-nav="home" id="nav-home"><span class="key">[h]</span> home</a>
+      <a href="/blog/" class="nav-link" data-nav="blog"><span class="key">[b]</span> blog</a>
+      <a href="/projects/" class="nav-link" data-nav="projects"><span class="key">[p]</span> projects</a>
+      <a href="/skills/" class="nav-link" data-nav="skills"><span class="key">[s]</span> skills</a>
+      <a href="/work/" class="nav-link" data-nav="work"><span class="key">[w]</span> work</a>
     </nav>
+
 
     <!-- ── home ── -->
     <section id="page-home" class="page">
@@ -60,7 +66,7 @@
       <section>
         <div class="sec-head">
           <h2 class="sec-title"><span class="accent">*</span> projects</h2>
-          <a href="#projects" class="view-all">all projects ↗</a>
+          <a href="/projects/" class="view-all">all projects ↗</a>
         </div>
         <div class="item-list" id="home-projects"></div>
       </section>
@@ -68,7 +74,7 @@
       <section>
         <div class="sec-head">
           <h2 class="sec-title"><span class="accent">*</span> writing</h2>
-          <a href="#blog" class="view-all">all posts ↗</a>
+          <a href="/blog/" class="view-all">all posts ↗</a>
         </div>
         <div class="blog-list" id="home-posts"></div>
       </section>
@@ -81,6 +87,7 @@
       <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
+
     <!-- ── writing ── -->
     <section id="page-blog" class="page" style="display:none">
       <header class="page-header">
@@ -91,11 +98,13 @@
       <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
+
     <!-- ── writing - posts ── -->
     <section id="page-post" class="page" style="display:none">
       <article id="post-content"></article>
       <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
+
 
     <!-- ── projects ── -->
     <section id="page-projects" class="page" style="display:none">
@@ -107,6 +116,7 @@
       <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
 
+
     <!-- ── skills ── -->
     <section id="page-skills" class="page" style="display:none">
       <header class="page-header">
@@ -116,6 +126,7 @@
       <div id="skills-list"></div>
       <p class="hint">press <kbd>h</kbd> <kbd>b</kbd> <kbd>p</kbd> <kbd>s</kbd> <kbd>w</kbd> to navigate · <kbd>t</kbd> theme</p>
     </section>
+
 
     <!-- ── work ── -->
     <section id="page-work" class="page" style="display:none">
@@ -128,12 +139,15 @@
     </section>
   </div>
 
-<script src="assets/js/ini.js"></script>
-<script src="assets/js/loader.js"></script>
-<script src="assets/js/posts.js"></script>
-<script src="assets/js/pages.js"></script>
-<script src="assets/js/app.js"></script>
+
+<script src="/assets/js/ini.js"></script>
+<script src="/assets/js/loader.js"></script>
+<script src="/assets/js/posts.js"></script>
+<script src="/assets/js/pages.js"></script>
+<script src="/assets/js/app.js"></script>
+
 
 </body>
+
 
 </html>
