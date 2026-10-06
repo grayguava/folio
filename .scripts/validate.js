@@ -21,7 +21,6 @@ const SLUG_FILES = [
   ['meta/work', 'slugs/meta/work.ini'],
   ['profile/about', 'slugs/profile/about.ini'],
   ['profile/socials', 'slugs/profile/socials.ini'],
-  ['meta/pages', 'slugs/meta/pages.ini'],
 ];
 
 let errors = 0;

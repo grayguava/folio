@@ -127,16 +127,12 @@ function initHome(query) {
 
 function initBlog(query) {
   setTitle('blog');
-  var profile = window.PROFILE;
 
   var el = document.getElementById('scramble-blog');
   if (el) {
     el.textContent = 'writing';
     scramble(el, el.textContent);
   }
-
-  var subEl = document.getElementById('blog-sub');
-  if (subEl && profile && profile.pageSub) subEl.textContent = profile.pageSub.blog;
 
   var list = document.getElementById('blog-list');
   if (!list) return;
@@ -148,16 +144,12 @@ function initBlog(query) {
 
 function initProjects(query) {
   setTitle('projects');
-  var profile = window.PROFILE;
 
   var el = document.getElementById('scramble-projects');
   if (el) {
     el.textContent = 'projects';
     scramble(el, el.textContent);
   }
-
-  var subEl = document.getElementById('projects-sub');
-  if (subEl && profile && profile.pageSub) subEl.textContent = profile.pageSub.projects;
 
   var list = document.getElementById('projects-list');
   if (!list) return;
@@ -169,16 +161,12 @@ function initProjects(query) {
 
 function initWork(query) {
   setTitle('work');
-  var profile = window.PROFILE;
 
   var el = document.getElementById('scramble-work');
   if (el) {
     el.textContent = 'work';
     scramble(el, el.textContent);
   }
-
-  var subEl = document.getElementById('work-sub');
-  if (subEl && profile && profile.pageSub) subEl.textContent = profile.pageSub.work;
 
   var list = document.getElementById('work-list');
   if (!list) return;
@@ -190,16 +178,12 @@ function initWork(query) {
 
 function initSkills(query) {
   setTitle('skills');
-  var profile = window.PROFILE;
 
   var el = document.getElementById('scramble-skills');
   if (el) {
     el.textContent = 'skills';
     scramble(el, el.textContent);
   }
-
-  var subEl = document.getElementById('skills-sub');
-  if (subEl && profile && profile.pageSub) subEl.textContent = profile.pageSub.skills;
 
   var list = document.getElementById('skills-list');
   if (!list) return;

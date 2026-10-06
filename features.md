@@ -66,11 +66,11 @@ section key resolves to `blog`.
 
 ## slugs
 
-site data lives in six plain INI files under `main/slugs/`:
+site data lives in five plain INI files under `main/slugs/`:
 
 ```
-meta/pages      meta/projects      meta/work
-profile/about   profile/skills     profile/socials
+meta/projects      meta/work
+profile/about      profile/skills     profile/socials
 ```
 
 at build they are minified into a single `assets/slugs.min.ini`

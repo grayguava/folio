@@ -66,7 +66,6 @@ function minifySlugs() {
     ['meta/work', 'slugs/meta/work.ini'],
     ['profile/about', 'slugs/profile/about.ini'],
     ['profile/socials', 'slugs/profile/socials.ini'],
-    ['meta/pages', 'slugs/meta/pages.ini'],
   ];
   const out = [];
   let rawSize = 0;

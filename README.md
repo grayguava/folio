@@ -56,8 +56,7 @@ main/                  source of the site
   assets/js/           ini, loader, posts, pages, app
   assets/fonts/
   assets/vendor/       marked + highlight.js, build-time only
-  slugs/               6 ini files (no posts.ini, see below)
-    meta/pages
+  slugs/               5 ini files (no posts.ini, see below)
     meta/projects
     meta/work
     profile/about

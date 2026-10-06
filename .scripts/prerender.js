@@ -95,6 +95,8 @@ function prerenderPost(post) {
     .replace('<section id="page-post" class="page" style="display:none">', '<section id="page-post" class="page">')
     .replace('<article id="post-content"></article>', '<article id="post-content" data-prerendered="1">' + article + '</article>');
 
+  out = keepOnlySection(out, 'page-post');
+
   const dir = path.join(dist, 'blog', post.slug);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
@@ -144,22 +146,53 @@ function buildSkillsHTML(SKILLS) {
   }).join('');
 }
 
-function emitPage(route, pageId, containerId, innerHTML, subText) {
+// keep only the page <section> this shell serves (drop the other hidden ones)
+function keepOnlySection(html, keepId) {
+  const opener = /<section id="(page-[a-z-]+)" class="page"[^>]*>/g;
+  let out = '';
+  let last = 0;
+  let m;
+  while ((m = opener.exec(html)) !== null) {
+    if (m[1] === keepId) continue;
+    const start = m.index;
+    const end = sectionEnd(html, opener.lastIndex);
+    out += html.slice(last, start);
+    last = end;
+    opener.lastIndex = end;
+  }
+  return out + html.slice(last);
+}
+
+// index just past the matching </section>
+function sectionEnd(html, from) {
+  const tags = /<section\b|<\/section>/g;
+  tags.lastIndex = from;
+  let depth = 1;
+  let m;
+  while ((m = tags.exec(html)) !== null) {
+    if (m[0] === '</section>') {
+      depth--;
+      if (depth === 0) return tags.lastIndex;
+    } else {
+      depth++;
+    }
+  }
+  return html.length;
+}
+
+function emitPage(route, pageId, containerId, innerHTML) {
   let out = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
   out = out
     .replace('<section id="page-home" class="page">', '<section id="page-home" class="page" style="display:none">')
     .replace('<section id="' + pageId + '" class="page" style="display:none">', '<section id="' + pageId + '" class="page">')
     .replace(' id="' + containerId + '"></div>', ' id="' + containerId + '">' + innerHTML + '</div>');
-  if (subText) {
-    out = out.replace('id="' + route + '-sub"></p>', 'id="' + route + '-sub">' + subText + '</p>');
-  }
+  out = keepOnlySection(out, pageId);
   const dir = path.join(dist, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
   console.log(route + '/');
 }
 
-const pageSub = parseSlug(fs.readFileSync(path.join(main, 'slugs/meta/pages.ini'), 'utf8')).kv || {};
 const projects = parseSlug(fs.readFileSync(path.join(main, 'slugs/meta/projects.ini'), 'utf8')).sections.map(s => ({ title: s.section, role: s.kv.role || '', description: s.kv.description || '', href: s.kv.href || '', tags: s.kv.tags ? s.kv.tags.split('|').map(x => x.trim()) : [] }));
 const work = parseSlug(fs.readFileSync(path.join(main, 'slugs/meta/work.ini'), 'utf8')).sections.map(s => ({ title: s.section, role: s.kv.role || '', description: s.kv.description || '' }));
 const skills = [];
@@ -168,7 +201,7 @@ parseSlug(fs.readFileSync(path.join(main, 'slugs/profile/skills.ini'), 'utf8')).
   s.items.forEach(i => skills.push({ name: i, category: s.section }));
 });
 
-emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''), pageSub.blog || '');
-emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''), pageSub.projects || '');
-emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills), pageSub.skills || '');
-emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''), pageSub.work || '');
+emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''));
+emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''));
+emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills));
+emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''));

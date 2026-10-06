@@ -46,7 +46,6 @@
     var socials = ((d['profile/socials'] || {}).sections || []).map(function(s) {
       return { name: s.section, href: s.kv.href || '', svg: s.kv.svg || '' };
     });
-    var pageSub = (d['meta/pages'] || {}).kv || {};
 
     window.POSTS = posts;
     window.PROJECTS = projects;
@@ -57,7 +56,6 @@
       sub: base.sub || '',
       bio: base.bio || '',
       socials: socials,
-      pageSub: pageSub,
     };
   });
 })();
