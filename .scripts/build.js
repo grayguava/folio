@@ -32,69 +32,24 @@ function concat(files) {
   return files.map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 }
 
-function parseIni(text) {
-  const d = { sections: [], kv: {} };
-  let current = null;
-  for (const line of text.split('\n')) {
-    const l = line.trim();
-    if (!l || l.charAt(0) === ';') continue;
-    if (l.charAt(0) === '[') {
-      const close = l.indexOf(']');
-      if (close === -1) continue;
-      current = { section: l.slice(1, close).trim(), kv: {}, items: [] };
-      d.sections.push(current);
-    } else if (current) {
-      const eq = l.indexOf('=');
-      if (eq !== -1) current.kv[l.slice(0, eq).trim()] = l.slice(eq + 1).trim();
-      else current.items.push(l);
-    } else {
-      const eq = l.indexOf('=');
-      if (eq !== -1) d.kv[l.slice(0, eq).trim()] = l.slice(eq + 1).trim();
-    }
-  }
-  return d;
-}
+// the JSON sources merged into dist/assets/slugs.jsonl
+const SLUG_SOURCES = [
+  'slugs/meta/projects.json',
+  'slugs/profile/skills.json',
+  'slugs/meta/work.json',
+  'slugs/profile/about.json',
+  'slugs/profile/socials.json',
+];
 
 function minifySlugs() {
-  const { discoverPosts, postsIniText } = require('./frontmatter.js');
-  // meta/posts is generated from md frontmatter — there is no posts.ini anymore
-  const generated = { 'meta/posts': postsIniText(discoverPosts()) };
-  const files = [
-    ['meta/posts', null],
-    ['meta/projects', 'slugs/meta/projects.ini'],
-    ['profile/skills', 'slugs/profile/skills.ini'],
-    ['meta/work', 'slugs/meta/work.ini'],
-    ['profile/about', 'slugs/profile/about.ini'],
-    ['profile/socials', 'slugs/profile/socials.ini'],
-  ];
-  const out = [];
-  let rawSize = 0;
-  for (const [gpath, rel] of files) {
-    const text = rel === null
-      ? generated[gpath]
-      : fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
-    rawSize += Buffer.byteLength(text);
-    const d = parseIni(text);
-    out.push('[m:' + gpath + ']');
-    for (const k of Object.keys(d.kv)) out.push(k + '=' + d.kv[k]);
-    for (const s of d.sections) {
-      if (s.section.indexOf(']') !== -1) throw new Error('section name contains "]" in ' + gpath + ': ' + s.section);
-      const parts = [];
-      for (const k of Object.keys(s.kv)) {
-        const v = s.kv[k];
-        if (v.indexOf('\t') !== -1 || v.indexOf('\n') !== -1) {
-          throw new Error('value contains tab/newline in ' + gpath + ' [' + s.section + '] ' + k);
-        }
-        parts.push(k + '=' + v);
-      }
-      out.push('[' + s.section + ']' + parts.concat(s.items).join('\t'));
-    }
-  }
-  const dest = path.join(dist, 'assets/slugs.min.ini');
+  const { loadData, toJSONL } = require('./slugs.js');
+  const out = toJSONL(loadData());
+  const dest = path.join(dist, 'assets/slugs.jsonl');
   fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.writeFileSync(dest, out.join('\n'));
+  fs.writeFileSync(dest, out);
   fs.rmSync(path.join(dist, 'slugs'), { recursive: true, force: true });
 
+  const rawSize = SLUG_SOURCES.reduce((n, f) => n + fs.statSync(path.join(main, f)).size, 0);
   return { dest, rawSize, size: fs.statSync(dest).size };
 }
 
@@ -108,7 +63,7 @@ async function build() {
 
   const cssFiles = ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']
     .map((f) => path.join(main, 'assets/css', f));
-  const jsFiles = ['ini.js', 'loader.js', 'posts.js', 'pages.js', 'app.js']
+  const jsFiles = ['loader.js', 'posts.js', 'pages.js', 'app.js']
     .map((f) => path.join(main, 'assets/js', f));
 
   const cssOut = path.join(dist, 'assets/guava.min.css');
@@ -142,7 +97,7 @@ async function build() {
   for (const f of ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']) {
     fs.rmSync(path.join(dist, 'assets/css', f), { force: true });
   }
-  for (const f of ['ini.js', 'loader.js', 'posts.js', 'pages.js', 'app.js']) {
+  for (const f of ['loader.js', 'posts.js', 'pages.js', 'app.js']) {
     fs.rmSync(path.join(dist, 'assets/js', f), { force: true });
   }
   // rmdir fails when a future file was dropped in — that file staying is the point
