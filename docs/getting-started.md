@@ -81,36 +81,11 @@ behavior in [features.md](features.md).
 
 ## site config
 
-`config.json` at the repo root decides what gets built. this is
-the default it ships with:
+what gets built is driven by `config.json` — bootloader screen,
+first-visit theme, site name, home preview counts, page subtitles,
+and which pages ship at all. the full key reference lives in
+[config.md](config.md).
 
-```json
-{
-  "bootloader": {
-    "loaderEnable": false,
-    "defaultDuration": 1200
-  },
-  "theme": {
-    "defaultTheme": "dark"
-  },
-  "pages": {
-    "blog": true,
-    "projects": true,
-    "skills": false,
-    "work": false
-  }
-}
-```
-
-- `bootloader.loaderEnable` shows the `>_` boot screen on first
-  visit; `defaultDuration` is its minimum display time in ms.
-- `theme.defaultTheme` is what first-time visitors get — a saved
-  choice in `localStorage` always wins.
-- a page set to `false` is dropped from the nav, the shell, the
-  home blocks, the keyboard shortcuts and the prerender, as if it
-  never existed. omitted pages default to on. turning `blog` off
-  also drops every `/blog/<slug>/` page.
-
-do it in this order: fill in `main/slugs/` first, and only then
-flip a page to `true` in `config.json`. a page with no data behind
-it builds fine but renders empty lists — data first, switch second.
+one rule of thumb: fill in `main/slugs/` first, and only then flip
+a page to `true` in `config.json`. a page with no data behind it
+builds fine but renders empty lists — data first, switch second.

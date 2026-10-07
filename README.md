@@ -69,7 +69,7 @@ main/                  source of the site
     profile/socials
 posts/                 *.md, filename is the slug
 dist/                  generated output, deploy this
-docs/                  guides: getting-started, features, markdown, vendor
+docs/                  guides: getting-started, config, features, markdown, vendor
 README.md              this file — layout + build
 ```
 
