@@ -44,6 +44,7 @@ and deploy one of your own.
 
 ```
 build.bat / build.sh   entry points, run from repo root
+config.json            site toggles: bootloader, theme, which pages ship
 .scripts/              build tooling (node, dev-only)
   build.js             pipeline: validate -> bundle -> inline slugs -> prerender
   validate.js          data gate, fails the build on bad data
