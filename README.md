@@ -33,9 +33,12 @@ the old architecture is preserved on the [`v1` branch](https://github.com/graygu
 | runtime deps | marked + highlight.js loaded in browser | none — bundled html/css/js |
 
 the data in this repo is placeholder (john doe, demo posts) so the
-build stays green with no personal content in it. see `markdown.md`
-for what markdown the post bodies support, and `features.md` for
-the sitewide features (router, keyboard nav, theme, slugs).
+build stays green with no personal content in it. see
+[docs/markdown.md](docs/markdown.md) for what markdown the post
+bodies support, [docs/features.md](docs/features.md) for the
+sitewide features (router, keyboard nav, theme, slugs), and
+[docs/getting-started.md](docs/getting-started.md) to fork it
+and deploy one of your own.
 
 ## layout
 
@@ -65,10 +68,8 @@ main/                  source of the site
     profile/socials
 posts/                 *.md, filename is the slug
 dist/                  generated output, deploy this
-vendor.md              vendored lib versions + hashes
+docs/                  guides: getting-started, features, markdown, vendor
 README.md              this file — layout + build
-features.md            sitewide features (router, nav, theme)
-markdown.md            post markdown reference
 ```
 
 `meta/posts` is generated at build time from frontmatter by
@@ -77,18 +78,8 @@ markdown.md            post markdown reference
 
 ## quick start
 
-```
-cd .scripts && npm install
-```
-
-then from the repo root:
-
-```
-build.bat        :: windows
-./build.sh       :: macos / linux
-```
-
-open `dist/index.html`, or serve `dist/` statically.
+to run your own copy, follow [docs/getting-started.md](docs/getting-started.md)
+— install, build, and deploy from zero to served in a few commands.
 
 ## what the build does, in order
 
@@ -131,8 +122,9 @@ runtime deps: none. `marked` + `highlight.js` are vendored under
 
 ## deploying
 
-`dist/` is the site. serve it as static files with clean urls
-(`./build.sh` output works on any static host):
+`dist/` is the site — see [docs/getting-started.md](docs/getting-started.md#deploy)
+for serving it locally and shipping it to cloudflare pages or any
+static host:
 
 - `/` home, `/blog/`, `/projects/`, `/skills/`, `/work/`
 - `/blog/<slug>/` one dir per post, fully prerendered

@@ -2,7 +2,7 @@
 
 what the site does as a whole — routing, pages, theme, chrome.
 for what a post body supports, see [markdown.md](markdown.md);
-for the build pipeline, see [README.md](README.md).
+for the build pipeline, see [README.md](../README.md).
 
 ## clean urls
 
