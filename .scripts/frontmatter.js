@@ -82,4 +82,13 @@ function discoverPosts() {
       (b.dateKey.localeCompare(a.dateKey)) || b.slug.localeCompare(a.slug));
 }
 
-module.exports = { root, postsDir, parseIso, formatDate, parseFrontmatter, discoverPosts };
+// posts.ini-shaped text so the merged slugs.min.ini keeps the same meta/posts group
+function postsIniText(posts) {
+  const out = [];
+  for (const p of posts) {
+    out.push('[' + p.slug + ']', 'title=' + p.title, 'date=' + p.dateDisplay, '');
+  }
+  return out.join('\n');
+}
+
+module.exports = { root, postsDir, parseIso, formatDate, parseFrontmatter, discoverPosts, postsIniText };

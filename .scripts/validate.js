@@ -8,6 +8,21 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const main = path.join(root, 'main');
 
+// ── pull the real parsers out of the shipped frontend code ──
+const iniSrc = fs.readFileSync(path.join(main, 'assets/js/ini.js'), 'utf8');
+const mod = {};
+new Function('module', 'exports', 'window', iniSrc + '\nmodule.exports = { parseSlug, parseSlugsMin };')(mod, mod.exports, {});
+const { parseSlug, parseSlugsMin } = mod.exports;
+
+const SLUG_FILES = [
+  ['meta/posts', null], // generated from md frontmatter — no posts.ini
+  ['meta/projects', 'slugs/meta/projects.ini'],
+  ['profile/skills', 'slugs/profile/skills.ini'],
+  ['meta/work', 'slugs/meta/work.ini'],
+  ['profile/about', 'slugs/profile/about.ini'],
+  ['profile/socials', 'slugs/profile/socials.ini'],
+];
+
 let errors = 0;
 function fail(msg) { console.log('✗ ' + msg); errors++; }
 function ok(msg) { console.log('✓ ' + msg); }
@@ -16,10 +31,48 @@ console.log('> Validating...');
 
 function hasBadValue(v) { return /\t|\n/.test(v); }
 
-// 1. every md file is auto-discovered with valid frontmatter — the filename
-//    IS the slug, there is no posts.json to keep in sync
-const { discoverPosts, parseIso } = require('./frontmatter.js');
+// same merging logic as build.js minifySlugs
+const { discoverPosts, postsIniText, parseIso } = require('./frontmatter.js');
 const posts = discoverPosts();
+
+// meta/posts is generated from md frontmatter — there is no posts.ini anymore
+const generated = { 'meta/posts': postsIniText(posts) };
+function groupText(rel) {
+  return rel === null ? generated['meta/posts'] : fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
+}
+
+function buildMerged() {
+  const out = [];
+  for (const [gpath, rel] of SLUG_FILES) {
+    const text = groupText(rel);
+    const d = parseSlug(text);
+
+    // group-level kv tab/newline check (build gap #8)
+    for (const k of Object.keys(d.kv)) {
+      if (hasBadValue(d.kv[k])) fail((rel || gpath) + ': group-level kv "' + k + '" contains tab/newline');
+      if (k.includes(']') || d.kv[k].includes('\t')) {}
+    }
+
+    out.push('[m:' + gpath + ']');
+    for (const k of Object.keys(d.kv)) {
+      if (hasBadValue(d.kv[k])) fail((rel || gpath) + ': kv "' + k + '" contains tab/newline');
+      out.push(k + '=' + d.kv[k]);
+    }
+    for (const s of d.sections) {
+      if (s.section.indexOf(']') !== -1) fail((rel || gpath) + ': section name contains "]": ' + s.section);
+      const parts = [];
+      for (const k of Object.keys(s.kv)) {
+        if (hasBadValue(s.kv[k])) fail((rel || gpath) + ' [' + s.section + '] ' + k + ' contains tab/newline');
+        parts.push(k + '=' + s.kv[k]);
+      }
+      out.push('[' + s.section + ']' + parts.concat(s.items).join('\t'));
+    }
+  }
+  return out.join('\n');
+}
+
+// 1. every md file is auto-discovered with valid frontmatter — there is
+//    no posts.ini left to keep in sync, the filename IS the slug
 if (!posts.length) fail('no .md files found in posts/');
 for (const p of posts) {
   const where = p.slug + '.md';
@@ -35,51 +88,14 @@ for (const p of posts) {
 }
 if (posts.length) ok(posts.length + ' md files auto-discovered, frontmatter valid');
 
-// 2. the JSON slug sources parse and carry the fields every renderer reads
-const { readJSON, loadData, toJSONL } = require('./slugs.js');
-const REQUIRED = {
-  'slugs/meta/projects.json': { array: true, fields: ['title', 'role', 'description', 'href', 'tags'] },
-  'slugs/meta/work.json': { array: true, fields: ['title', 'role', 'description'] },
-  'slugs/profile/skills.json': { array: true, fields: ['category', 'items'] },
-  'slugs/profile/about.json': { array: false, fields: ['name', 'sub', 'bio'] },
-  'slugs/profile/socials.json': { array: true, fields: ['name', 'href', 'svg'] },
-};
-for (const [rel, spec] of Object.entries(REQUIRED)) {
-  let data;
-  try { data = readJSON(rel); } catch (e) { fail(rel + ': ' + e.message); continue; }
-  if (spec.array && !Array.isArray(data)) { fail(rel + ': expected a JSON array'); continue; }
-  const rows = spec.array ? data : [data];
-  if (spec.array && !data.length) fail(rel + ': empty');
-  for (const row of rows) {
-    for (const field of spec.fields) {
-      if (row[field] === undefined || row[field] === '') fail(rel + ': an entry is missing "' + field + '"');
-    }
-  }
-  if (rel === 'slugs/profile/skills.json') {
-    for (const s of data) {
-      if (!Array.isArray(s.items) || !s.items.length) fail(rel + ' [' + s.category + ']: items missing/empty');
-      else for (const it of s.items) if (!it || !it.name) fail(rel + ' [' + s.category + ']: an item is missing "name"');
-    }
-  }
-}
-ok('slug JSON sources valid');
-
-// 3. merged-merge dry run: prove JSON.parse reads back every record we emit
-const data = loadData();
-const merged = toJSONL(data);
-let lineNo = 0;
-let builtPosts = 0;
-for (const line of merged.split('\n')) {
-  lineNo++;
-  if (!line.trim()) continue;
-  let rec;
-  try { rec = JSON.parse(line); } catch (e) { fail('slugs.jsonl line ' + lineNo + ': ' + e.message); continue; }
-  if (rec.t === 'post') builtPosts++;
-}
-if (builtPosts !== posts.length) {
-  fail('slugs.jsonl round-trip: expected ' + posts.length + ' post records, got ' + builtPosts);
+// 2. merged-merge dry run: prove parseSlugsMin reads back what we built
+const merged = buildMerged();
+const groups = parseSlugsMin(merged);
+const builtPosts = (groups['meta/posts'] || {}).sections || [];
+if (builtPosts.length !== posts.length) {
+  fail('parseSlugsMin round-trip: expected ' + posts.length + ' post sections, got ' + builtPosts.length);
 } else {
-  ok('slugs.jsonl round-trip OK');
+  ok('parseSlugsMin round-trip OK');
 }
 
 if (errors) {

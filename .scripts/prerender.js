@@ -10,7 +10,11 @@ const dist = path.join(root, 'dist');
 
 const marked = require(path.join(main, 'assets/vendor/marked.min.js'));
 const hljs = require(path.join(main, 'assets/vendor/highlight.min.js'));
-const { loadData } = require('./slugs.js');
+const iniSrc = fs.readFileSync(path.join(main, 'assets/js/ini.js'), 'utf8');
+const mod = {};
+new Function('module', 'exports', 'window', iniSrc + '\nmodule.exports = { parseSlug };')(mod, mod.exports, {});
+const { parseSlug } = mod.exports;
+
 const { discoverPosts } = require('./frontmatter.js');
 const posts = discoverPosts();
 
@@ -189,7 +193,13 @@ function emitPage(route, pageId, containerId, innerHTML) {
   console.log(route + '/');
 }
 
-const { projects, skills, work } = loadData();
+const projects = parseSlug(fs.readFileSync(path.join(main, 'slugs/meta/projects.ini'), 'utf8')).sections.map(s => ({ title: s.section, role: s.kv.role || '', description: s.kv.description || '', href: s.kv.href || '', tags: s.kv.tags ? s.kv.tags.split('|').map(x => x.trim()) : [] }));
+const work = parseSlug(fs.readFileSync(path.join(main, 'slugs/meta/work.ini'), 'utf8')).sections.map(s => ({ title: s.section, role: s.kv.role || '', description: s.kv.description || '' }));
+const skills = [];
+parseSlug(fs.readFileSync(path.join(main, 'slugs/profile/skills.ini'), 'utf8')).sections.forEach(s => {
+  for (const k in s.kv) skills.push({ name: k, category: s.section, href: s.kv[k] });
+  s.items.forEach(i => skills.push({ name: i, category: s.section }));
+});
 
 emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''));
 emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''));

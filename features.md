@@ -66,18 +66,17 @@ section key resolves to `blog`.
 
 ## slugs
 
-site data lives in five plain JSON files under `main/slugs/`:
+site data lives in five plain INI files under `main/slugs/`:
 
 ```
 meta/projects      meta/work
 profile/about      profile/skills     profile/socials
 ```
 
-at build they are flattened into a single `assets/slugs.jsonl` —
-one typed JSON record per line, parsed in the browser with plain
-`JSON.parse` (round-trip checked by `validate.js`). post metadata
-is *not* here — it comes from `posts/*.md` frontmatter (see
-[markdown.md](markdown.md)).
+at build they are minified into a single `assets/slugs.min.ini`
+(section contents tab-joined, values round-trip checked by
+`validate.js`). post metadata is *not* here — it comes from
+`posts/*.md` frontmatter (see [markdown.md](markdown.md)).
 
 ## chrome upgrades
 
