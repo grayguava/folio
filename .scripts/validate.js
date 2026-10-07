@@ -19,7 +19,11 @@ function hasBadValue(v) { return /\t|\n/.test(v); }
 let site = null;
 try {
   site = loadConfig();
-  ok('site config: pages [' + (site.enabled.join(', ') || 'home only') + '], bootloader ' + (site.bootloader.loaderEnable ? 'on (' + site.bootloader.defaultDuration + 'ms)' : 'off') + ', theme ' + site.theme.defaultTheme + ', site "' + site.site.name + '"');
+  ok('Site config:');
+  console.log('     Enabled pages: ' + (site.enabled.join(', ') || 'home only'));
+  console.log('     Bootloader: ' + (site.bootloader.loaderEnable ? 'on' : 'off'));
+  console.log('     Default theme: ' + site.theme.defaultTheme);
+  console.log('     Site name: ' + site.site.name);
 } catch (e) {
   fail(e.message);
 }
