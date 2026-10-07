@@ -124,9 +124,9 @@ function _extractWrap(html) {
   };
 }
 
-function _fetchAndCache(url) {
+function _fetchAndCache(url, low) {
   if (_pageCache[url]) return Promise.resolve(_pageCache[url]);
-  return fetch(url).then(function(r) {
+  return fetch(url, low ? { priority: 'low' } : undefined).then(function(r) {
     if (!r.ok) throw new Error('not found');
     return r.text();
   }).then(function(text) {
@@ -137,8 +137,23 @@ function _fetchAndCache(url) {
 
 function _prefetchPages() {
   ['/', '/blog/', '/projects/', '/skills/', '/work/'].forEach(function(u) {
-    if (!_pageCache[u]) _fetchAndCache(u).catch(function() {});
+    if (u === window.location.pathname || _pageCache[u]) return;
+    _fetchAndCache(u, true).catch(function() {});
   });
+}
+
+// prefetch only once loaded and idle — first paint and fonts own the
+// bandwidth until then; navigations above keep normal priority
+function _schedulePrefetch() {
+  function run() {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(function() { _prefetchPages(); }, { timeout: 3000 });
+    } else {
+      setTimeout(_prefetchPages, 1500);
+    }
+  }
+  if (document.readyState === 'complete') run();
+  else window.addEventListener('load', run);
 }
 
 function _navigateTo(url, push) {
@@ -179,7 +194,7 @@ window.addEventListener('popstate', function() {
   _navigateTo(window.location.pathname, false);
 });
 
-_prefetchPages();
+_schedulePrefetch();
 
 // ── initial route ──
 
