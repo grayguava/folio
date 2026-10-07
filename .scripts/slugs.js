@@ -20,6 +20,15 @@ const path = require('path');
 const root = path.resolve(__dirname, '..');
 const main = path.join(root, 'main');
 
+// every hand-edited slug source — buildData() reads exactly these
+const SLUG_FILES = {
+  projects: 'slugs/meta/projects.ini',
+  skills: 'slugs/profile/skills.ini',
+  work: 'slugs/meta/work.ini',
+  about: 'slugs/profile/about.ini',
+  socials: 'slugs/profile/socials.ini',
+};
+
 function parseIni(text) {
   const d = { sections: [], kv: {} };
   let current = null;
@@ -53,7 +62,7 @@ function buildData() {
 
   const posts = discoverPosts().map((p) => ({ slug: p.slug, title: p.title, date: p.dateDisplay }));
 
-  const projects = readIni('slugs/meta/projects.ini').sections.map((s) => ({
+  const projects = readIni(SLUG_FILES.projects).sections.map((s) => ({
     title: s.section,
     role: s.kv.role || '',
     description: s.kv.description || '',
@@ -62,19 +71,19 @@ function buildData() {
   }));
 
   const skills = [];
-  readIni('slugs/profile/skills.ini').sections.forEach((s) => {
+  readIni(SLUG_FILES.skills).sections.forEach((s) => {
     for (const k in s.kv) skills.push({ name: k, category: s.section, href: s.kv[k] });
     s.items.forEach((i) => skills.push({ name: i, category: s.section }));
   });
 
-  const work = readIni('slugs/meta/work.ini').sections.map((s) => ({
+  const work = readIni(SLUG_FILES.work).sections.map((s) => ({
     title: s.section,
     role: s.kv.role || '',
     description: s.kv.description || '',
   }));
 
-  const about = readIni('slugs/profile/about.ini').kv;
-  const socials = readIni('slugs/profile/socials.ini').sections.map((s) => ({
+  const about = readIni(SLUG_FILES.about).kv;
+  const socials = readIni(SLUG_FILES.socials).sections.map((s) => ({
     name: s.section,
     href: s.kv.href || '',
     svg: s.kv.svg || '',
@@ -111,4 +120,4 @@ function inlineScript() {
     '</script>';
 }
 
-module.exports = { root, main, parseIni, readIni, buildData, inlineScript };
+module.exports = { root, main, SLUG_FILES, parseIni, readIni, buildData, inlineScript };

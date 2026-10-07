@@ -97,7 +97,6 @@ function prerenderPost(post) {
   const dir = path.join(dist, 'blog', post.slug);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
-  console.log('blog/' + post.slug + '/ (' + (out.length / 1024).toFixed(1) + ' kB)');
 }
 
 for (const p of posts) prerenderPost(p);
@@ -187,7 +186,6 @@ function emitPage(route, pageId, containerId, innerHTML) {
   const dir = path.join(dist, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
-  console.log(route + '/');
 }
 
 // same object build.js inlines into index.html — the shells carry live lists

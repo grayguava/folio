@@ -61,11 +61,11 @@ if (data) {
   for (const s of data.profile.socials) {
     if (!s.name || !s.href) fail('slugs/profile/socials.ini: a social is missing name/href');
   }
-  ok('slug data builds (' + data.posts.length + ' posts, ' + data.projects.length + ' projects, ' + data.skills.length + ' skills, ' + data.work.length + ' work)');
+  ok('Slug data builds (' + data.posts.length + ' posts, ' + data.projects.length + ' projects, ' + data.skills.length + ' skills, ' + data.work.length + ' work)');
 }
 
 if (errors) {
   console.error('\n> Validation failed with ' + errors + ' error(s)');
   process.exit(1);
 }
-console.log('> Validation passed!');
+console.log('✨ Validation passed!');

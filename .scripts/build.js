@@ -35,7 +35,7 @@ function concat(files) {
 // slug data is baked into dist/index.html — no slug file is emitted, and the
 // raw slugs/ sources never reach dist/
 function inlineSlugData() {
-  const { inlineScript } = require('./slugs.js');
+  const { inlineScript, SLUG_FILES } = require('./slugs.js');
   const script = inlineScript();
   const file = path.join(dist, 'index.html');
   let html = fs.readFileSync(file, 'utf8');
@@ -44,7 +44,31 @@ function inlineSlugData() {
   html = html.replace(bundleTag, script + '\n' + bundleTag);
   fs.writeFileSync(file, html);
   fs.rmSync(path.join(dist, 'slugs'), { recursive: true, force: true });
-  return Buffer.byteLength(script);
+  return { bytes: Buffer.byteLength(script), files: Object.keys(SLUG_FILES).length };
+}
+
+// .wrangler is local deploy state and vendor/ never ships —
+// neither is served, so neither counts toward the total
+function distSize() {
+  let n = 0;
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      const rel = path.relative(dist, p);
+      if (e.isDirectory()) {
+        if (rel === '.wrangler' || rel === path.join('assets', 'vendor')) continue;
+        walk(p);
+      } else {
+        n += fs.statSync(p).size;
+      }
+    }
+  })(dist);
+  return n;
+}
+
+function fmtSize(n) {
+  const kb = n / 1024;
+  return kb >= 1024 ? (kb / 1024).toFixed(1) + ' MB' : kb.toFixed(1) + ' kB';
 }
 
 async function build() {
@@ -79,10 +103,14 @@ async function build() {
   rewriteHtml(path.join(dist, 'index.html'), '/');
   rewriteHtml(path.join(dist, '404.html'), '/');
 
-  const inlineSize = inlineSlugData();
-  console.log(`✓ Slugs:  inlined into index.html (${(inlineSize / 1024).toFixed(1)} kB, 0 files)`);
+  const slugOut = inlineSlugData();
+  console.log(`✓ Slugs: ${slugOut.files} files inlined into index.html (${(slugOut.bytes / 1024).toFixed(1)} kB)`);
 
-  console.log('\n> Prerendering clean URLs...');
+  const cssOld = cssFiles.reduce((n, f) => n + fs.statSync(f).size, 0);
+  const jsOld = jsFiles.reduce((n, f) => n + fs.statSync(f).size, 0);
+  console.log(`✓ JS:     ${(jsOld / 1024).toFixed(1)} kB -> ${(fs.statSync(jsOut).size / 1024).toFixed(1)} kB`);
+  console.log(`✓ CSS:    ${(cssOld / 1024).toFixed(1)} kB -> ${(fs.statSync(cssOut).size / 1024).toFixed(1)} kB`);
+
   require('./prerender.js');
 
   // remove only the bundled source files — leave any non-bundled asset
@@ -98,11 +126,8 @@ async function build() {
   try { fs.rmdirSync(path.join(dist, 'assets/css')); } catch (_) {}
   try { fs.rmdirSync(path.join(dist, 'assets/js')); } catch (_) {}
 
-  const cssOld = cssFiles.reduce((n, f) => n + fs.statSync(f).size, 0);
-  const jsOld = jsFiles.reduce((n, f) => n + fs.statSync(f).size, 0);
-  console.log(`✓ CSS:    ${(cssOld / 1024).toFixed(1)} kB -> ${(fs.statSync(cssOut).size / 1024).toFixed(1)} kB`);
-  console.log(`✓ JS:     ${(jsOld / 1024).toFixed(1)} kB -> ${(fs.statSync(jsOut).size / 1024).toFixed(1)} kB`);
-  console.log('> Minify and build done!');
+  console.log('✨ Minify and build done!');
+  console.log(`\n✨ Total site size: ${fmtSize(distSize())}`);
 }
 
 function rewriteHtml(file, prefix) {
