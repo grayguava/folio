@@ -11,8 +11,10 @@
   color: var(--text);
 }
 
-#skills-list summary::-webkit-details-marker {
-  display: none;
+@supports selector(::-webkit-details-marker) {
+  #skills-list summary::-webkit-details-marker {
+    display: none;
+  }
 }
 
 #skills-list summary::before {

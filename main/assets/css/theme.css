@@ -32,34 +32,9 @@
 }
 
 /* ── custom scrollbar ── */
-/* Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--dim) var(--bg-secondary);
-}
-
-/* Chromium / WebKit */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--dim);
-  border-radius: 5px;
-  border: 2px solid var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-}
-
-::-webkit-scrollbar-corner {
-  background: var(--bg-secondary);
 }
 
 /* ── base ── */

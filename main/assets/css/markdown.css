@@ -412,7 +412,9 @@ article summary {
   transition: background 0.15s;
 }
 
-article summary::-webkit-details-marker { display: none; }
+@supports selector(::-webkit-details-marker) {
+  article summary::-webkit-details-marker { display: none; }
+}
 
 article summary::before {
   content: "▶";
