@@ -73,10 +73,11 @@ meta/projects      meta/work
 profile/about      profile/skills     profile/socials
 ```
 
-at build they are minified into a single `assets/slugs.min.ini`
-(section contents tab-joined, values round-trip checked by
-`validate.js`). post metadata is *not* here — it comes from
-`posts/*.md` frontmatter (see [markdown.md](markdown.md)).
+at build they are baked into `index.html` as a `<script
+id="slug-data">` setting `window.POSTS / PROJECTS / SKILLS / WORK /
+PROFILE` — no slug file is emitted to `dist/`, nothing is fetched
+or parsed in the browser. post metadata is *not* here — it comes
+from `posts/*.md` frontmatter (see [markdown.md](markdown.md)).
 
 ## chrome upgrades
 

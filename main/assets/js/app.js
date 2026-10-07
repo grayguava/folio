@@ -183,6 +183,7 @@ _prefetchPages();
 
 // ── initial route ──
 
-(window._dataReady || Promise.resolve()).then(route);
+// slug data is inlined in the html — no async load to wait for
+Promise.resolve().then(route);
 
 })();

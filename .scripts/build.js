@@ -32,70 +32,19 @@ function concat(files) {
   return files.map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 }
 
-function parseIni(text) {
-  const d = { sections: [], kv: {} };
-  let current = null;
-  for (const line of text.split('\n')) {
-    const l = line.trim();
-    if (!l || l.charAt(0) === ';') continue;
-    if (l.charAt(0) === '[') {
-      const close = l.indexOf(']');
-      if (close === -1) continue;
-      current = { section: l.slice(1, close).trim(), kv: {}, items: [] };
-      d.sections.push(current);
-    } else if (current) {
-      const eq = l.indexOf('=');
-      if (eq !== -1) current.kv[l.slice(0, eq).trim()] = l.slice(eq + 1).trim();
-      else current.items.push(l);
-    } else {
-      const eq = l.indexOf('=');
-      if (eq !== -1) d.kv[l.slice(0, eq).trim()] = l.slice(eq + 1).trim();
-    }
-  }
-  return d;
-}
-
-function minifySlugs() {
-  const { discoverPosts, postsIniText } = require('./frontmatter.js');
-  // meta/posts is generated from md frontmatter — there is no posts.ini anymore
-  const generated = { 'meta/posts': postsIniText(discoverPosts()) };
-  const files = [
-    ['meta/posts', null],
-    ['meta/projects', 'slugs/meta/projects.ini'],
-    ['profile/skills', 'slugs/profile/skills.ini'],
-    ['meta/work', 'slugs/meta/work.ini'],
-    ['profile/about', 'slugs/profile/about.ini'],
-    ['profile/socials', 'slugs/profile/socials.ini'],
-  ];
-  const out = [];
-  let rawSize = 0;
-  for (const [gpath, rel] of files) {
-    const text = rel === null
-      ? generated[gpath]
-      : fs.readFileSync(path.join(main, rel), 'utf8').replace(/^\uFEFF/, '');
-    rawSize += Buffer.byteLength(text);
-    const d = parseIni(text);
-    out.push('[m:' + gpath + ']');
-    for (const k of Object.keys(d.kv)) out.push(k + '=' + d.kv[k]);
-    for (const s of d.sections) {
-      if (s.section.indexOf(']') !== -1) throw new Error('section name contains "]" in ' + gpath + ': ' + s.section);
-      const parts = [];
-      for (const k of Object.keys(s.kv)) {
-        const v = s.kv[k];
-        if (v.indexOf('\t') !== -1 || v.indexOf('\n') !== -1) {
-          throw new Error('value contains tab/newline in ' + gpath + ' [' + s.section + '] ' + k);
-        }
-        parts.push(k + '=' + v);
-      }
-      out.push('[' + s.section + ']' + parts.concat(s.items).join('\t'));
-    }
-  }
-  const dest = path.join(dist, 'assets/slugs.min.ini');
-  fs.mkdirSync(path.dirname(dest), { recursive: true });
-  fs.writeFileSync(dest, out.join('\n'));
+// slug data is baked into dist/index.html — no slug file is emitted, and the
+// raw slugs/ sources never reach dist/
+function inlineSlugData() {
+  const { inlineScript } = require('./slugs.js');
+  const script = inlineScript();
+  const file = path.join(dist, 'index.html');
+  let html = fs.readFileSync(file, 'utf8');
+  const bundleTag = '<script src="/assets/guava.min.js"></script>';
+  if (!html.includes(bundleTag)) throw new Error('inlineSlugData: bundle tag not found in dist/index.html');
+  html = html.replace(bundleTag, script + '\n' + bundleTag);
+  fs.writeFileSync(file, html);
   fs.rmSync(path.join(dist, 'slugs'), { recursive: true, force: true });
-
-  return { dest, rawSize, size: fs.statSync(dest).size };
+  return Buffer.byteLength(script);
 }
 
 async function build() {
@@ -108,7 +57,7 @@ async function build() {
 
   const cssFiles = ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']
     .map((f) => path.join(main, 'assets/css', f));
-  const jsFiles = ['ini.js', 'loader.js', 'posts.js', 'pages.js', 'app.js']
+  const jsFiles = ['posts.js', 'pages.js', 'app.js']
     .map((f) => path.join(main, 'assets/js', f));
 
   const cssOut = path.join(dist, 'assets/guava.min.css');
@@ -130,8 +79,8 @@ async function build() {
   rewriteHtml(path.join(dist, 'index.html'), '/');
   rewriteHtml(path.join(dist, '404.html'), '/');
 
-  const slugsOut = minifySlugs();
-  console.log(`✓ Slugs:  ${(slugsOut.rawSize / 1024).toFixed(1)} kB -> ${(slugsOut.size / 1024).toFixed(1)} kB`);
+  const inlineSize = inlineSlugData();
+  console.log(`✓ Slugs:  inlined into index.html (${(inlineSize / 1024).toFixed(1)} kB, 0 files)`);
 
   console.log('\n> Prerendering clean URLs...');
   require('./prerender.js');
@@ -142,7 +91,7 @@ async function build() {
   for (const f of ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']) {
     fs.rmSync(path.join(dist, 'assets/css', f), { force: true });
   }
-  for (const f of ['ini.js', 'loader.js', 'posts.js', 'pages.js', 'app.js']) {
+  for (const f of ['posts.js', 'pages.js', 'app.js']) {
     fs.rmSync(path.join(dist, 'assets/js', f), { force: true });
   }
   // rmdir fails when a future file was dropped in — that file staying is the point
