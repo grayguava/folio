@@ -11,6 +11,8 @@ const dist = path.join(root, 'dist');
 const marked = require(path.join(main, 'assets/vendor/marked.min.js'));
 const hljs = require(path.join(main, 'assets/vendor/highlight.min.js'));
 const { buildData } = require('./slugs.js');
+const { loadConfig } = require('./config.js');
+const site = loadConfig();
 
 const { discoverPosts } = require('./frontmatter.js');
 const posts = discoverPosts();
@@ -99,7 +101,9 @@ function prerenderPost(post) {
   fs.writeFileSync(path.join(dir, 'index.html'), out);
 }
 
-for (const p of posts) prerenderPost(p);
+if (site.pages.blog) {
+  for (const p of posts) prerenderPost(p);
+}
 
 function itemHTML(p) {
   var hasLink = !!p.href;
@@ -191,7 +195,7 @@ function emitPage(route, pageId, containerId, innerHTML) {
 // same object build.js inlines into index.html — the shells carry live lists
 const { projects, skills, work } = buildData();
 
-emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''));
-emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''));
-emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills));
-emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''));
+if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''));
+if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''));
+if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills));
+if (site.pages.work) emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''));

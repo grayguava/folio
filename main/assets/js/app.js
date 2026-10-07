@@ -23,7 +23,7 @@ try {
 // ── theme toggle ──
 
 var saved = storage.getItem('theme');
-var theme = saved || 'dark';
+var theme = saved || ((window.SITE && window.SITE.theme) || 'dark');
 if (theme === 'light') {
   document.documentElement.setAttribute('data-theme', 'light');
 }
@@ -41,8 +41,14 @@ window.toggleTheme = function() {
 
 // ── section from pathname (/blog/20260708001/ -> blog, / -> home) ──
 
+// pages enabled at build time (window.SITE is inlined by the build;
+// all-on fallback when opening source files directly)
+var SITE_PAGES = (window.SITE && window.SITE.pages) || ['blog', 'projects', 'skills', 'work'];
+var PAGE_KEYS = { blog: 'b', projects: 'p', skills: 's', work: 'w' };
+
 function _sectionKey(pathname) {
-  var m = pathname.match(/^\/(blog|projects|skills|work)(\/|$)/);
+  if (!SITE_PAGES.length) return 'home';
+  var m = pathname.match(new RegExp('^\\/(' + SITE_PAGES.join('|') + ')(\\/|$)'));
   return m ? m[1] : 'home';
 }
 
@@ -90,13 +96,10 @@ document.addEventListener('keydown', function(e) {
   if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
 
-  var map = {
-    h: '/',
-    b: '/blog/',
-    p: '/projects/',
-    s: '/skills/',
-    w: '/work/',
-  };
+  var map = { h: '/' };
+  SITE_PAGES.forEach(function(p) {
+    if (PAGE_KEYS[p]) map[PAGE_KEYS[p]] = '/' + p + '/';
+  });
 
   var target = map[e.key];
   if (target !== undefined && window.location.pathname !== target) {
@@ -136,7 +139,9 @@ function _fetchAndCache(url, low) {
 }
 
 function _prefetchPages() {
-  ['/', '/blog/', '/projects/', '/skills/', '/work/'].forEach(function(u) {
+  var urls = ['/'];
+  SITE_PAGES.forEach(function(p) { urls.push('/' + p + '/'); });
+  urls.forEach(function(u) {
     if (u === window.location.pathname || _pageCache[u]) return;
     _fetchAndCache(u, true).catch(function() {});
   });

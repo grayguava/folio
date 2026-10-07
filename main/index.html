@@ -27,8 +27,11 @@
     (function() {
       var t;
       try { t = localStorage.getItem('theme'); } catch (_) {}
+      if (t !== 'light' && t !== 'dark') t = /*__THEME_DEFAULT__*/'dark';
       if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
     })();
+  </script>
+  <script id="boot-loader">
     var _loaded = false, _timerDone = false;
     try { if (sessionStorage.getItem('site_seen')) _timerDone = true; } catch (_) {}
     function _hideLoader() {
@@ -37,7 +40,7 @@
       l.classList.add('loaded');
       setTimeout(function() { l.style.display = 'none'; }, 350);
     }
-    setTimeout(function() { _timerDone = true; try { sessionStorage.setItem('site_seen', '1'); } catch (_) {} _hideLoader(); }, _timerDone ? 0 : 1200);
+    setTimeout(function() { _timerDone = true; try { sessionStorage.setItem('site_seen', '1'); } catch (_) {} _hideLoader(); }, _timerDone ? 0 : /*__BOOT_MS__*/1200);
     window.addEventListener('load', function() {
       _loaded = true;
       _hideLoader();

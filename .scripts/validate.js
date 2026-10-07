@@ -4,6 +4,7 @@
 
 const { discoverPosts, parseIso } = require('./frontmatter.js');
 const { buildData } = require('./slugs.js');
+const { loadConfig } = require('./config.js');
 
 let errors = 0;
 function fail(msg) { console.log('✗ ' + msg); errors++; }
@@ -13,9 +14,21 @@ console.log('> Validating...');
 
 function hasBadValue(v) { return /\t|\n/.test(v); }
 
+// 0. site config gates everything below — a missing file, bad JSON,
+//    unknown pages or wrong types fail the build here
+let site = null;
+try {
+  site = loadConfig();
+  ok('site config: pages [' + (site.enabled.join(', ') || 'home only') + '], bootloader ' + (site.bootloader.loaderEnable ? 'on (' + site.bootloader.defaultDuration + 'ms)' : 'off') + ', theme ' + site.theme.defaultTheme);
+} catch (e) {
+  fail(e.message);
+}
+
 // 1. every md file is auto-discovered with valid frontmatter — there is
-//    no posts.ini left to keep in sync, the filename IS the slug
+//    no posts.ini left to keep in sync, the filename IS the slug.
+//    skipped when the blog page is disabled (no post routes to feed)
 const posts = discoverPosts();
+if (!site || site.pages.blog) {
 if (!posts.length) fail('no .md files found in posts/');
 for (const p of posts) {
   const where = p.slug + '.md';
@@ -30,6 +43,7 @@ for (const p of posts) {
   if (p.date && !parseIso(p.date)) fail(where + ': date "' + p.date + '" is not a real ISO date (yyyy-mm-dd)');
 }
 if (posts.length) ok(posts.length + ' md files auto-discovered, frontmatter valid');
+}
 
 // 2. the slug .ini sources build into the exact object inlined in index.html
 let data = null;

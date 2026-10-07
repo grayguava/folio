@@ -34,6 +34,7 @@
     (function() {
       var saved;
       try { saved = localStorage.getItem('theme'); } catch (_) {}
+      if (saved !== 'light' && saved !== 'dark') saved = /*__THEME_DEFAULT__*/'dark';
       if (saved === 'light') document.documentElement.setAttribute('data-theme', 'light');
     })();
     document.addEventListener('keydown', function(e) {

@@ -1,0 +1,15 @@
+{
+  "bootloader": {
+    "loaderEnable": false,
+    "defaultDuration": 1200
+  },
+  "theme": {
+    "defaultTheme": "dark"
+  },
+  "pages": {
+    "blog": true,
+    "projects": true,
+    "skills": false,
+    "work": false
+  }
+}

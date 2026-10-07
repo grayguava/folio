@@ -32,8 +32,93 @@ function concat(files) {
   return files.map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 }
 
-// slug data is baked into dist/index.html — no slug file is emitted, and the
-// raw slugs/ sources never reach dist/
+// drop disabled pages from the shell: nav link, page section, home blocks,
+// regenerated hints; bootloader block per config. runs on dist/index.html
+// after rewriteHtml, before prerender (shells inherit the result)
+function applySiteConfig() {
+  const { loadConfig } = require('./config.js');
+  const site = loadConfig();
+  const file = path.join(dist, 'index.html');
+  let html = fs.readFileSync(file, 'utf8');
+
+  const HOME_BLOCKS = { blog: 'home-posts', projects: 'home-projects' };
+  for (const p of ['blog', 'projects', 'skills', 'work']) {
+    if (site.pages[p]) continue;
+    html = html.replace(new RegExp('<a\\b[^>]*data-nav="' + p + '"[^>]*>[\\s\\S]*?<\\/a>', 'g'), '');
+    html = dropSection(html, 'page-' + p);
+    if (HOME_BLOCKS[p]) html = dropHomeBlock(html, HOME_BLOCKS[p]);
+  }
+
+  // hints list only the keys that actually work
+  const letters = ['h'].concat(site.enabled.map((p) => KEY_LETTERS[p]));
+  const hint = '<p class="hint">press ' + letters.map((l) => '<kbd>' + l + '</kbd>').join(' ') + ' to navigate · <kbd>t</kbd> theme</p>';
+  html = html.replace(/<p class="hint">[\s\S]*?<\/p>/g, hint);
+
+  if (!site.bootloader.loaderEnable) {
+    html = html.replace(/<div id="site-loader">[\s\S]*?<\/div>/, '');
+    html = html.replace(/<script id="boot-loader">[\s\S]*?<\/script>/, '');
+  } else {
+    html = html.replace('/*__BOOT_MS__*/1200', String(site.bootloader.defaultDuration));
+  }
+
+  html = html.replace("/*__THEME_DEFAULT__*/'dark'", "'" + site.theme.defaultTheme + "'");
+
+  fs.writeFileSync(file, html);
+
+  const notFound = path.join(dist, '404.html');
+  if (fs.existsSync(notFound)) {
+    let nf = fs.readFileSync(notFound, 'utf8');
+    nf = nf.replace("/*__THEME_DEFAULT__*/'dark'", "'" + site.theme.defaultTheme + "'");
+    fs.writeFileSync(notFound, nf);
+  }
+}
+
+// runtime page list for app.js — read before the bundle runs
+function injectSiteConfig() {
+  const { loadConfig } = require('./config.js');
+  const site = loadConfig();
+  const script = '<script id="site-config">window.SITE=' + JSON.stringify({ pages: site.enabled, theme: site.theme.defaultTheme }) + ';</script>';
+  const file = path.join(dist, 'index.html');
+  let html = fs.readFileSync(file, 'utf8');
+  const bundleTag = '<script src="/assets/guava.min.js"></script>';
+  if (!html.includes(bundleTag)) throw new Error('injectSiteConfig: bundle tag not found in dist/index.html');
+  fs.writeFileSync(file, html.replace(bundleTag, script + '\n' + bundleTag));
+}
+
+// remove one page <section>...</section> by id
+function dropSection(html, id) {
+  const m = new RegExp('<section id="' + id + '" class="page"[^>]*>').exec(html);
+  if (!m) return html;
+  return html.slice(0, m.index) + html.slice(sectionEnd(html, m.index + m[0].length));
+}
+
+// remove the inner home <section> wrapping a preview block
+function dropHomeBlock(html, innerId) {
+  const idx = html.indexOf('id="' + innerId + '"');
+  if (idx === -1) return html;
+  const start = html.lastIndexOf('<section', idx);
+  if (start === -1) return html;
+  return html.slice(0, start) + html.slice(sectionEnd(html, html.indexOf('>', start) + 1));
+}
+
+// index just past the matching </section>
+function sectionEnd(html, from) {
+  const tags = /<section\b|<\/section>/g;
+  tags.lastIndex = from;
+  let depth = 1;
+  let m;
+  while ((m = tags.exec(html)) !== null) {
+    if (m[0] === '</section>') {
+      depth--;
+      if (depth === 0) return tags.lastIndex;
+    } else {
+      depth++;
+    }
+  }
+  return html.length;
+}
+
+var KEY_LETTERS = { blog: 'b', projects: 'p', skills: 's', work: 'w' };
 function inlineSlugData() {
   const { inlineScript, SLUG_FILES } = require('./slugs.js');
   const script = inlineScript();
@@ -102,6 +187,9 @@ async function build() {
 
   rewriteHtml(path.join(dist, 'index.html'), '/');
   rewriteHtml(path.join(dist, '404.html'), '/');
+
+  applySiteConfig();
+  injectSiteConfig();
 
   const slugOut = inlineSlugData();
   console.log(`✓ Slugs: ${slugOut.files} files inlined into index.html (${(slugOut.bytes / 1024).toFixed(1)} kB)`);
