@@ -19,7 +19,7 @@ function hasBadValue(v) { return /\t|\n/.test(v); }
 let site = null;
 try {
   site = loadConfig();
-  ok('site config: pages [' + (site.enabled.join(', ') || 'home only') + '], bootloader ' + (site.bootloader.loaderEnable ? 'on (' + site.bootloader.defaultDuration + 'ms)' : 'off') + ', theme ' + site.theme.defaultTheme);
+  ok('site config: pages [' + (site.enabled.join(', ') || 'home only') + '], bootloader ' + (site.bootloader.loaderEnable ? 'on (' + site.bootloader.defaultDuration + 'ms)' : 'off') + ', theme ' + site.theme.defaultTheme + ', site "' + site.site.name + '"');
 } catch (e) {
   fail(e.message);
 }
@@ -50,7 +50,9 @@ let data = null;
 try {
   data = buildData();
 } catch (e) {
-  fail('slugs: failed to build slug data — ' + e.message);
+  // when the config itself is broken the gate above already failed —
+  // don't report the same root cause twice
+  if (site) fail('slugs: failed to build slug data — ' + e.message);
 }
 if (data) {
   if (data.posts.length !== posts.length) {

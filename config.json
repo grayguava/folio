@@ -6,6 +6,18 @@
   "theme": {
     "defaultTheme": "dark"
   },
+  "site": {
+    "name": "John Doe"
+  },
+  "homePreview": {
+    "projects": 2,
+    "posts": 4,
+    "work": 2
+  },
+  "subtitles": {
+    "blog": "occasional posts on systems, networking, and tooling",
+    "projects": "things i've built"
+  },
   "pages": {
     "blog": true,
     "projects": true,

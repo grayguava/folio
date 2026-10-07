@@ -44,11 +44,43 @@ function loadConfig() {
     throw new Error('config.json: theme.defaultTheme must be "dark" or "light"');
   }
 
+  const st = cfg.site;
+  if (!st || typeof st !== 'object') throw new Error('config.json: site must be an object');
+  if (typeof st.name !== 'string' || !st.name) {
+    throw new Error('config.json: site.name must be a non-empty string');
+  }
+
+  const hm = cfg.homePreview;
+  if (!hm || typeof hm !== 'object') throw new Error('config.json: homePreview must be an object');
+  for (const k of ['projects', 'posts', 'work']) {
+    if (!Number.isInteger(hm[k]) || hm[k] < 0) {
+      throw new Error('config.json: homePreview.' + k + ' must be an integer >= 0');
+    }
+  }
+
+  const sub = cfg.subtitles;
+  if (!sub || typeof sub !== 'object') throw new Error('config.json: subtitles must be an object');
+  for (const k of Object.keys(sub)) {
+    if (!KNOWN_PAGES.includes(k)) throw new Error('config.json: unknown subtitles page "' + k + '"');
+    if (typeof sub[k] !== 'string' || !sub[k]) {
+      throw new Error('config.json: subtitles.' + k + ' must be a non-empty string');
+    }
+  }
+
   // omitted pages default to on
   const enabled = KNOWN_PAGES.filter((p) => pages[p] !== false);
+  // every enabled page needs its subtitle — a disabled page doesn't
+  for (const p of enabled) {
+    if (sub[p] === undefined) {
+      throw new Error('config.json: subtitles.' + p + ' is required while the page is enabled');
+    }
+  }
   return {
     bootloader: { loaderEnable: bl.loaderEnable, defaultDuration: bl.defaultDuration },
     theme: { defaultTheme: th.defaultTheme },
+    site: { name: st.name },
+    homePreview: { projects: hm.projects, posts: hm.posts, work: hm.work },
+    subtitles: Object.fromEntries(KNOWN_PAGES.filter((p) => sub[p] !== undefined).map((p) => [p, sub[p]])),
     pages: Object.fromEntries(KNOWN_PAGES.map((p) => [p, pages[p] !== false])),
     enabled,
   };

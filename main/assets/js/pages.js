@@ -68,7 +68,7 @@ function renderItem(p) {
 // ── set page title ──
 
 function setTitle(pageTitle) {
-  var name = (window.PROFILE && PROFILE.name) || 'grayguava';
+  var name = (window.PROFILE && PROFILE.name) || (window.SITE && window.SITE.name) || 'grayguava';
   document.title = pageTitle ? pageTitle + ' · ' + name : name;
 }
 
@@ -107,19 +107,46 @@ function initHome(query) {
   }
 
   var homeProjects = document.getElementById('home-projects');
+  var homeCfg = (window.SITE && window.SITE.homePreview) || {};
   if (homeProjects) {
     homeProjects.innerHTML = '';
-    PROJECTS.slice(0, 2).forEach(function(p) {
-      homeProjects.appendChild(renderItem(p));
-    });
+    var projectCount = typeof homeCfg.projects === 'number' ? homeCfg.projects : 2;
+    if (projectCount === 0) {
+      var projectSec = homeProjects.closest('section');
+      if (projectSec) projectSec.remove();
+    } else {
+      PROJECTS.slice(0, projectCount).forEach(function(p) {
+        homeProjects.appendChild(renderItem(p));
+      });
+    }
+  }
+
+  var homeWork = document.getElementById('home-work');
+  if (homeWork) {
+    homeWork.innerHTML = '';
+    var workCount = typeof homeCfg.work === 'number' ? homeCfg.work : 2;
+    if (workCount === 0) {
+      var workSec = homeWork.closest('section');
+      if (workSec) workSec.remove();
+    } else {
+      WORK.slice(0, workCount).forEach(function(p) {
+        homeWork.appendChild(renderItem(p));
+      });
+    }
   }
 
   var homePosts = document.getElementById('home-posts');
   if (homePosts) {
     homePosts.innerHTML = '';
-    POSTS.slice(0, 4).forEach(function(p) {
-      homePosts.appendChild(renderBlogItem(p));
-    });
+    var postCount = typeof homeCfg.posts === 'number' ? homeCfg.posts : 4;
+    if (postCount === 0) {
+      var postSec = homePosts.closest('section');
+      if (postSec) postSec.remove();
+    } else {
+      POSTS.slice(0, postCount).forEach(function(p) {
+        homePosts.appendChild(renderBlogItem(p));
+      });
+    }
   }
 }
 

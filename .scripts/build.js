@@ -41,7 +41,7 @@ function applySiteConfig() {
   const file = path.join(dist, 'index.html');
   let html = fs.readFileSync(file, 'utf8');
 
-  const HOME_BLOCKS = { blog: 'home-posts', projects: 'home-projects' };
+  const HOME_BLOCKS = { blog: 'home-posts', projects: 'home-projects', work: 'home-work' };
   for (const p of ['blog', 'projects', 'skills', 'work']) {
     if (site.pages[p]) continue;
     html = html.replace(new RegExp('<a\\b[^>]*data-nav="' + p + '"[^>]*>[\\s\\S]*?<\\/a>', 'g'), '');
@@ -49,10 +49,24 @@ function applySiteConfig() {
     if (HOME_BLOCKS[p]) html = dropHomeBlock(html, HOME_BLOCKS[p]);
   }
 
+  // a zero preview removes the home block but keeps the page itself
+  if (site.pages.projects && site.homePreview.projects === 0) html = dropHomeBlock(html, 'home-projects');
+  if (site.pages.blog && site.homePreview.posts === 0) html = dropHomeBlock(html, 'home-posts');
+  if (site.pages.work && site.homePreview.work === 0) html = dropHomeBlock(html, 'home-work');
+
   // hints list only the keys that actually work
   const letters = ['h'].concat(site.enabled.map((p) => KEY_LETTERS[p]));
   const hint = '<p class="hint">press ' + letters.map((l) => '<kbd>' + l + '</kbd>').join(' ') + ' to navigate · <kbd>t</kbd> theme</p>';
   html = html.replace(/<p class="hint">[\s\S]*?<\/p>/g, hint);
+
+  // page subtitles come from config, not markup
+  for (const p of site.enabled) {
+    if (site.subtitles[p] === undefined) continue;
+    html = html.replace(
+      new RegExp('(<p class="sub" id="' + p + '-sub">)[\\s\\S]*?(</p>)'),
+      function (m, open, close) { return open + escHtml(site.subtitles[p]) + close; }
+    );
+  }
 
   if (!site.bootloader.loaderEnable) {
     html = html.replace(/<div id="site-loader">[\s\S]*?<\/div>/, '');
@@ -62,6 +76,7 @@ function applySiteConfig() {
   }
 
   html = html.replace("/*__THEME_DEFAULT__*/'dark'", "'" + site.theme.defaultTheme + "'");
+  html = html.replace('/*__SITE_NAME__*/grayguava', site.site.name);
 
   fs.writeFileSync(file, html);
 
@@ -69,6 +84,7 @@ function applySiteConfig() {
   if (fs.existsSync(notFound)) {
     let nf = fs.readFileSync(notFound, 'utf8');
     nf = nf.replace("/*__THEME_DEFAULT__*/'dark'", "'" + site.theme.defaultTheme + "'");
+    nf = nf.replace('/*__SITE_NAME__*/grayguava', site.site.name);
     fs.writeFileSync(notFound, nf);
   }
 }
@@ -77,7 +93,7 @@ function applySiteConfig() {
 function injectSiteConfig() {
   const { loadConfig } = require('./config.js');
   const site = loadConfig();
-  const script = '<script id="site-config">window.SITE=' + JSON.stringify({ pages: site.enabled, theme: site.theme.defaultTheme }) + ';</script>';
+  const script = '<script id="site-config">window.SITE=' + JSON.stringify({ pages: site.enabled, theme: site.theme.defaultTheme, name: site.site.name, homePreview: site.homePreview }) + ';</script>';
   const file = path.join(dist, 'index.html');
   let html = fs.readFileSync(file, 'utf8');
   const bundleTag = '<script src="/assets/guava.min.js"></script>';
@@ -119,6 +135,11 @@ function sectionEnd(html, from) {
 }
 
 var KEY_LETTERS = { blog: 'b', projects: 'p', skills: 's', work: 'w' };
+
+// subtitles land in element text — escape markup characters
+function escHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 function inlineSlugData() {
   const { inlineScript, SLUG_FILES } = require('./slugs.js');
   const script = inlineScript();

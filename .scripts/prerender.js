@@ -88,7 +88,7 @@ function prerenderPost(post) {
 
   let out = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
   out = out
-    .replace('<title>grayguava</title>', '<title>' + post.title + ' · grayguava</title>')
+    .replace(/<title>([^<]*)<\/title>/, '<title>' + post.title + ' · $1</title>')
     .replace('<body>', '<body>\n<script>window.__prerenderedPost = true;</script>')
     .replace('<section id="page-home" class="page">', '<section id="page-home" class="page" style="display:none">')
     .replace('<section id="page-post" class="page" style="display:none">', '<section id="page-post" class="page">')

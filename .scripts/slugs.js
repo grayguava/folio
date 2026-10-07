@@ -59,6 +59,8 @@ function readIni(rel) {
 // same shapes the runtime always consumed (POSTS/PROJECTS/SKILLS/WORK/PROFILE)
 function buildData() {
   const { discoverPosts } = require('./frontmatter.js');
+  const { loadConfig } = require('./config.js');
+  const siteName = loadConfig().site.name;
 
   const posts = discoverPosts().map((p) => ({ slug: p.slug, title: p.title, date: p.dateDisplay }));
 
@@ -95,7 +97,7 @@ function buildData() {
     skills,
     work,
     profile: {
-      name: about.name || 'grayguava',
+      name: about.name || siteName,
       sub: about.sub || '',
       bio: about.bio || '',
       socials,
