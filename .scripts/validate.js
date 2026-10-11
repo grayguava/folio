@@ -29,8 +29,8 @@ try {
   fail(e.message);
 }
 
-// 1. every md file is auto-discovered with valid frontmatter — there is
-//    no posts.ini left to keep in sync, the filename IS the slug.
+// 1. every md file is auto-discovered with valid frontmatter —
+//    the filename IS the slug.
 //    skipped when the blog page is disabled (no post routes to feed)
 const posts = discoverPosts();
 if (!site || site.pages.blog) {

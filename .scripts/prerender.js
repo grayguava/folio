@@ -98,20 +98,14 @@ function highlightCodeBlocks(html) {
   );
 }
 
-// post-process anchors: rewrite legacy hash-router links to clean URLs,
-// open external links in a new tab, wrap text links in .link-text so the
-// hover underline works (image links stay unwrapped, no underline)
+// post-process anchors: open external links in a new tab, wrap text
+// links in .link-text so the hover underline works (image links
+// stay unwrapped, no underline)
 function fixupLinks(html) {
   return html.replace(/<a\s([^>]*)>([\s\S]*?)<\/a>/g, (m, attrs, inner) => {
     const hm = attrs.match(/\bhref="([^"]*)"/);
     if (!hm) return m;
     let href = hm[1];
-
-    const legacy = href.match(/^\/?#blog\?p=([^&]+)/); // /#blog?p=slug -> /blog/slug/
-    if (legacy) {
-      href = '/blog/' + decodeURIComponent(legacy[1]) + '/';
-      attrs = attrs.replace(/\bhref="[^"]*"/, 'href="' + href + '"');
-    }
 
     if (/^https?:\/\//.test(href) && !/\btarget=/.test(attrs)) {
       attrs += ' target="_blank" rel="noopener noreferrer"';

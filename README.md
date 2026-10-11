@@ -29,7 +29,7 @@ The old architecture is preserved on the [`v1` branch](https://github.com/graygu
 | Rendering | Client-side, markdown fetched at runtime | Prerendered at build time |
 | Speed | Faster to build, instant first paint | Slightly slower build/first load |
 | SEO | Crawlers see an empty shell | Full content in the HTML |
-| Post metadata | `posts.ini` by hand | Frontmatter, filename is the slug |
+| Post metadata | manual index file | Frontmatter, filename is the slug |
 | Runtime deps | marked + highlight.js loaded in browser | None - bundled HTML/CSS/JS |
 
 The data in this repo is placeholder (John Doe, demo posts) so the
@@ -62,7 +62,7 @@ main/                  source of the site
   assets/js/           posts, pages, app (no runtime data loader)
   assets/fonts/
   assets/vendor/       marked + highlight.js, build-time only
-  slugs/               5 INI files (no posts.ini, see below)
+  slugs/               5 INI files (see below)
     meta/projects
     meta/work
     profile/about
@@ -75,7 +75,7 @@ README.md              this file - layout + build
 ```
 
 `meta/posts` is generated at build time from frontmatter by
-`.scripts/frontmatter.js` - there is no `posts.ini` to edit.
+`.scripts/frontmatter.js`.
 `files/` is gitignored personal data, not part of the layout.
 
 ## Quick start
@@ -100,9 +100,8 @@ To run your own copy, follow [docs/getting-started.md](docs/getting-started.md)
    `slugs/` dir is removed from `dist/`.
 4. `prerender.js` - marked + highlight.js run at build time.
    Emits `dist/blog/<slug>/index.html` per post (highlighted code,
-   `.link-text` wrapping, external links get `target="_blank"`,
-   legacy `/#blog?p=slug` links rewritten to `/blog/slug/`) plus
-   static shells for `/blog/`, `/projects/`, `/skills/`, `/work/`.
+   `.link-text` wrapping, external links get `target="_blank"`)
+   plus static shells for `/blog/`, `/projects/`, `/skills/`, `/work/`.
 5. Strip the unbundled sources from `dist/` (the 5 CSS + 3 JS
    files). Anything else dropped in those dirs stays.
 
