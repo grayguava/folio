@@ -209,24 +209,9 @@ kbd {
 /* ── responsive ── */
 @media (max-width: 700px) {
   html { font-size: 13px; }
-  .wrap { padding: 1.5rem 1.5rem 3rem 4.5rem; }
+  .wrap { padding: 1.5rem 1.5rem 3rem; }
   h1 { font-size: 2.7rem; }
-  nav {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    height: 100dvh;
-    width: 3rem;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 4.5rem;
-    margin-bottom: 0;
-    border-right: 1px solid var(--border);
-    background: var(--bg);
-    z-index: 100;
-  }
+  nav { gap: 1.5rem; align-items: center; }
   .nav-link { font-size: 0; line-height: 1; }
   .nav-link .key svg { width: 22px; height: 22px; display: block; }
   .blog-item { display: flex; flex-direction: column; gap: 0.25rem; }
