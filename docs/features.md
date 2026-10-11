@@ -1,12 +1,12 @@
-# features
+# Features
 
-what the site does as a whole — routing, pages, theme, chrome.
-for what a post body supports, see [markdown.md](markdown.md);
+What the site does as a whole - routing, pages, theme, chrome.
+For what a post body supports, see [markdown.md](markdown.md);
 for the build pipeline, see [README.md](../README.md).
 
-## clean urls
+## Clean URLs
 
-every page is a real path, prerendered into `dist/`:
+Every page is a real path, prerendered into `dist/`:
 
 ```
 /               home
@@ -15,89 +15,88 @@ every page is a real path, prerendered into `dist/`:
 /projects/      /skills/ /work/
 ```
 
-no hash fragments, no query params. each `dist/blog/<slug>/`
+No hash fragments, no query params. Each `dist/blog/<slug>/`
 directory has its own `index.html` with the finished article
 (bright content included), so crawlers and feed readers get the
-whole page with zero javascript.
+whole page with zero JavaScript.
 
-## client router
+## Client router
 
 `main/assets/js/app.js` is a small pathname router on top of the
 prerendered pages:
 
-- internal `/...` links are fetched and swapped in without a full
-  reload; `history.pushState` keeps the url honest.
+- Internal `/...` links are fetched and swapped in without a full
+  reload; `history.pushState` keeps the URL honest.
 - `popstate` walks back/forward through the same cache.
-- pages are prefetched after load (`_prefetchPages()`), so
+- Pages are prefetched after load (`_prefetchPages()`), so
   hopping between sections feels instant.
-- external links, modified clicks (ctrl/meta/shift) and the 404
+- External links, modified clicks (ctrl/meta/shift) and the 404
   page fall through to a normal full load.
-- on a prerendered post path the router leaves the inlined html
+- On a prerendered post path the router leaves the inlined HTML
   alone and just runs post chrome.
 
-## keyboard nav
+## Keyboard nav
 
-available on every page:
+Available on every page:
 
 ```
 h home   b blog   p projects   s skills   w work   t theme
 ```
 
-ignored while typing in an input/textarea, and with any modifier
-held. on the 404 page only `h` works (plain full load).
+Ignored while typing in an input/textarea, and with any modifier
+held. On the 404 page only `h` works (plain full load).
 
-## theme
+## Theme
 
-light/dark toggle, persisted in `localStorage` and applied before
+Light/dark toggle, persisted in `localStorage` and applied before
 first paint (no flash). `t` is the shortcut.
 
-## boot loader
+## Boot loader
 
-a terminal-style loader (`> _` with a blinking cursor) shows on
+A terminal-style loader (`> _` with a blinking cursor) shows on
 the first visit of a session, then stays out of the way —
 later navigations in the same session skip it.
 
-## nav highlighting
+## Nav highlighting
 
-the active section in the top nav is set from the current
+The active section in the top nav is set from the current
 pathname (`_sectionKey()`), including on direct loads and
 refreshes of a prerendered `/blog/<slug>/` page — the post's
 section key resolves to `blog`.
 
-## slugs
+## Slugs
 
-site data lives in five plain INI files under `main/slugs/`:
+Site data lives in five plain INI files under `main/slugs/`:
 
 ```
 meta/projects      meta/work
 profile/about      profile/skills     profile/socials
 ```
 
-at build they are baked into `index.html` as a `<script
+At build they are baked into `index.html` as a `<script
 id="slug-data">` setting `window.POSTS / PROJECTS / SKILLS / WORK /
 PROFILE` — no slug file is emitted to `dist/`, nothing is fetched
-or parsed in the browser. post metadata is *not* here — it comes
+or parsed in the browser. Post metadata is *not* here - it comes
 from `posts/*.md` frontmatter (see [markdown.md](markdown.md)).
 
-## chrome upgrades
+## Chrome upgrades
 
-on post pages only, `posts.js` runs on top of the prerendered
-html: copy-button toolbars, callouts, image flags. lists, item
+On post pages only, `posts.js` runs on top of the prerendered
+HTML: copy-button toolbars, callouts, image flags. Lists, item
 arrows (`↗`) and reading-time chips are all emitted at build
 time, not assembled in the browser.
 
-## styling
+## Styling
 
-- single bundled `assets/guava.min.css` (+ `guava.min.js`),
-  built by esbuild — no css/js framework, no runtime deps.
-- accent-colored list markers, zebra/hover tables, bordered
+- Single bundled `assets/guava.min.css` (+ `guava.min.js`),
+  built by esbuild - no CSS/JS framework, no runtime deps.
+- Accent-colored list markers, zebra/hover tables, bordered
   collapsibles, chip-style inline code (details in
   [markdown.md](markdown.md)).
 - JetBrains Mono for the terminal-ish chrome; floated images
   collapse to one column under ~600px.
 
-## headers
+## Headers
 
-`main/_headers` (copied to `dist/`): fonts and any vendored
-asset get `immutable` caching, everything else under `/assets/*`
-gets `no-cache` + `nosniff`.
+`main/_headers` (copied to `dist/`): fonts get `immutable` caching,
+everything else under `/assets/*` gets `no-cache` + `nosniff`.

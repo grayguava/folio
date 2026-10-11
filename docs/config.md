@@ -1,9 +1,9 @@
-# config
+# Config
 
-`config.json` at the repo root decides what gets built. the build
-reads it three times over — `validate.js` gates it, `build.js`
-applies it, `prerender.js` obeys it — and fails on a missing file,
-bad JSON, unknown keys, or wrong types. fix the message it gives
+`config.json` at the repo root decides what gets built. The build
+reads it three times over - `validate.js` gates it, `build.js`
+applies it, `prerender.js` obeys it - and fails on a missing file,
+bad JSON, unknown keys, or wrong types. Fix the message it gives
 you and rebuild.
 
 ```json
@@ -37,46 +37,46 @@ you and rebuild.
 }
 ```
 
-## bootloader
+## Bootloader
 
-- `loaderEnable` (bool) — the `>_` boot screen on first visit.
-  `false` removes its markup and script from the html entirely
+- `loaderEnable` (bool) - the `>_` boot screen on first visit.
+  `false` removes its markup and script from the HTML entirely
   (the theme-restore script stays).
-- `defaultDuration` (number, ms, >= 0) — minimum display time.
+- `defaultDuration` (number, ms, >= 0) - minimum display time.
 
-## theme
+## Theme
 
-- `defaultTheme` (`"dark"` or `"light"`) — what first-time
+- `defaultTheme` (`"dark"` or `"light"`) - what first-time
   visitors get, baked into `index.html` and `404.html` before
-  first paint. a saved choice in `localStorage` always wins.
+  first paint. A saved choice in `localStorage` always wins.
 
-## site
+## Site
 
-- `name` (non-empty string) — the site title everywhere: the tab,
+- `name` (non-empty string) - the site title everywhere: the tab,
   the 404 page, every `post · name` title, and the fallback when
-  `about.ini` has no `name=`. change this and your about `name=`
+  `about.ini` has no `name=`. Change this and your about `name=`
   together.
-- `url` (https URL, or empty) — the public domain, and the SEO
+- `url` (https URL, or empty) - the public domain, and the SEO
   switch: empty means no meta/OG tags, no sitemap, no robots.
-  set it and every page gets descriptions, canonical links and
+  Set it and every page gets descriptions, canonical links and
   share cards, plus emitted `sitemap.xml` / `robots.txt`.
 
 ## homePreview
 
-- `projects` / `posts` / `work` (integer, >= 0) — how many of
+- `projects` / `posts` / `work` (integer, >= 0) - how many of
   each the home page previews. `0` removes that block from the
   home page; the page itself stays.
 
-## pages
+## Pages
 
-- `blog` / `projects` / `skills` / `work` (bool) — `false` drops
+- `blog` / `projects` / `skills` / `work` (bool) - `false` drops
   the page from the nav, the shell, the home blocks, the keyboard
   shortcuts, the prefetch list and the prerender, as if it never
-  existed. omitted pages default to on. turning `blog` off also
+  existed. Omitted pages default to on. Turning `blog` off also
   drops every `/blog/<slug>/` page and skips post validation.
 
-## subtitles
+## Subtitles
 
-- one non-empty string per page — the tagline under each page
-  heading, HTML-escaped at build time. every enabled page needs
-  one; a disabled page doesn't. unknown page keys fail the build.
+- One non-empty string per page - the tagline under each page
+  heading, HTML-escaped at build time. Every enabled page needs
+  one; a disabled page doesn't. Unknown page keys fail the build.
