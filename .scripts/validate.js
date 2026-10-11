@@ -24,6 +24,7 @@ try {
   console.log('     Bootloader: ' + (site.bootloader.loaderEnable ? 'on' : 'off'));
   console.log('     Default theme: ' + site.theme.defaultTheme);
   console.log('     Site name: ' + site.site.name);
+  console.log('     Site URL: ' + (site.site.url || '(seo off)'));
 } catch (e) {
   fail(e.message);
 }

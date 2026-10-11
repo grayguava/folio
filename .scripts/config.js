@@ -49,6 +49,12 @@ function loadConfig() {
   if (typeof st.name !== 'string' || !st.name) {
     throw new Error('config.json: site.name must be a non-empty string');
   }
+  if (st.url === undefined) st.url = '';
+  if (typeof st.url !== 'string') throw new Error('config.json: site.url must be a string');
+  const url = st.url.replace(/\/+$/, '');
+  if (url && !/^https:\/\/\S+$/.test(url)) {
+    throw new Error('config.json: site.url must be an https:// URL or empty (SEO off)');
+  }
 
   const hm = cfg.homePreview;
   if (!hm || typeof hm !== 'object') throw new Error('config.json: homePreview must be an object');
@@ -78,7 +84,7 @@ function loadConfig() {
   return {
     bootloader: { loaderEnable: bl.loaderEnable, defaultDuration: bl.defaultDuration },
     theme: { defaultTheme: th.defaultTheme },
-    site: { name: st.name },
+    site: { name: st.name, url },
     homePreview: { projects: hm.projects, posts: hm.posts, work: hm.work },
     subtitles: Object.fromEntries(KNOWN_PAGES.filter((p) => sub[p] !== undefined).map((p) => [p, sub[p]])),
     pages: Object.fromEntries(KNOWN_PAGES.map((p) => [p, pages[p] !== false])),

@@ -17,6 +17,64 @@ const site = loadConfig();
 const { discoverPosts } = require('./frontmatter.js');
 const posts = discoverPosts();
 
+// first readable paragraph, markdown stripped, clipped for meta tags
+function excerpt(md) {
+  const text = md.replace(/```[\s\S]*?```/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[#*_`>\[\]()]/g, '')
+    .replace(/\s+/g, ' ').trim();
+  return clip(text, 160);
+}
+
+function clip(s, n) {
+  const t = String(s).replace(/\s+/g, ' ').trim();
+  if (t.length <= n) return t;
+  const cut = t.slice(0, n).lastIndexOf(' ');
+  return (cut > 0 ? t.slice(0, cut) : t.slice(0, n)) + '…';
+}
+
+// one meta/OG/Twitter/canonical block per file — skipped entirely when
+// no site.url is set (SEO off). each file is tagged exactly once.
+function applySeo(file, seo) {
+  if (!site.site.url) return;
+  const base = site.site.url;
+  const tags = [
+    '<meta name="description" content="' + escHtml(seo.description) + '">',
+    '<link rel="canonical" href="' + base + seo.path + '">',
+    '<meta property="og:title" content="' + escHtml(seo.title) + '">',
+    '<meta property="og:description" content="' + escHtml(seo.description) + '">',
+    '<meta property="og:type" content="' + seo.type + '">',
+    '<meta property="og:url" content="' + base + seo.path + '">',
+    '<meta name="twitter:card" content="summary">',
+    '<meta name="twitter:title" content="' + escHtml(seo.title) + '">',
+    '<meta name="twitter:description" content="' + escHtml(seo.description) + '">',
+  ];
+  if (seo.published) tags.push('<meta property="article:published_time" content="' + seo.published + '">');
+  let html = fs.readFileSync(file, 'utf8');
+  html = html.replace('</head>', tags.join('\n') + '\n</head>');
+  fs.writeFileSync(file, html);
+}
+
+function emitSitemap() {
+  if (!site.site.url) return;
+  const base = site.site.url;
+  const urls = ['<url><loc>' + base + '/</loc></url>'];
+  for (const p of site.enabled) urls.push('<url><loc>' + base + '/' + p + '/</loc></url>');
+  if (site.pages.blog) {
+    for (const p of posts) {
+      if (!p.hasFrontmatter) continue;
+      const lastmod = /^\d{4}-\d{2}-\d{2}$/.test(p.date) ? '<lastmod>' + p.date + '</lastmod>' : '';
+      urls.push('<url><loc>' + base + '/blog/' + p.slug + '/</loc>' + lastmod + '</url>');
+    }
+  }
+  fs.writeFileSync(path.join(dist, 'sitemap.xml'),
+    '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+    urls.join('\n') + '\n</urlset>\n');
+  fs.writeFileSync(path.join(dist, 'robots.txt'),
+    'User-agent: *\nAllow: /\nSitemap: ' + base + '/sitemap.xml\n');
+}
+
 // marked escapes code contents; hljs wants the raw text back
 function decodeEntities(s) {
   return s
@@ -99,6 +157,13 @@ function prerenderPost(post) {
   const dir = path.join(dist, 'blog', post.slug);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
+  applySeo(path.join(dir, 'index.html'), {
+    title: post.title + ' · ' + site.site.name,
+    description: excerpt(post.body),
+    path: '/blog/' + post.slug + '/',
+    type: 'article',
+    published: post.date,
+  });
 }
 
 if (site.pages.blog) {
@@ -163,7 +228,7 @@ function keepOnlySection(html, keepId) {
   return out + html.slice(last);
 }
 
-function emitPage(route, pageId, containerId, innerHTML) {
+function emitPage(route, pageId, containerId, innerHTML, seo) {
   let out = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
   out = out
     .replace('<section id="page-home" class="page">', '<section id="page-home" class="page" style="display:none">')
@@ -173,12 +238,21 @@ function emitPage(route, pageId, containerId, innerHTML) {
   const dir = path.join(dist, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
+  applySeo(path.join(dir, 'index.html'), seo);
 }
 
 // same object build.js inlines into index.html — the shells carry live lists
-const { projects, skills, work } = buildData();
+const { projects, skills, work, profile } = buildData();
 
-if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''));
-if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''));
-if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills));
-if (site.pages.work) emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''));
+if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''), { title: site.site.name, description: site.subtitles.blog, path: '/blog/', type: 'website' });
+if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''), { title: site.site.name, description: site.subtitles.projects, path: '/projects/', type: 'website' });
+if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills), { title: site.site.name, description: site.subtitles.skills, path: '/skills/', type: 'website' });
+if (site.pages.work) emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''), { title: site.site.name, description: site.subtitles.work, path: '/work/', type: 'website' });
+
+applySeo(path.join(dist, 'index.html'), {
+  title: site.site.name,
+  description: clip(profile.bio, 160),
+  path: '/',
+  type: 'website',
+});
+emitSitemap();

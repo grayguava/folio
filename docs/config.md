@@ -16,7 +16,8 @@ you and rebuild.
     "defaultTheme": "dark"
   },
   "site": {
-    "name": "John Doe"
+    "name": "John Doe",
+    "url": ""
   },
   "homePreview": {
     "projects": 2,
@@ -55,6 +56,10 @@ you and rebuild.
   the 404 page, every `post · name` title, and the fallback when
   `about.ini` has no `name=`. change this and your about `name=`
   together.
+- `url` (https URL, or empty) — the public domain, and the SEO
+  switch: empty means no meta/OG tags, no sitemap, no robots.
+  set it and every page gets descriptions, canonical links and
+  share cards, plus emitted `sitemap.xml` / `robots.txt`.
 
 ## homePreview
 
