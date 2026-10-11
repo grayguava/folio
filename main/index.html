@@ -50,11 +50,11 @@
 
   <div class="wrap">
     <nav>
-      <a href="/" class="nav-link" data-nav="home" id="nav-home"><span class="key" aria-hidden="true">[h]</span> home</a>
-      <a href="/blog/" class="nav-link" data-nav="blog"><span class="key" aria-hidden="true">[b]</span> blog</a>
-      <a href="/projects/" class="nav-link" data-nav="projects"><span class="key" aria-hidden="true">[p]</span> projects</a>
-      <a href="/skills/" class="nav-link" data-nav="skills"><span class="key" aria-hidden="true">[s]</span> skills</a>
-      <a href="/work/" class="nav-link" data-nav="work"><span class="key" aria-hidden="true">[w]</span> work</a>
+      <a href="/" class="nav-link" data-nav="home" id="nav-home"><span class="key" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg></span> home</a>
+      <a href="/blog/" class="nav-link" data-nav="blog"><span class="key" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span> blog</a>
+      <a href="/projects/" class="nav-link" data-nav="projects"><span class="key" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span> projects</a>
+      <a href="/skills/" class="nav-link" data-nav="skills"><span class="key" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M1 14h6M9 8h6M17 16h6"/></svg></span> skills</a>
+      <a href="/work/" class="nav-link" data-nav="work"><span class="key" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span> work</a>
     </nav>
 
 
@@ -68,30 +68,30 @@
 
       <section>
         <div class="sec-head">
-          <h2 class="sec-title"><span class="accent">*</span> projects</h2>
-          <a href="/projects/" class="view-all">all projects ↗</a>
+          <h2 class="sec-title">projects<span class="accent">_</span></h2>
+          <a href="/projects/" class="view-all">all projects <span class="view-arrow">→</span></a>
         </div>
         <div class="item-list" id="home-projects"></div>
       </section>
 
       <section>
         <div class="sec-head">
-          <h2 class="sec-title"><span class="accent">*</span> work</h2>
-          <a href="/work/" class="view-all">all work ↗</a>
+          <h2 class="sec-title">work<span class="accent">_</span></h2>
+          <a href="/work/" class="view-all">all work <span class="view-arrow">→</span></a>
         </div>
         <div class="item-list" id="home-work"></div>
       </section>
 
       <section>
         <div class="sec-head">
-          <h2 class="sec-title"><span class="accent">*</span> writing</h2>
-          <a href="/blog/" class="view-all">all posts ↗</a>
+          <h2 class="sec-title">writing<span class="accent">_</span></h2>
+          <a href="/blog/" class="view-all">all posts <span class="view-arrow">→</span></a>
         </div>
         <div class="blog-list" id="home-posts"></div>
       </section>
 
       <section>
-        <h2 class="sec-title" style="margin-bottom:1.25rem"><span class="accent">*</span> find me on</h2>
+        <h2 class="sec-title" style="margin-bottom:1.25rem">find me on<span class="accent">_</span></h2>
         <div class="links-row" id="social-links"></div>
       </section>
 
@@ -102,7 +102,7 @@
     <!-- ── writing ── -->
     <section id="page-blog" class="page" style="display:none">
       <header class="page-header">
-        <h1><span class="accent">*</span> <span id="scramble-blog">writing</span></h1>
+        <h1><span id="scramble-blog">writing</span><span class="accent">_</span></h1>
         <p class="sub" id="blog-sub">occasional posts on systems, networking, and tooling</p>
       </header>
       <div class="blog-list" id="blog-list"></div>
@@ -120,7 +120,7 @@
     <!-- ── projects ── -->
     <section id="page-projects" class="page" style="display:none">
       <header class="page-header">
-        <h1><span class="accent">*</span> <span id="scramble-projects">projects</span></h1>
+        <h1><span id="scramble-projects">projects</span><span class="accent">_</span></h1>
         <p class="sub" id="projects-sub">things i've built</p>
       </header>
       <div class="item-list" id="projects-list"></div>
@@ -131,7 +131,7 @@
     <!-- ── skills ── -->
     <section id="page-skills" class="page" style="display:none">
       <header class="page-header">
-        <h1><span class="accent">*</span> <span id="scramble-skills">skills</span></h1>
+        <h1><span id="scramble-skills">skills</span><span class="accent">_</span></h1>
         <p class="sub" id="skills-sub">technologies and concepts i've worked with</p>
       </header>
       <div id="skills-list"></div>
@@ -142,7 +142,7 @@
     <!-- ── work ── -->
     <section id="page-work" class="page" style="display:none">
       <header class="page-header">
-        <h1><span class="accent">*</span> <span id="scramble-work">work</span></h1>
+        <h1><span id="scramble-work">work</span><span class="accent">_</span></h1>
         <p class="sub" id="work-sub">things i've worked on</p>
       </header>
       <div class="item-list" id="work-list"></div>

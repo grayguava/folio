@@ -37,7 +37,7 @@ function scramble(el, target, duration) {
 
 // ── project item renderer ──
 
-function renderItem(p) {
+function renderItem(p, showRole) {
   var hasLink = !!p.href;
   var el = document.createElement(hasLink ? 'a' : 'div');
   el.className = 'item';
@@ -57,7 +57,7 @@ function renderItem(p) {
   el.innerHTML =
     '<div class="item-body">' +
       '<div class="item-title">' + escHtml(p.title) + '</div>' +
-      '<div class="item-meta">' + escHtml(p.role || '') + '</div>' +
+      (showRole ? '<div class="item-meta">' + escHtml(p.role || '') + '</div>' : '') +
       '<div class="item-desc">' + escHtml(p.description || '') + '</div>' +
       tagsHtml +
     '</div>' +
@@ -117,7 +117,7 @@ function initHome(query) {
       if (projectSec) projectSec.remove();
     } else {
       PROJECTS.slice(0, projectCount).forEach(function(p) {
-        homeProjects.appendChild(renderItem(p));
+        homeProjects.appendChild(renderItem(p, false));
       });
     }
   }
@@ -131,7 +131,7 @@ function initHome(query) {
       if (workSec) workSec.remove();
     } else {
       WORK.slice(0, workCount).forEach(function(p) {
-        homeWork.appendChild(renderItem(p));
+        homeWork.appendChild(renderItem(p, true));
       });
     }
   }
@@ -182,7 +182,7 @@ function initProjects(query) {
   var list = document.getElementById('projects-list');
   if (!list) return;
   list.innerHTML = '';
-  PROJECTS.forEach(function(p) { list.appendChild(renderItem(p)); });
+  PROJECTS.forEach(function(p) { list.appendChild(renderItem(p, false)); });
 }
 
 // ── init work page ──
@@ -199,7 +199,7 @@ function initWork(query) {
   var list = document.getElementById('work-list');
   if (!list) return;
   list.innerHTML = '';
-  WORK.forEach(function(p) { list.appendChild(renderItem(p)); });
+  WORK.forEach(function(p) { list.appendChild(renderItem(p, true)); });
 }
 
 // ── init skills page ──

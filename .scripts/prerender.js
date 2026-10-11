@@ -164,7 +164,7 @@ if (site.pages.blog) {
   for (const p of posts) prerenderPost(p);
 }
 
-function itemHTML(p) {
+function itemHTML(p, showRole) {
   var hasLink = !!p.href;
   var tagsHtml = '';
   if (p.tags && p.tags.length) {
@@ -175,7 +175,7 @@ function itemHTML(p) {
   return '<a' + (hasLink ? ' class="item" href="' + escHtml(p.href) + '" target="_blank" rel="noopener"' : ' class="item"') + '>' +
     '<div class="item-body">' +
       '<div class="item-title">' + escHtml(p.title) + '</div>' +
-      '<div class="item-meta">' + escHtml(p.role || '') + '</div>' +
+      (showRole ? '<div class="item-meta">' + escHtml(p.role || '') + '</div>' : '') +
       '<div class="item-desc">' + escHtml(p.description || '') + '</div>' +
       tagsHtml +
     '</div>' +
@@ -239,9 +239,9 @@ function emitPage(route, pageId, containerId, innerHTML, seo) {
 const { projects, skills, work, profile } = buildData();
 
 if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''), { title: site.site.name, description: site.subtitles.blog, path: '/blog/', type: 'website' });
-if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', projects.map(itemHTML).join(''), { title: site.site.name, description: site.subtitles.projects, path: '/projects/', type: 'website' });
+if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', projects.map(function(p) { return itemHTML(p, false); }).join(''), { title: site.site.name, description: site.subtitles.projects, path: '/projects/', type: 'website' });
 if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills), { title: site.site.name, description: site.subtitles.skills, path: '/skills/', type: 'website' });
-if (site.pages.work) emitPage('work', 'page-work', 'work-list', work.map(itemHTML).join(''), { title: site.site.name, description: site.subtitles.work, path: '/work/', type: 'website' });
+if (site.pages.work) emitPage('work', 'page-work', 'work-list', work.map(function(p) { return itemHTML(p, true); }).join(''), { title: site.site.name, description: site.subtitles.work, path: '/work/', type: 'website' });
 
 applySeo(path.join(dist, 'index.html'), {
   title: site.site.name,

@@ -1,18 +1,19 @@
 /* ── tokens ── */
 :root {
-  --bg:           #111111;
-  --bg-secondary: #1a1a1a;
+  --bg:           #0e0e0e;
+  --bg-secondary: #141414;
   --fg:           #d1d5db;
   --text:         #d1d5db;
   --text-dim:     #888888;
+  --text-body:    #a0a8b2;
   --muted:        #6b7280;
   --dim:          #4b5563;
-  --border:       #262626;
+  --border:       #232323;
   --white:        #ffffff;
-  --accent:       #ff6b35;
-  --hover-bg:     #141414;
-  --font:         'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
-  --mono:         'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  --accent:       #e05a30;
+  --hover-bg:     #121212;
+  --font:         'Geist Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  --mono:         ui-monospace, 'Cascadia Code', Consolas, 'SF Mono', Menlo, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 }
 
 [data-theme="light"] {
@@ -21,14 +22,15 @@
   --fg:           #3d3d3d;
   --text:         #3d3d3d;
   --text-dim:     #999999;
+  --text-body:    #3d3d3d;
   --muted:        #7a7a7a;
   --dim:          #9a9a9a;
   --border:       #e6dfd0;
   --white:        #2d2d2d;
-  --accent:       #a04030;
+  --accent:       #8f3a2c;
   --hover-bg:     #f9f2dd;
-  --font:         'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
-  --mono:         'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  --font:         'Geist Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  --mono:         ui-monospace, 'Cascadia Code', Consolas, 'SF Mono', Menlo, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 }
 
 /* ── custom scrollbar ── */
@@ -44,7 +46,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font);
-  font-size: 15px;
+  font-size: 15.4px;
   font-weight: 400;
   line-height: 1.75;
   letter-spacing: 0.02em;
@@ -75,7 +77,7 @@ a { color: inherit; text-decoration: none; }
 
 .boot {
   font-family: var(--font);
-  font-size: 6rem;
+  font-size: 6.16rem;
   line-height: 1;
   color: var(--fg);
   margin: 0;

@@ -16,7 +16,7 @@ article hr {
 
 /* ── Headings ── */
 article h1 {
-  font-size: 1.75rem;
+  font-size: 1.8rem;
   min-height: unset;
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
@@ -24,7 +24,7 @@ article h1 {
 }
 
 article h2 {
-  font-size: 1.3rem;
+  font-size: 1.33rem;
   font-weight: 700;
   color: var(--white);
   margin: 2.75rem 0 1.15rem;
@@ -34,7 +34,7 @@ article h2 {
 }
 
 article h3 {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 600;
   color: var(--white);
   margin: 2.25rem 0 0.85rem;
@@ -45,13 +45,13 @@ article h3 {
 
 article h1 code, article h2 code, article h3 code,
 article h4 code, article h5 code, article h6 code {
-  font-size: 0.85em;
+  font-size: 0.88em;
 }
 
 /* ── Post Meta ── */
 article .post-meta {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 13.3px;
   margin-bottom: 2.25rem;
   padding-bottom: 1.75rem;
   border-bottom: 1px solid var(--border);
@@ -72,8 +72,11 @@ article .post-meta .reading-time {
 article p {
   margin-bottom: 1.75rem;
   line-height: 1.85;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
+
+/* body copy sits below headings in the hierarchy, not beside them */
+article p, article li, article blockquote, article td { color: var(--text-body); }
 
 /* ── Links ── */
 article a {
@@ -106,7 +109,7 @@ article code {
   border: 1px solid var(--border);
   border-radius: 3px;
   padding: 1px 6px;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-variant-ligatures: none;
 }
 
@@ -128,7 +131,7 @@ article code {
 }
 
 .code-lang {
-  font-size: 12.35px;
+  font-size: 12.7px;
   letter-spacing: 0.08em;
   color: color-mix(in srgb, var(--muted) 70%, white);
   font-family: inherit;
@@ -151,7 +154,7 @@ article pre {
   padding: 1.5rem;
   overflow-x: auto;
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   line-height: 1.65;
   tab-size: 2;
   -moz-tab-size: 2;
@@ -162,7 +165,7 @@ article table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.75rem 0;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   line-height: 1.6;
   display: block;
   overflow-x: auto;
@@ -247,7 +250,7 @@ article li {
 article li {
   margin-bottom: 0.6rem;
   line-height: 1.7;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
 article ul li::marker {
@@ -256,7 +259,7 @@ article ul li::marker {
 
 article ol li::marker {
   color: var(--muted);
-  font-size: 0.85em;
+  font-size: 0.88em;
 }
 
 /* Nested lists */
@@ -274,13 +277,13 @@ article dl {
 article dt {
   font-weight: 600;
   color: var(--white);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   margin-bottom: 0.2rem;
 }
 
 article dd {
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   margin-left: 1.5rem;
   margin-bottom: 0.75rem;
   line-height: 1.7;
@@ -402,7 +405,7 @@ article summary {
   background: var(--bg-secondary);
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--white);
   display: flex;
   align-items: center;
@@ -418,7 +421,7 @@ article summary {
 
 article summary::before {
   content: "▶";
-  font-size: 0.6rem;
+  font-size: 0.61rem;
   transition: transform 0.2s;
   opacity: 0.6;
   flex-shrink: 0;
@@ -481,8 +484,8 @@ article details > p:first-of-type {
 
 /* ── Responsive ── */
 @media (max-width: 700px) {
-  article p, article li { font-size: 1rem; }
-  article code, article pre { font-size: 0.9rem; }
+  article p, article li { font-size: 1.08rem; }
+  article code, article pre { font-size: 0.97rem; font-family: var(--mono); }
 
 }
 
@@ -490,7 +493,7 @@ article details > p:first-of-type {
 @media print {
   article a[href]::after {
     content: " (" attr(href) ")";
-    font-size: 0.75em;
+    font-size: 0.82em;
     color: #666;
   }
 
