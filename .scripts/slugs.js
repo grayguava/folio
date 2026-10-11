@@ -122,4 +122,27 @@ function inlineScript() {
     '</script>';
 }
 
-module.exports = { root, main, SLUG_FILES, parseIni, readIni, buildData, inlineScript };
+// one escaping convention for every HTML string built at build time or in
+// the browser — text and double-quoted attribute values alike
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// index just past the matching </section>
+function sectionEnd(html, from) {
+  const tags = /<section\b|<\/section>/g;
+  tags.lastIndex = from;
+  let depth = 1;
+  let m;
+  while ((m = tags.exec(html)) !== null) {
+    if (m[0] === '</section>') {
+      depth--;
+      if (depth === 0) return tags.lastIndex;
+    } else {
+      depth++;
+    }
+  }
+  return html.length;
+}
+
+module.exports = { root, main, SLUG_FILES, parseIni, readIni, buildData, inlineScript, escHtml, sectionEnd };

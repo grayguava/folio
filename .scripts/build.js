@@ -6,6 +6,8 @@ const root = path.resolve(__dirname, '..');
 const main = path.join(root, 'main');
 const dist = path.join(root, 'dist');
 
+const { escHtml, sectionEnd } = require('./slugs.js');
+
 const EXCLUDE = new Set(['.wrangler', 'node_modules', 'temp', '.gitignore', 'dist', 'wrangler.toml', 'vendor']);
 
 function rmrf(dir) {
@@ -117,29 +119,8 @@ function dropHomeBlock(html, innerId) {
   return html.slice(0, start) + html.slice(sectionEnd(html, html.indexOf('>', start) + 1));
 }
 
-// index just past the matching </section>
-function sectionEnd(html, from) {
-  const tags = /<section\b|<\/section>/g;
-  tags.lastIndex = from;
-  let depth = 1;
-  let m;
-  while ((m = tags.exec(html)) !== null) {
-    if (m[0] === '</section>') {
-      depth--;
-      if (depth === 0) return tags.lastIndex;
-    } else {
-      depth++;
-    }
-  }
-  return html.length;
-}
-
 var KEY_LETTERS = { blog: 'b', projects: 'p', skills: 's', work: 'w' };
 
-// subtitles land in element text — escape markup characters
-function escHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
 function inlineSlugData() {
   const { inlineScript, SLUG_FILES } = require('./slugs.js');
   const script = inlineScript();

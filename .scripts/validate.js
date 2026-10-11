@@ -80,6 +80,9 @@ if (data) {
   if (!data.profile.name) fail('slugs/profile/about.ini: name missing');
   for (const s of data.profile.socials) {
     if (!s.name || !s.href) fail('slugs/profile/socials.ini: a social is missing name/href');
+    if (!s.svg.startsWith('<svg') || /<script/i.test(s.svg)) {
+      fail('slugs/profile/socials.ini: "' + s.name + '" svg must be an inline <svg> with no <script>');
+    }
   }
   ok('Slug data builds (' + data.posts.length + ' posts, ' + data.projects.length + ' projects, ' + data.skills.length + ' skills, ' + data.work.length + ' work)');
 }

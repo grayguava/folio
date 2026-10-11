@@ -50,15 +50,15 @@ function renderItem(p) {
   var tagsHtml = '';
   if (p.tags && p.tags.length) {
     tagsHtml = '<div class="item-tags">' + p.tags.map(function(t) {
-      return '<span class="item-tag">' + t + '</span>';
+      return '<span class="item-tag">' + escHtml(t) + '</span>';
     }).join('') + '</div>';
   }
 
   el.innerHTML =
     '<div class="item-body">' +
-      '<div class="item-title">' + p.title + '</div>' +
-      '<div class="item-meta">' + p.role + '</div>' +
-      '<div class="item-desc">' + p.description + '</div>' +
+      '<div class="item-title">' + escHtml(p.title) + '</div>' +
+      '<div class="item-meta">' + escHtml(p.role || '') + '</div>' +
+      '<div class="item-desc">' + escHtml(p.description || '') + '</div>' +
       tagsHtml +
     '</div>' +
     (hasLink ? '<div class="item-arrow">↗</div>' : '');
@@ -97,6 +97,7 @@ function initHome(query) {
       var a = document.createElement('a');
       a.href = s.href;
       a.title = s.name;
+      a.setAttribute('aria-label', s.name);
       if (!s.href.startsWith('mailto:')) {
         a.target = '_blank';
         a.rel = 'noopener';

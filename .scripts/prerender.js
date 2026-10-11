@@ -10,7 +10,7 @@ const dist = path.join(root, 'dist');
 
 const marked = require(path.join(main, 'assets/vendor/marked.min.js'));
 const hljs = require(path.join(main, 'assets/vendor/highlight.min.js'));
-const { buildData } = require('./slugs.js');
+const { buildData, escHtml, sectionEnd } = require('./slugs.js');
 const { loadConfig } = require('./config.js');
 const site = loadConfig();
 
@@ -79,16 +79,16 @@ function prerenderPost(post) {
   html = fixupLinks(html);
 
   const article =
-    '<h1>' + post.title + '</h1>' +
+    '<h1>' + escHtml(post.title) + '</h1>' +
     '<p class="post-meta">' +
-      '<time>' + post.dateDisplay + '</time>' +
+      '<time>' + escHtml(post.dateDisplay) + '</time>' +
       '<span class="reading-time">· ' + readTime + ' min read</span>' +
     '</p>' +
     html;
 
   let out = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
   out = out
-    .replace(/<title>([^<]*)<\/title>/, '<title>' + post.title + ' · $1</title>')
+    .replace(/<title>([^<]*)<\/title>/, (m, t) => '<title>' + escHtml(post.title) + ' · ' + t + '</title>')
     .replace('<body>', '<body>\n<script>window.__prerenderedPost = true;</script>')
     .replace('<section id="page-home" class="page">', '<section id="page-home" class="page" style="display:none">')
     .replace('<section id="page-post" class="page" style="display:none">', '<section id="page-post" class="page">')
@@ -110,14 +110,14 @@ function itemHTML(p) {
   var tagsHtml = '';
   if (p.tags && p.tags.length) {
     tagsHtml = '<div class="item-tags">' + p.tags.map(function(t) {
-      return '<span class="item-tag">' + t + '</span>';
+      return '<span class="item-tag">' + escHtml(t) + '</span>';
     }).join('') + '</div>';
   }
-  return '<a' + (hasLink ? ' class="item" href="' + p.href + '" target="_blank" rel="noopener"' : ' class="item"') + '>' +
+  return '<a' + (hasLink ? ' class="item" href="' + escHtml(p.href) + '" target="_blank" rel="noopener"' : ' class="item"') + '>' +
     '<div class="item-body">' +
-      '<div class="item-title">' + p.title + '</div>' +
-      '<div class="item-meta">' + (p.role || '') + '</div>' +
-      '<div class="item-desc">' + (p.description || '') + '</div>' +
+      '<div class="item-title">' + escHtml(p.title) + '</div>' +
+      '<div class="item-meta">' + escHtml(p.role || '') + '</div>' +
+      '<div class="item-desc">' + escHtml(p.description || '') + '</div>' +
       tagsHtml +
     '</div>' +
     (hasLink ? '<div class="item-arrow">↗</div>' : '') +
@@ -126,8 +126,8 @@ function itemHTML(p) {
 
 function blogItemHTML(p) {
   return '<a class="blog-item" href="/blog/' + p.slug + '/" data-slug="' + p.slug + '">' +
-    '<span class="blog-date">' + p.dateDisplay + '</span>' +
-    '<span class="blog-title">' + p.title + '</span>' +
+    '<span class="blog-date">' + escHtml(p.dateDisplay) + '</span>' +
+    '<span class="blog-title">' + escHtml(p.title) + '</span>' +
     '<span class="blog-arrow">↗</span>' +
   '</a>';
 }
@@ -139,10 +139,10 @@ function buildSkillsHTML(SKILLS) {
     var items = SKILLS.filter(function(s) { return s.category === cat; });
     var inner = items.map(function(s) {
       return s.href
-        ? '<a href="' + s.href + '" target="_blank" rel="noopener">' + s.name + '</a>'
-        : '<span>' + s.name + '</span>';
+        ? '<a href="' + escHtml(s.href) + '" target="_blank" rel="noopener">' + escHtml(s.name) + '</a>'
+        : '<span>' + escHtml(s.name) + '</span>';
     }).join(' · ');
-    return '<details><summary>' + cat + '</summary><div class="skills-content">' + inner + '</div></details>';
+    return '<details><summary>' + escHtml(cat) + '</summary><div class="skills-content">' + inner + '</div></details>';
   }).join('');
 }
 
@@ -161,23 +161,6 @@ function keepOnlySection(html, keepId) {
     opener.lastIndex = end;
   }
   return out + html.slice(last);
-}
-
-// index just past the matching </section>
-function sectionEnd(html, from) {
-  const tags = /<section\b|<\/section>/g;
-  tags.lastIndex = from;
-  let depth = 1;
-  let m;
-  while ((m = tags.exec(html)) !== null) {
-    if (m[0] === '</section>') {
-      depth--;
-      if (depth === 0) return tags.lastIndex;
-    } else {
-      depth++;
-    }
-  }
-  return html.length;
 }
 
 function emitPage(route, pageId, containerId, innerHTML) {

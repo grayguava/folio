@@ -1,5 +1,11 @@
 // ── blog post rendering ──
 
+// one escaping convention for every HTML string built in the browser —
+// text and double-quoted attribute values alike (slugs.js has the twin)
+function escHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // ── blog item renderer ──
 
 function renderBlogItem(post) {
@@ -8,8 +14,8 @@ function renderBlogItem(post) {
   el.href = '/blog/' + post.slug + '/';
   el.setAttribute('data-slug', post.slug);
   el.innerHTML =
-    '<span class="blog-date">' + post.date + '</span>' +
-    '<span class="blog-title">' + post.title + '</span>' +
+    '<span class="blog-date">' + escHtml(post.date) + '</span>' +
+    '<span class="blog-title">' + escHtml(post.title) + '</span>' +
     '<span class="blog-arrow">↗</span>';
   return el;
 }
@@ -51,6 +57,7 @@ function addCopyButtons() {
     btn.className = 'copy-btn';
     btn.innerHTML = COPY_ICON;
     btn.title = 'copy';
+    btn.setAttribute('aria-label', 'copy');
 
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -58,17 +65,21 @@ function addCopyButtons() {
       navigator.clipboard.writeText(code.textContent).then(function() {
         btn.innerHTML = CHECK_ICON;
         btn.title = 'copied!';
+        btn.setAttribute('aria-label', 'copied');
         btn.classList.add('copied');
         setTimeout(function() {
           btn.innerHTML = COPY_ICON;
           btn.title = 'copy';
+          btn.setAttribute('aria-label', 'copy');
           btn.classList.remove('copied');
         }, 1500);
       }).catch(function() {
         btn.title = 'copy failed';
+        btn.setAttribute('aria-label', 'copy failed');
         btn.classList.add('copied');
         setTimeout(function() {
           btn.title = 'copy';
+          btn.setAttribute('aria-label', 'copy');
           btn.classList.remove('copied');
         }, 1500);
       });
