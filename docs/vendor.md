@@ -2,10 +2,10 @@
 
 ## marked.min.js
 
-- **Version:** 15.0.12
+- **Version:** 18.1.1
 - **GitHub:** https://github.com/markedjs/marked
-- **Source:** https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js
-- **SHA256:** `742ee84b0d5a1f6376aeda1bb495c3bf35ddfc7e332f20d3698e9e676b99f714`
+- **Source:** https://cdn.jsdelivr.net/npm/marked@18.1.1/lib/marked.umd.min.js
+- **SHA256:** `0a33e858823905317e62dd5160132377d73dd4191483fd246e3f826c4cea9ff5`
 
 ## highlight.min.js
 
