@@ -211,7 +211,7 @@ kbd {
   html { font-size: 13px; }
   .wrap { padding: 1.5rem 1.5rem 3rem; }
   h1 { font-size: 2.7rem; }
-  nav { gap: 1.5rem; align-items: center; }
+  nav { gap: 2.5rem; align-items: center; }
   .nav-link { font-size: 0; line-height: 1; }
   .nav-link .key svg { width: 22px; height: 22px; display: block; }
   .blog-item { display: flex; flex-direction: column; gap: 0.25rem; }
