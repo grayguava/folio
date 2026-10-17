@@ -64,7 +64,7 @@ function renderItem(p, showRole) {
 
 
 function setTitle(pageTitle) {
-  var name = (window.PROFILE && PROFILE.name) || (window.SITE && window.SITE.name) || 'grayguava';
+  var name = (window.PROFILE && PROFILE.name) || (window.SITE && window.SITE.name) || 'Site Name';
   document.title = pageTitle ? pageTitle + ' · ' + name : name;
 }
 
@@ -75,7 +75,7 @@ function initHome(query) {
 
   var el = document.getElementById('scramble');
   if (el) {
-    el.textContent = (profile && profile.name) || 'grayguava';
+    el.textContent = (profile && profile.name) || 'Site Name';
     scramble(el, el.textContent);
   }
 

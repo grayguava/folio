@@ -78,7 +78,7 @@ function applySiteConfig() {
   }
 
   html = html.replace("/*__THEME_DEFAULT__*/'dark'", "'" + site.theme.defaultTheme + "'");
-  html = html.replace('/*__SITE_NAME__*/grayguava', site.site.name);
+  html = html.replace('/*__SITE_NAME__*/Site Name', site.site.name);
 
   fs.writeFileSync(file, html);
 
@@ -86,7 +86,7 @@ function applySiteConfig() {
   if (fs.existsSync(notFound)) {
     let nf = fs.readFileSync(notFound, 'utf8');
     nf = nf.replace("/*__THEME_DEFAULT__*/'dark'", "'" + site.theme.defaultTheme + "'");
-    nf = nf.replace('/*__SITE_NAME__*/grayguava', site.site.name);
+    nf = nf.replace('/*__SITE_NAME__*/Site Name', site.site.name);
     fs.writeFileSync(notFound, nf);
   }
 }
