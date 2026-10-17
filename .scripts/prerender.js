@@ -11,8 +11,9 @@ const dist = path.join(root, 'dist');
 const marked = require(path.join(main, 'assets/vendor/marked.min.js'));
 const hljs = require(path.join(main, 'assets/vendor/highlight.min.js'));
 const { buildData, escHtml, sectionEnd } = require('./slugs.js');
-const { loadConfig } = require('./config.js');
+const { loadConfig, loadSeo } = require('./config.js');
 const site = loadConfig();
+const seo = loadSeo();
 
 const { discoverPosts } = require('./frontmatter.js');
 const posts = discoverPosts();
@@ -35,30 +36,30 @@ function clip(s, n) {
 }
 
 // one meta/OG/Twitter/canonical block per file — skipped entirely when
-// no site.url is set (SEO off). each file is tagged exactly once.
-function applySeo(file, seo) {
-  if (!site.site.url) return;
-  const base = site.site.url;
+// no seo.url is set (SEO off). each file is tagged exactly once.
+function applySeo(file, meta) {
+  if (!seo.url) return;
+  const base = seo.url;
   const tags = [
-    '<meta name="description" content="' + escHtml(seo.description) + '">',
-    '<link rel="canonical" href="' + base + seo.path + '">',
-    '<meta property="og:title" content="' + escHtml(seo.title) + '">',
-    '<meta property="og:description" content="' + escHtml(seo.description) + '">',
-    '<meta property="og:type" content="' + seo.type + '">',
-    '<meta property="og:url" content="' + base + seo.path + '">',
+    '<meta name="description" content="' + escHtml(meta.description) + '">',
+    '<link rel="canonical" href="' + base + meta.path + '">',
+    '<meta property="og:title" content="' + escHtml(meta.title) + '">',
+    '<meta property="og:description" content="' + escHtml(meta.description) + '">',
+    '<meta property="og:type" content="' + meta.type + '">',
+    '<meta property="og:url" content="' + base + meta.path + '">',
     '<meta name="twitter:card" content="summary">',
-    '<meta name="twitter:title" content="' + escHtml(seo.title) + '">',
-    '<meta name="twitter:description" content="' + escHtml(seo.description) + '">',
+    '<meta name="twitter:title" content="' + escHtml(meta.title) + '">',
+    '<meta name="twitter:description" content="' + escHtml(meta.description) + '">',
   ];
-  if (seo.published) tags.push('<meta property="article:published_time" content="' + seo.published + '">');
+  if (meta.published) tags.push('<meta property="article:published_time" content="' + meta.published + '">');
   let html = fs.readFileSync(file, 'utf8');
   html = html.replace('</head>', tags.join('\n') + '\n</head>');
   fs.writeFileSync(file, html);
 }
 
 function emitSitemap() {
-  if (!site.site.url) return;
-  const base = site.site.url;
+  if (!seo.url) return;
+  const base = seo.url;
   const urls = ['<url><loc>' + base + '/</loc></url>'];
   for (const p of site.enabled) urls.push('<url><loc>' + base + '/' + p + '/</loc></url>');
   if (site.pages.blog) {

@@ -6,6 +6,9 @@ applies it, `prerender.js` obeys it - and fails on a missing file,
 bad JSON, unknown keys, or wrong types. Fix the message it gives
 you and rebuild.
 
+`seo.json` (optional) sits next to it and holds the SEO fields -
+today one: `url`. Missing file or empty `url` means SEO off.
+
 ```json
 {
   "bootloader": {
@@ -16,8 +19,7 @@ you and rebuild.
     "defaultTheme": "dark"
   },
   "site": {
-    "name": "John Doe",
-    "url": ""
+    "name": "John Doe"
   },
   "homePreview": {
     "projects": 2,
@@ -34,6 +36,14 @@ you and rebuild.
     "skills": false,
     "work": false
   }
+}
+```
+
+And `seo.json` beside it:
+
+```json
+{
+  "url": "https://example.com"
 }
 ```
 
@@ -56,10 +66,18 @@ you and rebuild.
   the 404 page, every `post · name` title, and the fallback when
   `about.ini` has no `name=`. Change this and your about `name=`
   together.
+
+## SEO (`seo.json`)
+
 - `url` (https URL, or empty) - the public domain, and the SEO
   switch: empty means no meta/OG tags, no sitemap, no robots.
   Set it and every page gets descriptions, canonical links and
   share cards, plus emitted `sitemap.xml` / `robots.txt`.
+
+Kept out of `config.json` so SEO can grow without crowding the
+build config. A `site.url` still in `config.json` fails the
+build - move the value here. A missing `seo.json` behaves like
+an empty `url` (SEO off).
 
 ## homePreview
 

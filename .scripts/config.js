@@ -1,8 +1,9 @@
 // config.js — repo-root config.json: which pages ship, bootloader behavior.
+// loadSeo() reads the optional seo.json beside it: url today, empty = SEO off.
 //
 // build.js applies it (drops disabled pages from the shell, injects
 // window.SITE), prerender.js skips disabled pages, validate.js gates it.
-// Missing file, bad JSON, unknown pages or wrong types fail the build.
+// A missing config.json, bad JSON, unknown pages or wrong types fail the build.
 
 const fs = require('fs');
 const path = require('path');
@@ -49,12 +50,7 @@ function loadConfig() {
   if (typeof st.name !== 'string' || !st.name) {
     throw new Error('config.json: site.name must be a non-empty string');
   }
-  if (st.url === undefined) st.url = '';
-  if (typeof st.url !== 'string') throw new Error('config.json: site.url must be a string');
-  const url = st.url.replace(/\/+$/, '');
-  if (url && !/^https:\/\/\S+$/.test(url)) {
-    throw new Error('config.json: site.url must be an https:// URL or empty (SEO off)');
-  }
+  if (st.url !== undefined) throw new Error('config.json: site.url moved to seo.json');
 
   const hm = cfg.homePreview;
   if (!hm || typeof hm !== 'object') throw new Error('config.json: homePreview must be an object');
@@ -84,7 +80,7 @@ function loadConfig() {
   return {
     bootloader: { loaderEnable: bl.loaderEnable, defaultDuration: bl.defaultDuration },
     theme: { defaultTheme: th.defaultTheme },
-    site: { name: st.name, url },
+    site: { name: st.name },
     homePreview: { projects: hm.projects, posts: hm.posts, work: hm.work },
     subtitles: Object.fromEntries(KNOWN_PAGES.filter((p) => sub[p] !== undefined).map((p) => [p, sub[p]])),
     pages: Object.fromEntries(KNOWN_PAGES.map((p) => [p, pages[p] !== false])),
@@ -92,4 +88,25 @@ function loadConfig() {
   };
 }
 
-module.exports = { root, KNOWN_PAGES, loadConfig };
+function loadSeo() {
+  const file = path.join(root, 'seo.json');
+  if (!fs.existsSync(file)) return { url: '' };
+  let seo;
+  try {
+    seo = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
+  } catch (e) {
+    throw new Error('seo.json is not valid JSON — ' + e.message);
+  }
+  if (!seo || typeof seo !== 'object' || Array.isArray(seo)) {
+    throw new Error('seo.json must be an object');
+  }
+  if (seo.url === undefined) seo.url = '';
+  if (typeof seo.url !== 'string') throw new Error('seo.json: url must be a string');
+  const url = seo.url.replace(/\/+$/, '');
+  if (url && !/^https:\/\/\S+$/.test(url)) {
+    throw new Error('seo.json: url must be an https:// URL or empty (SEO off)');
+  }
+  return { url };
+}
+
+module.exports = { root, KNOWN_PAGES, loadConfig, loadSeo };
