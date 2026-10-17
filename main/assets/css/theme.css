@@ -1,4 +1,4 @@
-/* ── tokens ── */
+/* tokens */
 :root {
   --bg:           #0e0e0e;
   --bg-secondary: #141414;
@@ -33,13 +33,13 @@
   --mono:         ui-monospace, 'Cascadia Code', Consolas, 'SF Mono', Menlo, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 }
 
-/* ── custom scrollbar ── */
+/* custom scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--dim) var(--bg-secondary);
 }
 
-/* ── base ── */
+/* base */
 html { scroll-behavior: smooth; }
 
 body {
@@ -58,7 +58,7 @@ a { color: inherit; text-decoration: none; }
 
 .accent { color: var(--accent); }
 
-/* ── site loader ── */
+/* site loader */
 #site-loader {
   position: fixed;
   inset: 0;

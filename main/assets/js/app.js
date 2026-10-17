@@ -1,8 +1,8 @@
-// ── orchestrator (theme, routing) ──
+// orchestrator (theme, routing)
 
 (function() {
 
-// ── safe storage wrapper ──
+// safe storage wrapper
 
 var storage;
 
@@ -20,7 +20,6 @@ try {
   };
 }
 
-// ── theme toggle ──
 
 var saved = storage.getItem('theme');
 var theme = saved || ((window.SITE && window.SITE.theme) || 'dark');
@@ -39,7 +38,6 @@ window.toggleTheme = function() {
   }
 };
 
-// ── section from pathname (/blog/20260708001/ -> blog, / -> home) ──
 
 // pages enabled at build time (window.SITE is inlined by the build;
 // all-on fallback when opening source files directly)
@@ -52,7 +50,6 @@ function _sectionKey(pathname) {
   return m ? m[1] : 'home';
 }
 
-// ── set active nav link ──
 
 function setActiveNav(key) {
   document.querySelectorAll('.nav-link').forEach(function(a) {
@@ -60,7 +57,6 @@ function setActiveNav(key) {
   });
 }
 
-// ── show/hide pages ──
 
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(function(p) {
@@ -68,7 +64,6 @@ function showPage(pageId) {
   });
 }
 
-// ── main route handler ──
 
 function route() {
   // on a prerendered post page, leave the inlined HTML alone but still
@@ -90,7 +85,6 @@ function route() {
   }
 }
 
-// ── keyboard shortcuts ──
 
 document.addEventListener('keydown', function(e) {
   if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
@@ -111,7 +105,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ── soft page cache (background preload so nav feels instant) ──
+// soft page cache (background preload so nav feels instant)
 
 var _pageCache = {};
 
@@ -201,7 +195,6 @@ window.addEventListener('popstate', function() {
 
 _schedulePrefetch();
 
-// ── initial route ──
 
 // slug data is inlined in the html — no async load to wait for
 Promise.resolve().then(route);

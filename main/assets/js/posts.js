@@ -1,4 +1,3 @@
-// ── blog post rendering ──
 
 // one escaping convention for every HTML string built in the browser —
 // text and double-quoted attribute values alike (slugs.js has the twin)
@@ -6,7 +5,6 @@ function escHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ── blog item renderer ──
 
 function renderBlogItem(post) {
   var el = document.createElement('a');
@@ -20,12 +18,10 @@ function renderBlogItem(post) {
   return el;
 }
 
-// ── copy button SVGs ──
 
 var COPY_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
 var CHECK_ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
-// ── add copy buttons to code blocks ──
 
 function addCopyButtons() {
   document.querySelectorAll('#post-content pre').forEach(function(pre) {
@@ -93,7 +89,6 @@ function addCopyButtons() {
   });
 }
 
-// ── upgrade callouts ──
 
 function upgradeCallouts() {
   document.querySelectorAll('#post-content blockquote').forEach(function(bq) {
@@ -107,7 +102,7 @@ function upgradeCallouts() {
   });
 }
 
-// ── upgrade images with flag syntax ──
+// upgrade images with flag syntax
 
 function upgradeImages() {
   var SIZE_MAP = {
@@ -165,7 +160,6 @@ function upgradeImages() {
   });
 }
 
-// ── main post initializer ──
 
 // Every post is prerendered into dist/blog/<slug>/index.html at build time,
 // so the article HTML (including syntax highlighting and link chrome) is

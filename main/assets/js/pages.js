@@ -1,6 +1,4 @@
-// ── page initializers ──
 
-// ── scramble animation ──
 
 function scramble(el, target, duration) {
   if (!el) return;
@@ -35,7 +33,6 @@ function scramble(el, target, duration) {
   tick();
 }
 
-// ── project item renderer ──
 
 function renderItem(p, showRole) {
   var hasLink = !!p.href;
@@ -65,14 +62,12 @@ function renderItem(p, showRole) {
   return el;
 }
 
-// ── set page title ──
 
 function setTitle(pageTitle) {
   var name = (window.PROFILE && PROFILE.name) || (window.SITE && window.SITE.name) || 'grayguava';
   document.title = pageTitle ? pageTitle + ' · ' + name : name;
 }
 
-// ── init home page ──
 
 function initHome(query) {
   setTitle('');
@@ -151,7 +146,6 @@ function initHome(query) {
   }
 }
 
-// ── init blog page ──
 
 function initBlog(query) {
   setTitle('blog');
@@ -168,7 +162,6 @@ function initBlog(query) {
   POSTS.forEach(function(p) { list.appendChild(renderBlogItem(p)); });
 }
 
-// ── init projects page ──
 
 function initProjects(query) {
   setTitle('projects');
@@ -185,7 +178,6 @@ function initProjects(query) {
   PROJECTS.forEach(function(p) { list.appendChild(renderItem(p, false)); });
 }
 
-// ── init work page ──
 
 function initWork(query) {
   setTitle('work');
@@ -202,7 +194,6 @@ function initWork(query) {
   WORK.forEach(function(p) { list.appendChild(renderItem(p, true)); });
 }
 
-// ── init skills page ──
 
 function initSkills(query) {
   setTitle('skills');
@@ -259,7 +250,6 @@ function initSkills(query) {
   });
 }
 
-// ── page init registry ──
 
 window.pageInits = {
   home: initHome,

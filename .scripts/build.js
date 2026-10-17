@@ -205,7 +205,6 @@ async function build() {
 
   // remove only the bundled source files — leave any non-bundled asset
   // (future fonts, extra css, etc.) intact in dist/
-  // remove the source bundles; future non-bundled files in these dirs stay
   for (const f of ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']) {
     fs.rmSync(path.join(dist, 'assets/css', f), { force: true });
   }

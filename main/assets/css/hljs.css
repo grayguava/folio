@@ -1,4 +1,4 @@
-/* ── highlight.js — dark mode (default) ── */
+/* dark mode (default) */
 /*
   Role → color mapping:
   keyword / control flow  →  soft coral/orange   (stands out, not harsh)
@@ -30,7 +30,6 @@
   color: #d4956e;
 }
 
-/* strings */
 .hljs-string,
 .hljs-template-tag,
 .hljs-template-variable {
@@ -45,7 +44,6 @@
   font-weight: 600;
 }
 
-/* comments */
 .hljs-comment,
 .hljs-quote {
   color: #5a6a7a;
@@ -58,7 +56,6 @@
   color: #e8b46a;
 }
 
-/* regexp */
 .hljs-regexp {
   color: #d4a06a;
 }
@@ -83,7 +80,6 @@
   color: #a8c4d8;
 }
 
-/* variables, identifiers */
 .hljs-variable,
 .hljs-name {
   color: #d48aa0;
@@ -101,13 +97,11 @@
   color: #c8cdd2;
 }
 
-/* links */
 .hljs-link {
   color: #72afd4;
   text-decoration: underline;
 }
 
-/* diff */
 .hljs-addition {
   color: #7ec87e;
   background: rgba(126, 200, 126, 0.1);
@@ -118,7 +112,6 @@
   background: rgba(212, 122, 122, 0.1);
 }
 
-/* symbols, tags */
 .hljs-symbol,
 .hljs-bullet {
   color: #e8b46a;
@@ -138,7 +131,7 @@
   color: #a8c4d8;
 }
 
-/* ── highlight.js — light mode ── */
+/* light mode */
 /*
   Warm cream background (~#f5f0e8) needs lower saturation and darker values.
   Avoid pure GitHub colors — they're designed for white bg and look garish on cream.

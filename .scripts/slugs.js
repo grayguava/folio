@@ -7,7 +7,7 @@
 //   slugs/profile/about.ini   group-level kv: name= sub= bio=
 //   slugs/profile/socials.ini [name] href= svg=
 //
-// meta/posts comes from post frontmatter (frontmatter.js), same as before.
+// meta/posts comes from post frontmatter (frontmatter.js).
 //
 // build.js inlines buildData() into dist/index.html as a <script> that sets
 // window.POSTS / PROJECTS / SKILLS / WORK / PROFILE — no slug file is

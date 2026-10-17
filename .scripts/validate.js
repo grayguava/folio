@@ -1,5 +1,5 @@
 // validate.js — pre-deploy data integrity gate.
-// Every failure mode from notes.md becomes a build error at your desk.
+// Every failure mode becomes a build error at your desk.
 // Usage: node validate.js   (exit 1 on any error)
 
 const { discoverPosts, parseIso } = require('./frontmatter.js');
@@ -14,7 +14,7 @@ console.log('> Validating...');
 
 function hasBadValue(v) { return /\t|\n/.test(v); }
 
-// 0. site config gates everything below — a missing file, bad JSON,
+// site config gates everything below — a missing file, bad JSON,
 //    unknown pages or wrong types fail the build here
 let site = null;
 try {
@@ -29,7 +29,7 @@ try {
   fail(e.message);
 }
 
-// 1. every md file is auto-discovered with valid frontmatter —
+// every md file is auto-discovered with valid frontmatter —
 //    the filename IS the slug.
 //    skipped when the blog page is disabled (no post routes to feed)
 const posts = discoverPosts();
@@ -50,7 +50,7 @@ for (const p of posts) {
 if (posts.length) ok(posts.length + ' md files auto-discovered, frontmatter valid');
 }
 
-// 2. the slug .ini sources build into the exact object inlined in index.html
+// the slug .ini sources build into the exact object inlined in index.html
 let data = null;
 try {
   data = buildData();
