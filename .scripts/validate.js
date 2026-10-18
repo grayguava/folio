@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright (C) 2026 grayguava
+
 // validate.js — pre-deploy data integrity gate.
 // Every failure mode becomes a build error at your desk.
 // Usage: node validate.js   (exit 1 on any error)

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright (C) 2026 grayguava
 
 // one escaping convention for every HTML string built in the browser —
 // text and double-quoted attribute values alike (slugs.js has the twin)

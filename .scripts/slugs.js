@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-only
+// Copyright (C) 2026 grayguava
+
 // slugs.js — single source of truth for slug data.
 //
 // Sources (INI, edited by hand):

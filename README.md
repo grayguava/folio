@@ -141,3 +141,18 @@ Client js is a pathname router (`app.js`): internal `/...` links
 are fetched and swapped in, everything else does a full load.
 On a prerendered post page it leaves the inlined HTML alone and
 just runs the runtime chrome (copy buttons, callouts, images).
+
+## License
+
+AGPL-3.0-only. Copyright (C) 2026 grayguava. Upstream:
+https://github.com/grayguava/folio
+
+Use, modify, and redistribute freely, including commercially. Forks
+and modified versions must keep the same license and preserve the
+copyright and license notices. Deployed sites are not required to
+credit this project or link back.
+
+Demo content in `posts/`, `main/slugs/`, and `config.json` is
+original placeholder material under the same terms. Vendored files
+in `main/assets/vendor/` and the Geist Mono fonts keep their own
+licenses; see `docs/vendor.md`.
