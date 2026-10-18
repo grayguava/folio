@@ -50,7 +50,7 @@ article h4 code, article h5 code, article h6 code {
 /* post meta */
 article .post-meta {
   color: var(--muted);
-  font-size: 13.3px;
+  font-size: max(10.64px, min(13.3px, 2.69231vw));
   margin-bottom: 2.25rem;
   padding-bottom: 1.75rem;
   border-bottom: 1px solid var(--border);
@@ -130,7 +130,7 @@ article code {
 }
 
 .code-lang {
-  font-size: 12.7px;
+  font-size: max(10.16px, min(12.7px, 2.57085vw));
   letter-spacing: 0.08em;
   color: color-mix(in srgb, var(--muted) 70%, white);
   font-family: inherit;

@@ -37,13 +37,13 @@
 }
 
 /* base */
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font);
-  font-size: 16.2px;
+  font-size: max(12.96px, min(16.2px, 3.27935vw));
   font-weight: 400;
   line-height: 1.75;
   letter-spacing: 0.02em;
@@ -52,8 +52,6 @@ body {
 }
 
 a { color: inherit; text-decoration: none; }
-
-::selection { background: var(--accent); color: var(--bg); }
 
 /* site loader */
 #site-loader {

@@ -77,6 +77,8 @@ function route() {
   if (window.pageInits && window.pageInits[pageKey]) {
     window.pageInits[pageKey]({});
   }
+
+  _observeBlogRows();
 }
 
 
@@ -102,6 +104,7 @@ document.addEventListener('keydown', function(e) {
 // soft page cache (background preload so nav feels instant)
 
 var _pageCache = {};
+var _pending = {};
 
 function _extractWrap(html) {
   var t = document.createElement('template');
@@ -117,13 +120,19 @@ function _extractWrap(html) {
 
 function _fetchAndCache(url, low) {
   if (_pageCache[url]) return Promise.resolve(_pageCache[url]);
-  return fetch(url, low ? { priority: 'low' } : undefined).then(function(r) {
+  if (_pending[url]) return _pending[url];
+  _pending[url] = fetch(url, low ? { priority: 'low' } : undefined).then(function(r) {
     if (!r.ok) throw new Error('not found');
     return r.text();
   }).then(function(text) {
     _pageCache[url] = _extractWrap(text);
+    delete _pending[url];
     return _pageCache[url];
+  }).catch(function(err) {
+    delete _pending[url];
+    throw err;
   });
+  return _pending[url];
 }
 
 function _prefetchPages() {
@@ -132,6 +141,30 @@ function _prefetchPages() {
   urls.forEach(function(u) {
     if (u === window.location.pathname || _pageCache[u]) return;
     _fetchAndCache(u, true).catch(function() {});
+  });
+}
+
+// touch devices have no hover to read intent from, so each blog row warms
+// once it scrolls into view (150px early) — anything tappable is already
+// fetched, and the data spent tracks what was actually browsed
+var _blogObserver = null;
+
+function _observeBlogRows() {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.location.pathname !== '/blog/') return;
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (navigator.onLine === false || (c && c.saveData)) return;
+  if (_blogObserver) _blogObserver.disconnect();
+  _blogObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(en) {
+      if (!en.isIntersecting) return;
+      _blogObserver.unobserve(en.target);
+      _warmPost(en.target);
+    });
+  }, { rootMargin: '150px 0px' });
+  document.querySelectorAll('#blog-list a.log-row').forEach(function(a) {
+    _blogObserver.observe(a);
   });
 }
 
@@ -165,6 +198,7 @@ function _navigateTo(url, push) {
     if (postEl && postEl.getAttribute('data-prerendered') && window.pageInits && window.pageInits.post) {
       window.pageInits.post({});
     }
+    _observeBlogRows();
     window.scrollTo(0, 0);
   }).catch(function() {
     window.location.href = pathname;
@@ -180,6 +214,25 @@ document.addEventListener('click', function(e) {
   if (/^\/(assets|api|slugs|files|fonts)\//.test(href)) return;
   e.preventDefault();
   _navigateTo(href, true);
+});
+
+// warm a post as soon as intent shows on its blog row — pointer (hover on
+// desktop, first touch on phones) or keyboard focus — into the same soft
+// page cache the click reads, so the swap needs no fresh fetch
+function _warmPost(a) {
+  var href = a.getAttribute('href');
+  if (!href || href.charAt(0) !== '/' || _pageCache[href] || _pending[href]) return;
+  _fetchAndCache(href, true).catch(function() {});
+}
+
+document.addEventListener('pointerover', function(e) {
+  var a = e.target.closest ? e.target.closest('a.log-row') : null;
+  if (a) _warmPost(a);
+});
+
+document.addEventListener('focusin', function(e) {
+  var a = e.target.closest ? e.target.closest('a.log-row') : null;
+  if (a) _warmPost(a);
 });
 
 window.addEventListener('popstate', function() {
