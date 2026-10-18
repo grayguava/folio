@@ -160,15 +160,21 @@ async function build() {
   const cssOut = path.join(dist, 'assets/guava.min.css');
   const jsOut = path.join(dist, 'assets/guava.min.js');
 
+  // license banner for the shipped bundles; /*! survives downstream minification
+  const banner = (name) =>
+    `/*! ${name} | Copyright (C) 2026 grayguava | AGPL-3.0-only | https://github.com/grayguava/folio */`;
+
   await esbuild.build({
     stdin: { contents: concat(cssFiles), loader: 'css', resolveDir: path.join(main, 'assets/css') },
     outfile: cssOut,
+    banner: { css: banner('guava.min.css') },
     minify: true,
     bundle: false,
   });
   await esbuild.build({
     stdin: { contents: concat(jsFiles), loader: 'js', resolveDir: path.join(main, 'assets/js') },
     outfile: jsOut,
+    banner: { js: banner('guava.min.js') },
     minify: true,
     bundle: false,
   });
