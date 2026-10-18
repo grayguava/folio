@@ -51,13 +51,6 @@ function _sectionKey(pathname) {
 }
 
 
-function setActiveNav(key) {
-  document.querySelectorAll('.nav-link').forEach(function(a) {
-    a.classList.toggle('active', a.dataset.nav === key);
-  });
-}
-
-
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(function(p) {
     p.style.display = p.id === 'page-' + pageId ? '' : 'none';
@@ -66,19 +59,17 @@ function showPage(pageId) {
 
 
 function route() {
+  var pageKey = _sectionKey(window.location.pathname);
+
   // on a prerendered post page, leave the inlined HTML alone but still
-  // mark the section active and run the client-side chrome upgrades
-  // (copy buttons, callouts, images)
+  // run the client-side chrome upgrades (copy buttons, callouts, images)
   if (window.__prerenderedPost) {
-    setActiveNav(_sectionKey(window.location.pathname));
     if (window.pageInits && window.pageInits.post) window.pageInits.post({});
     return;
   }
-  var pageKey = _sectionKey(window.location.pathname);
 
   showPage(pageKey);
   window.scrollTo(0, 0);
-  setActiveNav(pageKey);
 
   if (window.pageInits && window.pageInits[pageKey]) {
     window.pageInits[pageKey]({});
@@ -164,7 +155,6 @@ function _navigateTo(url, push) {
     window.__prerenderedPost = page.prerendered;
     if (push !== false) history.pushState(null, '', pathname);
     var key = _sectionKey(pathname);
-    setActiveNav(key);
     if (window.pageInits && window.pageInits[key] && !page.prerendered) {
       window.pageInits[key]({});
     }

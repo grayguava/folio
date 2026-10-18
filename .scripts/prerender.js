@@ -165,45 +165,75 @@ if (site.pages.blog) {
   for (const p of posts) prerenderPost(p);
 }
 
-function itemHTML(p, showRole) {
-  var hasLink = !!p.href;
-  var tagsHtml = '';
-  if (p.tags && p.tags.length) {
-    tagsHtml = '<div class="item-tags">' + p.tags.map(function(t) {
-      return '<span class="item-tag">' + escHtml(t) + '</span>';
-    }).join('') + '</div>';
-  }
-  return '<a' + (hasLink ? ' class="item" href="' + escHtml(p.href) + '" target="_blank" rel="noopener"' : ' class="item"') + '>' +
-    '<div class="item-body">' +
-      '<div class="item-title">' + escHtml(p.title) + '</div>' +
-      (showRole ? '<div class="item-meta">' + escHtml(p.role || '') + '</div>' : '') +
-      '<div class="item-desc">' + escHtml(p.description || '') + '</div>' +
-      tagsHtml +
-    '</div>' +
-    (hasLink ? '<div class="item-arrow">↗</div>' : '') +
-  '</a>';
+// twin renderers — pages.js builds the same markup in the browser, the
+// shells above carry it as static HTML
+function rowHTML(p, showRole) {
+  var meta = showRole ? (p.role || '') : ((p.tags || []).join(', '));
+  var open = p.href
+    ? '<a class="row" href="' + escHtml(p.href) + '" target="_blank" rel="noopener noreferrer">'
+    : '<div class="row">';
+  var close = p.href ? '</a>' : '</div>';
+  return open +
+    '<span class="row-name">' + escHtml(p.title) + '</span>' +
+    '<span class="row-meta">' + escHtml(meta) + '</span>' +
+    '<span class="row-desc">' + escHtml(p.description || '') + '</span>' +
+    close;
 }
 
-function blogItemHTML(p) {
-  return '<a class="blog-item" href="/blog/' + p.slug + '/" data-slug="' + p.slug + '">' +
-    '<span class="blog-date">' + escHtml(p.dateDisplay) + '</span>' +
-    '<span class="blog-title">' + escHtml(p.title) + '</span>' +
-    '<span class="blog-arrow">↗</span>' +
-  '</a>';
+function rowsHTML(list, showRole) {
+  return '<div class="rows">' + list.map(function(p) {
+    return rowHTML(p, showRole);
+  }).join('') + '</div>';
 }
 
-function buildSkillsHTML(SKILLS) {
-  var categories = [], seen = {};
-  SKILLS.forEach(function(s) { if (!seen[s.category]) { seen[s.category] = true; categories.push(s.category); } });
-  return categories.map(function(cat) {
-    var items = SKILLS.filter(function(s) { return s.category === cat; });
-    var inner = items.map(function(s) {
+function logRowHTML(p) {
+  var iso = p.date || '';
+  return '<li><a class="log-row" href="/blog/' + escHtml(p.slug) + '/">' +
+    '<time class="log-date" datetime="' + escHtml(iso) + '">' + escHtml(iso) + '</time>' +
+    '<span class="log-title">' + escHtml(p.title) + '</span>' +
+  '</a></li>';
+}
+
+var LOG_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december'];
+
+function logHTML(list) {
+  var html = '<ul class="log">';
+  var group = '';
+  list.forEach(function(p) {
+    var iso = p.date || '';
+    var g = iso.slice(0, 7);
+    var label = LOG_MONTHS[+iso.slice(5, 7) - 1];
+    if (label && g !== group) {
+      group = g;
+      html += '<li class="log-group">' + label + '</li>';
+    }
+    html += logRowHTML(p);
+  });
+  return html + '</ul>';
+}
+
+function skillsHTML(list) {
+  var categories = [];
+  var seen = {};
+  list.forEach(function(s) {
+    if (!seen[s.category]) {
+      seen[s.category] = true;
+      categories.push(s.category);
+    }
+  });
+
+  return '<div class="skills">' + categories.map(function(cat) {
+    var inner = list.filter(function(s) { return s.category === cat; }).map(function(s) {
       return s.href
-        ? '<a href="' + escHtml(s.href) + '" target="_blank" rel="noopener">' + escHtml(s.name) + '</a>'
-        : '<span>' + escHtml(s.name) + '</span>';
-    }).join(' · ');
-    return '<details><summary>' + escHtml(cat) + '</summary><div class="skills-content">' + inner + '</div></details>';
-  }).join('');
+        ? '<a href="' + escHtml(s.href) + '" target="_blank" rel="noopener noreferrer">' + escHtml(s.name) + '</a>'
+        : escHtml(s.name);
+    }).join(' \u00b7 ');
+    return '<div class="skill-row">' +
+      '<h2 class="skill-cat">' + escHtml(cat) + '</h2>' +
+      '<p class="skill-items">' + inner + '</p>' +
+    '</div>';
+  }).join('') + '</div>';
 }
 
 // keep only the page <section> this shell serves (drop the other hidden ones)
@@ -239,10 +269,10 @@ function emitPage(route, pageId, containerId, innerHTML, seo) {
 // same object build.js inlines into index.html — the shells carry live lists
 const { projects, skills, work, profile } = buildData();
 
-if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', posts.map(blogItemHTML).join(''), { title: site.site.name, description: site.subtitles.blog, path: '/blog/', type: 'website' });
-if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', projects.map(function(p) { return itemHTML(p, false); }).join(''), { title: site.site.name, description: site.subtitles.projects, path: '/projects/', type: 'website' });
-if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', buildSkillsHTML(skills), { title: site.site.name, description: site.subtitles.skills, path: '/skills/', type: 'website' });
-if (site.pages.work) emitPage('work', 'page-work', 'work-list', work.map(function(p) { return itemHTML(p, true); }).join(''), { title: site.site.name, description: site.subtitles.work, path: '/work/', type: 'website' });
+if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', logHTML(posts), { title: site.site.name, description: site.subtitles.blog, path: '/blog/', type: 'website' });
+if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', rowsHTML(projects, false), { title: site.site.name, description: site.subtitles.projects, path: '/projects/', type: 'website' });
+if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', skillsHTML(skills), { title: site.site.name, description: site.subtitles.skills, path: '/skills/', type: 'website' });
+if (site.pages.work) emitPage('work', 'page-work', 'work-list', rowsHTML(work, true), { title: site.site.name, description: site.subtitles.work, path: '/work/', type: 'website' });
 
 applySeo(path.join(dist, 'index.html'), {
   title: site.site.name,

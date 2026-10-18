@@ -62,7 +62,7 @@ function buildData() {
   const { loadConfig } = require('./config.js');
   const siteName = loadConfig().site.name;
 
-  const posts = discoverPosts().map((p) => ({ slug: p.slug, title: p.title, date: p.dateDisplay }));
+  const posts = discoverPosts().map((p) => ({ slug: p.slug, title: p.title, date: p.dateDisplay, iso: p.date }));
 
   const projects = readIni(SLUG_FILES.projects).sections.map((s) => ({
     title: s.section,
@@ -145,4 +145,4 @@ function sectionEnd(html, from) {
   return html.length;
 }
 
-module.exports = { root, main, SLUG_FILES, parseIni, readIni, buildData, inlineScript, escHtml, sectionEnd };
+module.exports = { SLUG_FILES, buildData, inlineScript, escHtml, sectionEnd };

@@ -37,14 +37,16 @@ prerendered pages:
 
 ## Keyboard nav
 
-Available on every page:
+There is no nav bar - the keys are the interface, and every page
+carries a hint line with the bindings:
 
 ```
 h home   b blog   p projects   s skills   w work   t theme
 ```
 
-Ignored while typing in an input/textarea, and with any modifier
-held. On the 404 page only `h` works (plain full load).
+Keys exist only for the pages enabled in `config.json`. Ignored
+while typing in an input/textarea, and with any modifier held.
+On the 404 page only `h` works (plain full load).
 
 ## Theme
 
@@ -55,14 +57,15 @@ first paint (no flash). `t` is the shortcut.
 
 A terminal-style loader (`> _` with a blinking cursor) shows on
 the first visit of a session, then stays out of the way —
-later navigations in the same session skip it.
+later navigations in the same session skip it. This repo ships it
+off (`bootloader.loaderEnable: false` in `config.json`).
 
-## Nav highlighting
+## Home
 
-The active section in the top nav is set from the current
-pathname (`_sectionKey()`), including on direct loads and
-refreshes of a prerendered `/blog/<slug>/` page — the post's
-section key resolves to `blog`.
+A centered title card: the name types itself in on every page
+load, then the intro and bio, a directory row with per-page counts
+(`blog/ (4)  projects/ (3)`), and the social icons. Nothing else —
+no nav, no footer, no chrome.
 
 ## Slugs
 
@@ -93,7 +96,7 @@ time, not assembled in the browser.
 - Accent-colored list markers, zebra/hover tables, bordered
   collapsibles, chip-style inline code (details in
   [markdown.md](markdown.md)).
-- JetBrains Mono for the terminal-ish chrome; floated images
+- Geist Mono for the terminal-ish chrome; floated images
   collapse to one column under ~600px.
 
 ## Headers

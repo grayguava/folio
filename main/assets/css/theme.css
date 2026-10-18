@@ -3,12 +3,9 @@
   --bg:           #0e0e0e;
   --bg-secondary: #141414;
   --fg:           #d1d5db;
-  --text:         #d1d5db;
-  --text-dim:     #888888;
-  --text-body:    #a0a8b2;
-  --muted:        #6b7280;
-  --dim:          #4b5563;
-  --border:       #232323;
+  --muted:        #9aa2ad;
+  --dim:          #808080;
+  --border:       #2a2a2a;
   --white:        #ffffff;
   --accent:       #f06232;
   --hover-bg:     #121212;
@@ -20,11 +17,8 @@
   --bg:           #fdf6e3;
   --bg-secondary: #f0ead8;
   --fg:           #3d3d3d;
-  --text:         #3d3d3d;
-  --text-dim:     #999999;
-  --text-body:    #3d3d3d;
-  --muted:        #7a7a7a;
-  --dim:          #9a9a9a;
+  --muted:        #4f4f4f;
+  --dim:          #6b6b6b;
   --border:       #e6dfd0;
   --white:        #2d2d2d;
   --accent:       #983c2e;
@@ -33,10 +27,10 @@
   --mono:         ui-monospace, 'Cascadia Code', Consolas, 'SF Mono', Menlo, 'DejaVu Sans Mono', 'Roboto Mono', monospace;
 }
 
-/* custom scrollbar */
+/* custom scrollbar — as dim as the palette gets */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--dim) var(--bg-secondary);
+  scrollbar-color: var(--border) var(--bg);
 }
 
 /* base */
@@ -46,7 +40,7 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font);
-  font-size: 15.4px;
+  font-size: 16.2px;
   font-weight: 400;
   line-height: 1.75;
   letter-spacing: 0.02em;
@@ -56,7 +50,7 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-.accent { color: var(--accent); }
+::selection { background: var(--accent); color: var(--bg); }
 
 /* site loader */
 #site-loader {
@@ -95,4 +89,8 @@ a { color: inherit; text-decoration: none; }
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot .cursor, .type-cursor { animation: none; }
 }

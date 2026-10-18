@@ -35,12 +35,12 @@ A green build looks like this:
 ✨ Validation passed!
 
 > Minifying assets...
-✓ Slugs: 5 files inlined into index.html (3.3 kB)
-✓ JS:     19.3 kB -> 11.5 kB
-✓ CSS:    22.8 kB -> 15.3 kB
+✓ Slugs: 5 files inlined into index.html (3.4 kB)
+✓ JS:     16.8 kB -> 11.0 kB
+✓ CSS:    21.6 kB -> 15.0 kB
 ✨ Minify and build done!
 
-✨ Total site size: 282.7 kB
+✨ Total site size: 210.9 kB
 ```
 
 If anything is off — a post missing frontmatter, a bad date, a slug
@@ -91,8 +91,8 @@ behavior in [features.md](features.md).
 ## Site config
 
 What gets built is driven by `config.json` - bootloader screen,
-first-visit theme, site name, home preview counts, page subtitles,
-and which pages ship at all. `seo.json` drives the SEO output
+first-visit theme, site name, page subtitles, and which pages ship
+at all. `seo.json` drives the SEO output
 (meta tags, share cards, `sitemap.xml`); an empty `url` turns it
 all off. The full key reference lives in [config.md](config.md).
 

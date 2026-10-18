@@ -59,7 +59,7 @@ main/                  source of the site
   404.html             plain 404, also bundled
   _headers             cache headers, copied to dist/
   favicon.ico
-  assets/css/          theme, skills, base, markdown, hljs
+  assets/css/          theme, base, markdown, hljs
   assets/js/           posts, pages, app (no runtime data loader)
   assets/fonts/
   assets/vendor/       marked + highlight.js, build-time only
@@ -103,7 +103,7 @@ To run your own copy, follow [docs/getting-started.md](docs/getting-started.md)
    Emits `dist/blog/<slug>/index.html` per post (highlighted code,
    `.link-text` wrapping, external links get `target="_blank"`)
    plus static shells for `/blog/`, `/projects/`, `/skills/`, `/work/`.
-5. Strip the unbundled sources from `dist/` (the 5 CSS + 3 JS
+5. Strip the unbundled sources from `dist/` (the 4 CSS + 3 JS
    files). Anything else dropped in those dirs stays.
 
 Runtime deps: none. `marked` + `highlight.js` are vendored under

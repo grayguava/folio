@@ -6,16 +6,34 @@ function escHtml(s) {
 }
 
 
-function renderBlogItem(post) {
-  var el = document.createElement('a');
-  el.className = 'blog-item';
-  el.href = '/blog/' + post.slug + '/';
-  el.setAttribute('data-slug', post.slug);
-  el.innerHTML =
-    '<span class="blog-date">' + escHtml(post.date) + '</span>' +
-    '<span class="blog-title">' + escHtml(post.title) + '</span>' +
-    '<span class="blog-arrow">↗</span>';
-  return el;
+function logRowHTML(p) {
+  var iso = p.iso || '';
+  return '<li><a class="log-row" href="/blog/' + escHtml(p.slug) + '/">' +
+    '<time class="log-date" datetime="' + escHtml(iso) + '">' + escHtml(iso) + '</time>' +
+    '<span class="log-title">' + escHtml(p.title) + '</span>' +
+  '</a></li>';
+}
+
+
+var LOG_MONTHS = ['january', 'february', 'march', 'april', 'may', 'june',
+  'july', 'august', 'september', 'october', 'november', 'december'];
+
+
+function logHTML(posts, limit) {
+  var list = limit > 0 ? posts.slice(0, limit) : posts;
+  var html = '<ul class="log">';
+  var group = '';
+  list.forEach(function(p) {
+    var iso = p.iso || '';
+    var g = iso.slice(0, 7);
+    var label = LOG_MONTHS[+iso.slice(5, 7) - 1];
+    if (label && g !== group) {
+      group = g;
+      html += '<li class="log-group">' + label + '</li>';
+    }
+    html += logRowHTML(p);
+  });
+  return html + '</ul>';
 }
 
 

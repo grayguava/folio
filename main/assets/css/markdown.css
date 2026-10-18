@@ -1,8 +1,6 @@
 
 /* typography & base */
 article {
-  max-width: 90ch;
-  margin: 0 auto;
   font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "ss01" 1;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -75,7 +73,7 @@ article p {
 }
 
 /* body copy sits below headings in the hierarchy, not beside them */
-article p, article li, article blockquote, article td { color: var(--text-body); }
+article p, article li, article blockquote, article td { color: var(--muted); }
 
 /* links */
 article a {
@@ -213,7 +211,7 @@ article pre code {
 .copy-btn {
   background: none;
   border: none;
-  color: var(--text-dim);
+  color: var(--dim);
   padding: 0.4rem;
   border-radius: 4px;
   cursor: pointer;
@@ -228,7 +226,7 @@ article pre code {
 }
 
 .copy-btn:hover {
-  color: var(--text);
+  color: var(--fg);
 }
 
 .copy-btn.copied {

@@ -1,65 +1,82 @@
 
 
-function scramble(el, target, duration) {
-  if (!el) return;
-  if (el._scrambleRAF) cancelAnimationFrame(el._scrambleRAF);
+var nameTyped = false;
 
-  duration = duration || 200;
-  var chars = 'abcdefghijklmnopqrstuvwxyz';
-  var steps = Math.ceil(duration / 10);
-  var frame = 0;
+function typeName(el, target) {
+  if (!el || !target) return;
+  if (el._typeTimer) { clearTimeout(el._typeTimer); el._typeTimer = null; }
 
-  function tick() {
-    var progress = frame / steps;
-    var revealed = Math.floor(progress * target.length);
-    var out = '';
-    for (var i = 0; i < target.length; i++) {
-      if (i < revealed) {
-        out += target[i];
-      } else {
-        out += chars[Math.floor(Math.random() * chars.length)];
-      }
-    }
-    el.textContent = out;
-    frame++;
-    if (frame <= steps) {
-      el._scrambleRAF = requestAnimationFrame(tick);
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || nameTyped) { el.textContent = target; return; }
+
+  // reserve the final width on the heading so the centered line stays put
+  var h1 = el.parentNode;
+  var cur = el.nextElementSibling; // solid while typing, blink resumes after
+  el.textContent = target;
+  h1.style.width = h1.getBoundingClientRect().width + 'px';
+  h1.style.textAlign = 'left';
+  el.textContent = '';
+  if (cur) cur.style.animation = 'none';
+
+  var i = 0;
+  function step() {
+    el.textContent = target.slice(0, ++i);
+    if (i < target.length) {
+      el._typeTimer = setTimeout(step, 150);
     } else {
-      el._scrambleRAF = null;
-      el.textContent = target;
+      el._typeTimer = null;
+      h1.style.width = '';
+      h1.style.textAlign = '';
+      if (cur) cur.style.animation = '';
+      nameTyped = true;
     }
   }
-
-  tick();
+  el._typeTimer = setTimeout(step, 120);
 }
 
 
-function renderItem(p, showRole) {
-  var hasLink = !!p.href;
-  var el = document.createElement(hasLink ? 'a' : 'div');
-  el.className = 'item';
-  if (hasLink) {
-    el.href = p.href;
-    el.target = '_blank';
-    el.rel = 'noopener';
-  }
+function rowHTML(p, showRole) {
+  var meta = showRole ? (p.role || '') : ((p.tags || []).join(', '));
+  var open = p.href
+    ? '<a class="row" href="' + escHtml(p.href) + '" target="_blank" rel="noopener noreferrer">'
+    : '<div class="row">';
+  var close = p.href ? '</a>' : '</div>';
+  return open +
+    '<span class="row-name">' + escHtml(p.title) + '</span>' +
+    '<span class="row-meta">' + escHtml(meta) + '</span>' +
+    '<span class="row-desc">' + escHtml(p.description || '') + '</span>' +
+    close;
+}
 
-  var tagsHtml = '';
-  if (p.tags && p.tags.length) {
-    tagsHtml = '<div class="item-tags">' + p.tags.map(function(t) {
-      return '<span class="item-tag">' + escHtml(t) + '</span>';
-    }).join('') + '</div>';
-  }
 
-  el.innerHTML =
-    '<div class="item-body">' +
-      '<div class="item-title">' + escHtml(p.title) + '</div>' +
-      (showRole ? '<div class="item-meta">' + escHtml(p.role || '') + '</div>' : '') +
-      '<div class="item-desc">' + escHtml(p.description || '') + '</div>' +
-      tagsHtml +
-    '</div>' +
-    (hasLink ? '<div class="item-arrow">↗</div>' : '');
-  return el;
+function rowsHTML(list, showRole) {
+  return '<div class="rows">' + list.map(function(p) {
+    return rowHTML(p, showRole);
+  }).join('') + '</div>';
+}
+
+
+function skillsHTML(list) {
+  var categories = [];
+  var seen = {};
+  list.forEach(function(s) {
+    if (!seen[s.category]) {
+      seen[s.category] = true;
+      categories.push(s.category);
+    }
+  });
+
+  return '<div class="skills">' + categories.map(function(cat) {
+    var inner = list.filter(function(s) { return s.category === cat; }).map(function(s) {
+      return s.href
+        ? '<a href="' + escHtml(s.href) + '" target="_blank" rel="noopener noreferrer">' + escHtml(s.name) + '</a>'
+        : escHtml(s.name);
+    }).join(' \u00b7 ');
+    return '<div class="skill-row">' +
+      '<h2 class="skill-cat">' + escHtml(cat) + '</h2>' +
+      '<p class="skill-items">' + inner + '</p>' +
+    '</div>';
+  }).join('') + '</div>';
 }
 
 
@@ -69,15 +86,31 @@ function setTitle(pageTitle) {
 }
 
 
+function renderHomeDirs() {
+  var el = document.getElementById('home-dirs');
+  if (!el) return;
+  var counts = {
+    blog: (window.POSTS || []).length,
+    projects: (window.PROJECTS || []).length,
+    skills: (window.SKILLS || []).length,
+    work: (window.WORK || []).length,
+  };
+  var enabled = (window.SITE && window.SITE.pages) || ['blog', 'projects', 'skills', 'work'];
+  el.innerHTML = enabled.map(function(p) {
+    return '<a href="/' + p + '/">' +
+      '<span class="dir-name">' + p + '/</span>' +
+      '<span class="dir-count">(' + counts[p] + ')</span>' +
+    '</a>';
+  }).join('');
+}
+
+
 function initHome(query) {
   setTitle('');
   var profile = window.PROFILE;
 
-  var el = document.getElementById('scramble');
-  if (el) {
-    el.textContent = (profile && profile.name) || 'Site Name';
-    scramble(el, el.textContent);
-  }
+  var el = document.getElementById('home-name');
+  if (el) typeName(el, (profile && profile.name) || (window.SITE && window.SITE.name) || '');
 
   var subEl = document.getElementById('home-sub');
   if (subEl && profile) subEl.textContent = profile.sub;
@@ -85,168 +118,61 @@ function initHome(query) {
   var bioEl = document.getElementById('home-bio');
   if (bioEl && profile) bioEl.textContent = profile.bio;
 
-  var socialContainer = document.getElementById('social-links');
-  if (socialContainer && profile && profile.socials) {
-    socialContainer.innerHTML = '';
-    profile.socials.forEach(function(s) {
-      var a = document.createElement('a');
-      a.href = s.href;
-      a.title = s.name;
-      a.setAttribute('aria-label', s.name);
-      if (!s.href.startsWith('mailto:')) {
-        a.target = '_blank';
-        a.rel = 'noopener';
-      }
-      a.innerHTML = s.svg;
-      socialContainer.appendChild(a);
-    });
-  }
-
-  var homeProjects = document.getElementById('home-projects');
-  var homeCfg = (window.SITE && window.SITE.homePreview) || {};
-  if (homeProjects) {
-    homeProjects.innerHTML = '';
-    var projectCount = typeof homeCfg.projects === 'number' ? homeCfg.projects : 2;
-    if (projectCount === 0) {
-      var projectSec = homeProjects.closest('section');
-      if (projectSec) projectSec.remove();
-    } else {
-      PROJECTS.slice(0, projectCount).forEach(function(p) {
-        homeProjects.appendChild(renderItem(p, false));
-      });
-    }
-  }
-
-  var homeWork = document.getElementById('home-work');
-  if (homeWork) {
-    homeWork.innerHTML = '';
-    var workCount = typeof homeCfg.work === 'number' ? homeCfg.work : 2;
-    if (workCount === 0) {
-      var workSec = homeWork.closest('section');
-      if (workSec) workSec.remove();
-    } else {
-      WORK.slice(0, workCount).forEach(function(p) {
-        homeWork.appendChild(renderItem(p, true));
-      });
-    }
-  }
-
-  var homePosts = document.getElementById('home-posts');
-  if (homePosts) {
-    homePosts.innerHTML = '';
-    var postCount = typeof homeCfg.posts === 'number' ? homeCfg.posts : 4;
-    if (postCount === 0) {
-      var postSec = homePosts.closest('section');
-      if (postSec) postSec.remove();
-    } else {
-      POSTS.slice(0, postCount).forEach(function(p) {
-        homePosts.appendChild(renderBlogItem(p));
-      });
-    }
-  }
+  renderHomeDirs();
+  fillSocials(document.getElementById('home-socials'));
 }
 
 
 function initBlog(query) {
   setTitle('blog');
 
-  var el = document.getElementById('scramble-blog');
-  if (el) {
-    el.textContent = 'writing';
-    scramble(el, el.textContent);
-  }
-
   var list = document.getElementById('blog-list');
   if (!list) return;
-  list.innerHTML = '';
-  POSTS.forEach(function(p) { list.appendChild(renderBlogItem(p)); });
+  list.innerHTML = logHTML((window.POSTS || []), 0);
 }
 
 
 function initProjects(query) {
   setTitle('projects');
 
-  var el = document.getElementById('scramble-projects');
-  if (el) {
-    el.textContent = 'projects';
-    scramble(el, el.textContent);
-  }
-
   var list = document.getElementById('projects-list');
   if (!list) return;
-  list.innerHTML = '';
-  PROJECTS.forEach(function(p) { list.appendChild(renderItem(p, false)); });
+  list.innerHTML = rowsHTML((window.PROJECTS || []), false);
 }
 
 
 function initWork(query) {
   setTitle('work');
 
-  var el = document.getElementById('scramble-work');
-  if (el) {
-    el.textContent = 'work';
-    scramble(el, el.textContent);
-  }
-
   var list = document.getElementById('work-list');
   if (!list) return;
-  list.innerHTML = '';
-  WORK.forEach(function(p) { list.appendChild(renderItem(p, true)); });
+  list.innerHTML = rowsHTML((window.WORK || []), true);
 }
 
 
 function initSkills(query) {
   setTitle('skills');
 
-  var el = document.getElementById('scramble-skills');
-  if (el) {
-    el.textContent = 'skills';
-    scramble(el, el.textContent);
-  }
-
   var list = document.getElementById('skills-list');
   if (!list) return;
-  list.innerHTML = '';
+  list.innerHTML = skillsHTML((window.SKILLS || []));
+}
 
-  var categories = [];
-  var seen = {};
-  SKILLS.forEach(function(s) {
-    if (!seen[s.category]) {
-      seen[s.category] = true;
-      categories.push(s.category);
+
+function fillSocials(el) {
+  if (!el || el.childElementCount) return;
+  var socials = (window.PROFILE && PROFILE.socials) || [];
+  socials.forEach(function(s) {
+    if (!s.href) return;
+    var a = document.createElement('a');
+    a.href = s.href;
+    a.setAttribute('aria-label', s.name || '');
+    if (s.href.indexOf('mailto:') !== 0) {
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
     }
-  });
-
-  categories.forEach(function(cat) {
-    var details = document.createElement('details');
-    var summary = document.createElement('summary');
-    summary.textContent = cat;
-    details.appendChild(summary);
-
-    var content = document.createElement('div');
-    content.className = 'skills-content';
-
-    var items = SKILLS.filter(function(s) { return s.category === cat; });
-    items.forEach(function(s, i) {
-      if (i > 0) {
-        content.appendChild(document.createTextNode(' \u00b7 '));
-      }
-      if (s.href) {
-        var a = document.createElement('a');
-        a.href = s.href;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.textContent = s.name;
-        content.appendChild(a);
-      } else {
-        var span = document.createElement('span');
-        span.textContent = s.name;
-        content.appendChild(span);
-      }
-    });
-
-    details.appendChild(content);
-    list.appendChild(details);
+    a.innerHTML = s.svg || (s.name || '').toLowerCase();
+    el.appendChild(a);
   });
 }
 

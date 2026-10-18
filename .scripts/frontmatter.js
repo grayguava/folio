@@ -75,11 +75,10 @@ function discoverPosts() {
         dateKey: parseIso(parsed && parsed.fm.date) || '', // sortable
         body: parsed ? parsed.body : '',
         hasFrontmatter: !!parsed,
-        raw,
       };
     })
     .sort((a, b) =>
       (b.dateKey.localeCompare(a.dateKey)) || b.slug.localeCompare(a.slug));
 }
 
-module.exports = { root, postsDir, parseIso, formatDate, parseFrontmatter, discoverPosts };
+module.exports = { parseIso, discoverPosts };

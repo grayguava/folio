@@ -6,7 +6,9 @@ const root = path.resolve(__dirname, '..');
 const main = path.join(root, 'main');
 const dist = path.join(root, 'dist');
 
-const { escHtml, sectionEnd } = require('./slugs.js');
+const { sectionEnd } = require('./slugs.js');
+
+const KEY_LETTERS = { blog: 'b', projects: 'p', skills: 's', work: 'w' };
 
 const EXCLUDE = new Set(['.wrangler', 'node_modules', 'temp', '.gitignore', 'dist', 'wrangler.toml', 'vendor']);
 
@@ -34,27 +36,19 @@ function concat(files) {
   return files.map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 }
 
-// drop disabled pages from the shell: nav link, page section, home blocks,
-// regenerated hints; bootloader block per config. runs on dist/index.html
-// after rewriteHtml, before prerender (shells inherit the result)
+// drop disabled pages from the shell: page section, regenerated hints;
+// bootloader block per config. runs on dist/index.html after
+// rewriteHtml, before prerender (shells inherit the result)
 function applySiteConfig() {
   const { loadConfig } = require('./config.js');
   const site = loadConfig();
   const file = path.join(dist, 'index.html');
   let html = fs.readFileSync(file, 'utf8');
 
-  const HOME_BLOCKS = { blog: 'home-posts', projects: 'home-projects', work: 'home-work' };
   for (const p of ['blog', 'projects', 'skills', 'work']) {
     if (site.pages[p]) continue;
-    html = html.replace(new RegExp('<a\\b[^>]*data-nav="' + p + '"[^>]*>[\\s\\S]*?<\\/a>', 'g'), '');
     html = dropSection(html, 'page-' + p);
-    if (HOME_BLOCKS[p]) html = dropHomeBlock(html, HOME_BLOCKS[p]);
   }
-
-  // a zero preview removes the home block but keeps the page itself
-  if (site.pages.projects && site.homePreview.projects === 0) html = dropHomeBlock(html, 'home-projects');
-  if (site.pages.blog && site.homePreview.posts === 0) html = dropHomeBlock(html, 'home-posts');
-  if (site.pages.work && site.homePreview.work === 0) html = dropHomeBlock(html, 'home-work');
 
   // hints list only the keys that actually work
   const letters = ['h'].concat(site.enabled.map((p) => KEY_LETTERS[p]));
@@ -66,7 +60,7 @@ function applySiteConfig() {
     if (site.subtitles[p] === undefined) continue;
     html = html.replace(
       new RegExp('(<p class="sub" id="' + p + '-sub">)[\\s\\S]*?(</p>)'),
-      function (m, open, close) { return open + escHtml(site.subtitles[p]) + close; }
+      '$1' + site.subtitles[p] + '$2'
     );
   }
 
@@ -95,7 +89,7 @@ function applySiteConfig() {
 function injectSiteConfig() {
   const { loadConfig } = require('./config.js');
   const site = loadConfig();
-  const script = '<script id="site-config">window.SITE=' + JSON.stringify({ pages: site.enabled, theme: site.theme.defaultTheme, name: site.site.name, homePreview: site.homePreview }) + ';</script>';
+  const script = '<script id="site-config">window.SITE=' + JSON.stringify({ pages: site.enabled, theme: site.theme.defaultTheme, name: site.site.name }) + ';</script>';
   const file = path.join(dist, 'index.html');
   let html = fs.readFileSync(file, 'utf8');
   const bundleTag = '<script src="/assets/guava.min.js"></script>';
@@ -109,17 +103,6 @@ function dropSection(html, id) {
   if (!m) return html;
   return html.slice(0, m.index) + html.slice(sectionEnd(html, m.index + m[0].length));
 }
-
-// remove the inner home <section> wrapping a preview block
-function dropHomeBlock(html, innerId) {
-  const idx = html.indexOf('id="' + innerId + '"');
-  if (idx === -1) return html;
-  const start = html.lastIndexOf('<section', idx);
-  if (start === -1) return html;
-  return html.slice(0, start) + html.slice(sectionEnd(html, html.indexOf('>', start) + 1));
-}
-
-var KEY_LETTERS = { blog: 'b', projects: 'p', skills: 's', work: 'w' };
 
 function inlineSlugData() {
   const { inlineScript, SLUG_FILES } = require('./slugs.js');
@@ -166,7 +149,7 @@ async function build() {
   cleanDir(dist);
   copyDir(main, dist);
 
-  const cssFiles = ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']
+  const cssFiles = ['theme.css', 'base.css', 'markdown.css', 'hljs.css']
     .map((f) => path.join(main, 'assets/css', f));
   const jsFiles = ['posts.js', 'pages.js', 'app.js']
     .map((f) => path.join(main, 'assets/js', f));
@@ -205,7 +188,7 @@ async function build() {
 
   // remove only the bundled source files — leave any non-bundled asset
   // (future fonts, extra css, etc.) intact in dist/
-  for (const f of ['theme.css', 'skills.css', 'base.css', 'markdown.css', 'hljs.css']) {
+  for (const f of ['theme.css', 'base.css', 'markdown.css', 'hljs.css']) {
     fs.rmSync(path.join(dist, 'assets/css', f), { force: true });
   }
   for (const f of ['posts.js', 'pages.js', 'app.js']) {

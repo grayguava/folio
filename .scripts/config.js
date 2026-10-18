@@ -52,14 +52,6 @@ function loadConfig() {
   }
   if (st.url !== undefined) throw new Error('config.json: site.url moved to seo.json');
 
-  const hm = cfg.homePreview;
-  if (!hm || typeof hm !== 'object') throw new Error('config.json: homePreview must be an object');
-  for (const k of ['projects', 'posts', 'work']) {
-    if (!Number.isInteger(hm[k]) || hm[k] < 0) {
-      throw new Error('config.json: homePreview.' + k + ' must be an integer >= 0');
-    }
-  }
-
   const sub = cfg.subtitles;
   if (!sub || typeof sub !== 'object') throw new Error('config.json: subtitles must be an object');
   for (const k of Object.keys(sub)) {
@@ -81,7 +73,6 @@ function loadConfig() {
     bootloader: { loaderEnable: bl.loaderEnable, defaultDuration: bl.defaultDuration },
     theme: { defaultTheme: th.defaultTheme },
     site: { name: st.name },
-    homePreview: { projects: hm.projects, posts: hm.posts, work: hm.work },
     subtitles: Object.fromEntries(KNOWN_PAGES.filter((p) => sub[p] !== undefined).map((p) => [p, sub[p]])),
     pages: Object.fromEntries(KNOWN_PAGES.map((p) => [p, pages[p] !== false])),
     enabled,
@@ -109,4 +100,4 @@ function loadSeo() {
   return { url };
 }
 
-module.exports = { root, KNOWN_PAGES, loadConfig, loadSeo };
+module.exports = { loadConfig, loadSeo };

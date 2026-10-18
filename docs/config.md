@@ -21,11 +21,6 @@ today one: `url`. Missing file or empty `url` means SEO off.
   "site": {
     "name": "John Doe"
   },
-  "homePreview": {
-    "projects": 2,
-    "posts": 4,
-    "work": 2
-  },
   "subtitles": {
     "blog": "occasional posts on systems, networking, and tooling",
     "projects": "things i've built"
@@ -79,16 +74,10 @@ build config. A `site.url` still in `config.json` fails the
 build - move the value here. A missing `seo.json` behaves like
 an empty `url` (SEO off).
 
-## homePreview
-
-- `projects` / `posts` / `work` (integer, >= 0) - how many of
-  each the home page previews. `0` removes that block from the
-  home page; the page itself stays.
-
 ## Pages
 
 - `blog` / `projects` / `skills` / `work` (bool) - `false` drops
-  the page from the nav, the shell, the home blocks, the keyboard
+  the page from the shell, the home directory row, the keyboard
   shortcuts, the prefetch list and the prerender, as if it never
   existed. Omitted pages default to on. Turning `blog` off also
   drops every `/blog/<slug>/` page and skips post validation.
