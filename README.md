@@ -18,20 +18,6 @@ body goes here...
 - Slug filenames must match `/^[a-z0-9]+(?:-[a-z0-9]+)*$/`.
 - Newest first by date, ties broken by slug.
 
-## v1 vs v2
-
-The old architecture is preserved on the [`v1` branch](https://github.com/grayguava/folio/tree/v1)
-— Browse it there if you want the fast-and-minimal variant.
-
-| | [v1](https://github.com/grayguava/folio/tree/v1) | v2 (this branch) |
-| --- | --- | --- |
-| URLs | `/#blog?p=slug` hash routing | Clean `/blog/<slug>/` paths |
-| Rendering | Client-side, markdown fetched at runtime | Prerendered at build time |
-| Speed | Faster to build, instant first paint | Slightly slower build/first load |
-| SEO | Crawlers see an empty shell | Full content in the HTML |
-| Post metadata | manual index file | Frontmatter, filename is the slug |
-| Runtime deps | marked + highlight.js loaded in browser | None - bundled HTML/CSS/JS |
-
 The data in this repo is placeholder (John Doe, demo posts) so the
 build stays green with no personal content in it. See
 [docs/markdown.md](docs/markdown.md) for what markdown the post
