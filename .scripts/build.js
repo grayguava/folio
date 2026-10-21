@@ -152,6 +152,7 @@ async function build() {
   console.log('\n> Minifying assets...');
   cleanDir(dist);
   copyDir(main, dist);
+  fs.copyFileSync(path.join(root, 'THIRD_PARTY_NOTICES.md'), path.join(dist, 'third-party-notices.md'));
 
   const cssFiles = ['theme.css', 'base.css', 'markdown.css', 'hljs.css']
     .map((f) => path.join(main, 'assets/css', f));

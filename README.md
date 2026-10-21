@@ -146,4 +146,4 @@ it however you want, no attribution needed. The GPL above covers the
 code, not this content.
 
 Vendored files in `main/assets/vendor/` and the Geist Mono fonts keep
-their own licenses; see `docs/vendor.md`.
+their own licenses; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
