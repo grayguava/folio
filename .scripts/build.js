@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: AGPL-3.0-only
-// Copyright (C) 2026 grayguava
+/* build.js
+   SPDX-License-Identifier: AGPL-3.0-only
+   Copyright (C) 2026 grayguava */
 
 const esbuild = require('esbuild');
 const fs = require('fs');
@@ -162,7 +163,7 @@ async function build() {
 
   // license banner for the shipped bundles; /*! survives downstream minification
   const banner = (name) =>
-    `/*! ${name} | Copyright (C) 2026 grayguava | AGPL-3.0-only | https://github.com/grayguava/folio */`;
+    `/*! ${name}\n   SPDX-License-Identifier: AGPL-3.0-only\n   Copyright (C) 2026 grayguava\n   https://github.com/grayguava/folio */\n`;
 
   await esbuild.build({
     stdin: { contents: concat(cssFiles), loader: 'css', resolveDir: path.join(main, 'assets/css') },

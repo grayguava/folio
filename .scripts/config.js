@@ -1,5 +1,6 @@
-// SPDX-License-Identifier: AGPL-3.0-only
-// Copyright (C) 2026 grayguava
+/* config.js
+   SPDX-License-Identifier: AGPL-3.0-only
+   Copyright (C) 2026 grayguava */
 
 // config.js — repo-root config.json: which pages ship, bootloader behavior.
 // loadSeo() reads the optional seo.json beside it: url today, empty = SEO off.
