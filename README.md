@@ -130,15 +130,20 @@ just runs the runtime chrome (copy buttons, callouts, images).
 
 ## License
 
-AGPL-3.0-only. Copyright (C) 2026 grayguava. Upstream:
+GPL-3.0-only. Copyright (C) 2026 grayguava. Upstream:
 https://github.com/grayguava/folio
 
-Use, modify, and redistribute freely, including commercially. Forks
-and modified versions must keep the same license and preserve the
-copyright and license notices. Deployed sites are not required to
-credit this project or link back.
+Use, modify, and redistribute freely, including commercially. If you
+distribute a modified version - including deploying the built site -
+the GPL requires you to keep the license and copyright notices, mark
+what you changed, and make the corresponding source available under
+the same license. No visible attribution is required.
 
-Demo content in `posts/`, `main/slugs/`, and `config.json` is
-original placeholder material under the same terms. Vendored files
-in `main/assets/vendor/` and the Geist Mono fonts keep their own
-licenses; see `docs/vendor.md`.
+Demo content in `posts/`, `main/slugs/`, `config.json` and `seo.json`
+is released under
+[CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/) - use
+it however you want, no attribution needed. The GPL above covers the
+code, not this content.
+
+Vendored files in `main/assets/vendor/` and the Geist Mono fonts keep
+their own licenses; see `docs/vendor.md`.

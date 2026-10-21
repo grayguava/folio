@@ -1,5 +1,5 @@
 /* prerender.js
-   SPDX-License-Identifier: AGPL-3.0-only
+   SPDX-License-Identifier: GPL-3.0-only
    Copyright (C) 2026 grayguava */
 
 // prerender.js — emit clean-URL HTML for every post + page shells for the
