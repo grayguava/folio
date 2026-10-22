@@ -6,8 +6,8 @@ applies it, `prerender.js` obeys it - and fails on a missing file,
 bad JSON, unknown keys, or wrong types. Fix the message it gives
 you and rebuild.
 
-`seo.json` (optional) sits next to it and holds the SEO fields -
-today one: `url`. Missing file or empty `url` means SEO off.
+`seo.json` (optional) sits next to it and holds the SEO fields.
+Missing file or empty `url` means SEO off.
 
 ```json
 {
@@ -38,7 +38,11 @@ And `seo.json` beside it:
 
 ```json
 {
-  "url": "https://example.com"
+  "url": "https://example.com",
+  "twitter": "@handle",
+  "locale": "en_US",
+  "jsonLd": true,
+  "rss": true
 }
 ```
 
@@ -65,9 +69,23 @@ And `seo.json` beside it:
 ## SEO (`seo.json`)
 
 - `url` (https URL, or empty) - the public domain, and the SEO
-  switch: empty means no meta/OG tags, no sitemap, no robots.
-  Set it and every page gets descriptions, canonical links and
-  share cards, plus emitted `sitemap.xml` / `robots.txt`.
+  switch: empty means no meta/OG tags, no sitemap, no robots, no
+  feed. Set it and every page gets a description, canonical link,
+  title, text-only share card, JSON-LD, and `sitemap.xml` /
+  `robots.txt`; `feed.xml` is emitted when `rss` is on.
+- `twitter` (string, optional) - one handle for
+  `twitter:site` / `twitter:creator`. `@handle` or `handle`;
+  empty omits them.
+- `locale` (string) - Open Graph locale and JSON-LD language,
+  `en_US` format. Defaults to `en_US`.
+- `jsonLd` (bool) - emit `WebSite`, `Person`, `BlogPosting`,
+  `CollectionPage` and `BreadcrumbList`. Defaults to `true`.
+- `rss` (bool) - emit `/feed.xml` and the alternate link.
+  Defaults to `true`.
+
+There is deliberately no image field: cards use
+`twitter:card=summary` and omit `og:image`, so share previews are
+text-only. Unknown keys or wrong types fail the build.
 
 Kept out of `config.json` so SEO can grow without crowding the
 build config. A `site.url` still in `config.json` fails the

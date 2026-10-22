@@ -30,6 +30,9 @@ try {
   console.log('     Default theme: ' + site.theme.defaultTheme);
   console.log('     Site name: ' + site.site.name);
   console.log('     Site URL: ' + (seo.url || '(seo off)'));
+  if (seo.url) {
+    console.log('     SEO extras: JSON-LD ' + (seo.jsonLd ? 'on' : 'off') + ', RSS ' + (seo.rss ? 'on' : 'off'));
+  }
 } catch (e) {
   fail(e.message);
 }

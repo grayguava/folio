@@ -22,6 +22,9 @@ const seo = loadSeo();
 const { discoverPosts } = require('./frontmatter.js');
 const posts = discoverPosts();
 
+// same object build.js inlines into index.html — the shells carry live lists
+const { projects, skills, work, profile } = buildData();
+
 // first readable paragraph, markdown stripped, clipped for meta tags
 function excerpt(md) {
   const text = md.replace(/```[\s\S]*?```/g, ' ')
@@ -39,24 +42,155 @@ function clip(s, n) {
   return (cut > 0 ? t.slice(0, cut) : t.slice(0, n)) + '…';
 }
 
-// one meta/OG/Twitter/canonical block per file — skipped entirely when
-// no seo.url is set (SEO off). each file is tagged exactly once.
-function applySeo(file, meta) {
-  if (!seo.url) return;
+function escXml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+function rfc822(iso) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return '';
+  return new Date(iso + 'T00:00:00Z').toUTCString();
+}
+
+function personNode(base) {
+  const sameAs = profile.socials.map((s) => s.href).filter((h) => /^https?:\/\//.test(h));
+  const node = {
+    '@type': 'Person',
+    '@id': base + '/#person',
+    name: profile.name,
+    url: base + '/',
+  };
+  if (profile.bio) node.description = profile.bio;
+  if (sameAs.length) node.sameAs = sameAs;
+  return node;
+}
+
+function websiteNode(base, description) {
+  return {
+    '@type': 'WebSite',
+    '@id': base + '/#website',
+    url: base + '/',
+    name: site.site.name,
+    description: description,
+    inLanguage: seo.locale.replace('_', '-'),
+    author: { '@id': base + '/#person' },
+  };
+}
+
+function breadcrumbNode(url, items) {
+  return {
+    '@type': 'BreadcrumbList',
+    '@id': url + '#breadcrumb',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      item: it.url,
+    })),
+  };
+}
+
+// text-only structured data: no image, no Organization logo requirement
+function jsonLdFor(meta) {
   const base = seo.url;
-  const tags = [
-    '<meta name="description" content="' + escHtml(meta.description) + '">',
-    '<link rel="canonical" href="' + base + meta.path + '">',
-    '<meta property="og:title" content="' + escHtml(meta.title) + '">',
-    '<meta property="og:description" content="' + escHtml(meta.description) + '">',
-    '<meta property="og:type" content="' + meta.type + '">',
-    '<meta property="og:url" content="' + base + meta.path + '">',
-    '<meta name="twitter:card" content="summary">',
-    '<meta name="twitter:title" content="' + escHtml(meta.title) + '">',
-    '<meta name="twitter:description" content="' + escHtml(meta.description) + '">',
+  const url = base + meta.path;
+  const lang = seo.locale.replace('_', '-');
+  const headline = meta.headline || meta.title;
+  const graph = [
+    personNode(base),
+    websiteNode(base, clip(profile.bio, 160)),
   ];
-  if (meta.published) tags.push('<meta property="article:published_time" content="' + meta.published + '">');
+
+  if (meta.type === 'article') {
+    const article = {
+      '@type': 'BlogPosting',
+      '@id': url + '#article',
+      headline: headline,
+      description: meta.description,
+      url: url,
+      mainEntityOfPage: url,
+      inLanguage: lang,
+      author: { '@id': base + '/#person' },
+      publisher: { '@id': base + '/#person' },
+      isPartOf: { '@id': base + '/#website' },
+    };
+    if (meta.published) {
+      article.datePublished = meta.published;
+      article.dateModified = meta.published;
+    }
+    graph.push(article);
+    graph.push(breadcrumbNode(url, [
+      { name: 'home', url: base + '/' },
+      { name: 'blog', url: base + '/blog/' },
+      { name: headline, url: url },
+    ]));
+  } else if (meta.path !== '/') {
+    graph.push({
+      '@type': 'CollectionPage',
+      '@id': url + '#webpage',
+      url: url,
+      name: headline,
+      description: meta.description,
+      inLanguage: lang,
+      isPartOf: { '@id': base + '/#website' },
+    });
+    graph.push(breadcrumbNode(url, [
+      { name: 'home', url: base + '/' },
+      { name: headline, url: url },
+    ]));
+  }
+
+  return { '@context': 'https://schema.org', '@graph': graph };
+}
+
+// one title + meta/OG/Twitter/canonical/JSON-LD block per file. titles are
+// always rewritten; the rest is skipped entirely when seo.url is empty.
+function applySeo(file, meta) {
   let html = fs.readFileSync(file, 'utf8');
+  const title = meta.title || site.site.name;
+  html = html.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escHtml(title) + '</title>');
+
+  if (!seo.url) {
+    fs.writeFileSync(file, html);
+    return;
+  }
+
+  const base = seo.url;
+  const url = base + meta.path;
+  const description = meta.description || '';
+  const tags = [
+    '<meta name="description" content="' + escHtml(description) + '">',
+    '<link rel="canonical" href="' + escHtml(url) + '">',
+    '<meta name="author" content="' + escHtml(profile.name) + '">',
+    '<meta property="og:title" content="' + escHtml(title) + '">',
+    '<meta property="og:description" content="' + escHtml(description) + '">',
+    '<meta property="og:type" content="' + escHtml(meta.type) + '">',
+    '<meta property="og:url" content="' + escHtml(url) + '">',
+    '<meta property="og:site_name" content="' + escHtml(site.site.name) + '">',
+    '<meta property="og:locale" content="' + escHtml(seo.locale) + '">',
+    '<meta name="twitter:card" content="summary">',
+    '<meta name="twitter:title" content="' + escHtml(title) + '">',
+    '<meta name="twitter:description" content="' + escHtml(description) + '">',
+  ];
+  if (seo.twitter) {
+    tags.push('<meta name="twitter:site" content="' + escHtml(seo.twitter) + '">');
+    tags.push('<meta name="twitter:creator" content="' + escHtml(seo.twitter) + '">');
+  }
+  if (meta.published) {
+    tags.push('<meta property="article:published_time" content="' + escHtml(meta.published) + '">');
+  }
+  if (meta.type === 'article') {
+    tags.push('<meta property="article:section" content="blog">');
+  }
+  if (seo.rss && site.pages.blog && posts.length) {
+    tags.push('<link rel="alternate" type="application/rss+xml" title="' +
+      escHtml(site.site.name + ' · blog') + '" href="' + escHtml(base + '/feed.xml') + '">');
+  }
+  if (seo.jsonLd) {
+    const ld = JSON.stringify(jsonLdFor(meta)).replace(/</g, '\\u003c');
+    tags.push('<script type="application/ld+json">' + ld + '</script>');
+  }
+
   html = html.replace('</head>', tags.join('\n') + '\n</head>');
   fs.writeFileSync(file, html);
 }
@@ -64,13 +198,17 @@ function applySeo(file, meta) {
 function emitSitemap() {
   if (!seo.url) return;
   const base = seo.url;
-  const urls = ['<url><loc>' + base + '/</loc></url>'];
-  for (const p of site.enabled) urls.push('<url><loc>' + base + '/' + p + '/</loc></url>');
+  const urls = ['<url><loc>' + escXml(base + '/') + '</loc></url>'];
+  for (const p of site.enabled) {
+    urls.push('<url><loc>' + escXml(base + '/' + p + '/') + '</loc></url>');
+  }
   if (site.pages.blog) {
     for (const p of posts) {
       if (!p.hasFrontmatter) continue;
-      const lastmod = /^\d{4}-\d{2}-\d{2}$/.test(p.date) ? '<lastmod>' + p.date + '</lastmod>' : '';
-      urls.push('<url><loc>' + base + '/blog/' + p.slug + '/</loc>' + lastmod + '</url>');
+      const lastmod = /^\d{4}-\d{2}-\d{2}$/.test(p.date)
+        ? '<lastmod>' + escXml(p.date) + '</lastmod>'
+        : '';
+      urls.push('<url><loc>' + escXml(base + '/blog/' + p.slug + '/') + '</loc>' + lastmod + '</url>');
     }
   }
   fs.writeFileSync(path.join(dist, 'sitemap.xml'),
@@ -78,6 +216,38 @@ function emitSitemap() {
     urls.join('\n') + '\n</urlset>\n');
   fs.writeFileSync(path.join(dist, 'robots.txt'),
     'User-agent: *\nAllow: /\nSitemap: ' + base + '/sitemap.xml\n');
+}
+
+function emitFeed() {
+  if (!seo.url || !seo.rss || !site.pages.blog || !posts.length) return;
+  const base = seo.url;
+  const items = posts.filter((p) => p.hasFrontmatter).map((p) => {
+    const url = base + '/blog/' + p.slug + '/';
+    const pub = rfc822(p.date);
+    return '<item>\n' +
+      '<title>' + escXml(p.title) + '</title>\n' +
+      '<link>' + escXml(url) + '</link>\n' +
+      '<guid isPermaLink="true">' + escXml(url) + '</guid>\n' +
+      (pub ? '<pubDate>' + pub + '</pubDate>\n' : '') +
+      '<description>' + escXml(excerpt(p.body)) + '</description>\n' +
+      '</item>';
+  });
+  const latest = posts.find((p) => p.hasFrontmatter && rfc822(p.date));
+  const feedTitle = site.site.name + ' · blog';
+  const feedDesc = site.subtitles.blog || clip(profile.bio, 160);
+  const lastBuild = latest ? rfc822(latest.date) : '';
+
+  const xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n' +
+    '<title>' + escXml(feedTitle) + '</title>\n' +
+    '<link>' + escXml(base + '/') + '</link>\n' +
+    '<description>' + escXml(feedDesc) + '</description>\n' +
+    '<language>' + escXml(seo.locale.replace('_', '-')) + '</language>\n' +
+    '<atom:link href="' + escXml(base + '/feed.xml') + '" rel="self" type="application/rss+xml" />\n' +
+    (lastBuild ? '<lastBuildDate>' + lastBuild + '</lastBuildDate>\n' : '') +
+    items.join('\n') + '\n</channel>\n</rss>\n';
+
+  fs.writeFileSync(path.join(dist, 'feed.xml'), xml);
 }
 
 // marked escapes code contents; hljs wants the raw text back
@@ -145,7 +315,6 @@ function prerenderPost(post) {
 
   let out = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
   out = out
-    .replace(/<title>([^<]*)<\/title>/, (m, t) => '<title>' + escHtml(post.title) + ' · ' + t + '</title>')
     .replace('<body>', '<body>\n<script>window.__prerenderedPost = true;</script>')
     .replace('<section id="page-home" class="page">', '<section id="page-home" class="page" style="display:none">')
     .replace('<section id="page-post" class="page" style="display:none">', '<section id="page-post" class="page">')
@@ -158,6 +327,7 @@ function prerenderPost(post) {
   fs.writeFileSync(path.join(dir, 'index.html'), out);
   applySeo(path.join(dir, 'index.html'), {
     title: post.title + ' · ' + site.site.name,
+    headline: post.title,
     description: excerpt(post.body),
     path: '/blog/' + post.slug + '/',
     type: 'article',
@@ -257,7 +427,7 @@ function keepOnlySection(html, keepId) {
   return out + html.slice(last);
 }
 
-function emitPage(route, pageId, containerId, innerHTML, seo) {
+function emitPage(route, pageId, containerId, innerHTML, meta) {
   let out = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
   out = out
     .replace('<section id="page-home" class="page">', '<section id="page-home" class="page" style="display:none">')
@@ -267,21 +437,24 @@ function emitPage(route, pageId, containerId, innerHTML, seo) {
   const dir = path.join(dist, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), out);
-  applySeo(path.join(dir, 'index.html'), seo);
+  applySeo(path.join(dir, 'index.html'), meta);
 }
 
-// same object build.js inlines into index.html — the shells carry live lists
-const { projects, skills, work, profile } = buildData();
+function sectionTitle(route) {
+  return route + '/ · ' + site.site.name;
+}
 
-if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', logHTML(posts), { title: site.site.name, description: site.subtitles.blog, path: '/blog/', type: 'website' });
-if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', rowsHTML(projects, false), { title: site.site.name, description: site.subtitles.projects, path: '/projects/', type: 'website' });
-if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', skillsHTML(skills), { title: site.site.name, description: site.subtitles.skills, path: '/skills/', type: 'website' });
-if (site.pages.work) emitPage('work', 'page-work', 'work-list', rowsHTML(work, true), { title: site.site.name, description: site.subtitles.work, path: '/work/', type: 'website' });
+if (site.pages.blog) emitPage('blog', 'page-blog', 'blog-list', logHTML(posts), { title: sectionTitle('blog'), headline: 'blog/', description: site.subtitles.blog, path: '/blog/', type: 'website' });
+if (site.pages.projects) emitPage('projects', 'page-projects', 'projects-list', rowsHTML(projects, false), { title: sectionTitle('projects'), headline: 'projects/', description: site.subtitles.projects, path: '/projects/', type: 'website' });
+if (site.pages.skills) emitPage('skills', 'page-skills', 'skills-list', skillsHTML(skills), { title: sectionTitle('skills'), headline: 'skills/', description: site.subtitles.skills, path: '/skills/', type: 'website' });
+if (site.pages.work) emitPage('work', 'page-work', 'work-list', rowsHTML(work, true), { title: sectionTitle('work'), headline: 'work/', description: site.subtitles.work, path: '/work/', type: 'website' });
 
 applySeo(path.join(dist, 'index.html'), {
   title: site.site.name,
+  headline: site.site.name,
   description: clip(profile.bio, 160),
   path: '/',
   type: 'website',
 });
 emitSitemap();
+emitFeed();

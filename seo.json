@@ -1,3 +1,7 @@
 {
-  "url": ""
+  "url": "",
+  "twitter": "",
+  "locale": "en_US",
+  "jsonLd": true,
+  "rss": true
 }

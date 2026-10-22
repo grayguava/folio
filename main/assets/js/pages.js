@@ -84,7 +84,7 @@ function skillsHTML(list) {
 
 
 function setTitle(pageTitle) {
-  var name = (window.PROFILE && PROFILE.name) || (window.SITE && window.SITE.name) || 'Site Name';
+  var name = (window.SITE && window.SITE.name) || (window.PROFILE && PROFILE.name) || 'Site Name';
   document.title = pageTitle ? pageTitle + ' · ' + name : name;
 }
 
@@ -127,7 +127,7 @@ function initHome(query) {
 
 
 function initBlog(query) {
-  setTitle('blog');
+  setTitle('blog/');
 
   var list = document.getElementById('blog-list');
   if (!list) return;
@@ -136,7 +136,7 @@ function initBlog(query) {
 
 
 function initProjects(query) {
-  setTitle('projects');
+  setTitle('projects/');
 
   var list = document.getElementById('projects-list');
   if (!list) return;
@@ -145,7 +145,7 @@ function initProjects(query) {
 
 
 function initWork(query) {
-  setTitle('work');
+  setTitle('work/');
 
   var list = document.getElementById('work-list');
   if (!list) return;
@@ -154,7 +154,7 @@ function initWork(query) {
 
 
 function initSkills(query) {
-  setTitle('skills');
+  setTitle('skills/');
 
   var list = document.getElementById('skills-list');
   if (!list) return;
