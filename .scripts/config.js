@@ -3,7 +3,6 @@
    Copyright (C) 2026 grayguava */
 
 // config.js — repo-root config.json: which pages ship, bootloader behavior.
-// loadSeo() reads the optional seo.json beside it: url is the switch (empty = off).
 //
 // build.js applies it (drops disabled pages from the shell, injects
 // window.SITE), prerender.js skips disabled pages, validate.js gates it.
@@ -54,7 +53,6 @@ function loadConfig() {
   if (typeof st.name !== 'string' || !st.name) {
     throw new Error('config.json: site.name must be a non-empty string');
   }
-  if (st.url !== undefined) throw new Error('config.json: site.url moved to seo.json');
 
   const sub = cfg.subtitles;
   if (!sub || typeof sub !== 'object') throw new Error('config.json: subtitles must be an object');
@@ -83,62 +81,4 @@ function loadConfig() {
   };
 }
 
-const SEO_KEYS = ['url', 'twitter', 'locale', 'jsonLd', 'rss'];
-
-function loadSeo() {
-  const file = path.join(root, 'seo.json');
-  const defaults = { url: '', twitter: '', locale: 'en_US', jsonLd: true, rss: true };
-  if (!fs.existsSync(file)) return defaults;
-
-  let seo;
-  try {
-    seo = JSON.parse(fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, ''));
-  } catch (e) {
-    throw new Error('seo.json is not valid JSON — ' + e.message);
-  }
-  if (!seo || typeof seo !== 'object' || Array.isArray(seo)) {
-    throw new Error('seo.json must be an object');
-  }
-  for (const k of Object.keys(seo)) {
-    if (!SEO_KEYS.includes(k)) throw new Error('seo.json: unknown key "' + k + '"');
-  }
-
-  if (seo.url === undefined) seo.url = '';
-  if (typeof seo.url !== 'string') throw new Error('seo.json: url must be a string');
-  const url = seo.url.replace(/\/+$/, '');
-  if (url && !/^https:\/\/\S+$/.test(url)) {
-    throw new Error('seo.json: url must be an https:// URL or empty (SEO off)');
-  }
-
-  if (seo.twitter !== undefined && typeof seo.twitter !== 'string') {
-    throw new Error('seo.json: twitter must be a string');
-  }
-  let twitter = seo.twitter === undefined ? '' : seo.twitter.trim();
-  if (twitter) {
-    if (!/^@?[A-Za-z0-9_]{1,15}$/.test(twitter)) {
-      throw new Error('seo.json: twitter must be an @handle (letters, digits, underscore, max 15)');
-    }
-    if (twitter.charAt(0) !== '@') twitter = '@' + twitter;
-  }
-
-  const locale = seo.locale === undefined ? 'en_US' : seo.locale;
-  if (typeof locale !== 'string' || !/^[a-z]{2}_[A-Z]{2}$/.test(locale)) {
-    throw new Error('seo.json: locale must look like en_US');
-  }
-
-  for (const k of ['jsonLd', 'rss']) {
-    if (seo[k] !== undefined && typeof seo[k] !== 'boolean') {
-      throw new Error('seo.json: ' + k + ' must be a bool');
-    }
-  }
-
-  return {
-    url,
-    twitter,
-    locale,
-    jsonLd: seo.jsonLd === undefined ? true : seo.jsonLd,
-    rss: seo.rss === undefined ? true : seo.rss,
-  };
-}
-
-module.exports = { loadConfig, loadSeo };
+module.exports = { loadConfig };

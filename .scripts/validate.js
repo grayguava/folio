@@ -8,7 +8,7 @@
 
 const { discoverPosts, parseIso } = require('./frontmatter.js');
 const { buildData } = require('./slugs.js');
-const { loadConfig, loadSeo } = require('./config.js');
+const { loadConfig } = require('./config.js');
 
 let errors = 0;
 function fail(msg) { console.log('✗ ' + msg); errors++; }
@@ -23,16 +23,11 @@ function hasBadValue(v) { return /\t|\n/.test(v); }
 let site = null;
 try {
   site = loadConfig();
-  const seo = loadSeo();
   ok('Site config:');
   console.log('     Enabled pages: ' + (site.enabled.join(', ') || 'home only'));
   console.log('     Bootloader: ' + (site.bootloader.loaderEnable ? 'on' : 'off'));
   console.log('     Default theme: ' + site.theme.defaultTheme);
   console.log('     Site name: ' + site.site.name);
-  console.log('     Site URL: ' + (seo.url || '(seo off)'));
-  if (seo.url) {
-    console.log('     SEO extras: JSON-LD ' + (seo.jsonLd ? 'on' : 'off') + ', RSS ' + (seo.rss ? 'on' : 'off'));
-  }
 } catch (e) {
   fail(e.message);
 }

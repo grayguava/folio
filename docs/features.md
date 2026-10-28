@@ -17,8 +17,8 @@ Every page is a real path, prerendered into `dist/`:
 
 No hash fragments, no query params. Each `dist/blog/<slug>/`
 directory has its own `index.html` with the finished article
-(bright content included), so crawlers and feed readers get the
-whole page with zero JavaScript.
+(bright content included), so the whole page arrives with zero
+JavaScript.
 
 ## Client router
 

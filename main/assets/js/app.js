@@ -107,10 +107,6 @@ document.addEventListener('keydown', function(e) {
 var _pageCache = {};
 var _pending = {};
 
-var _seoSelector = 'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"], ' +
-  'meta[name="author"], meta[property^="article:"], link[rel="canonical"], ' +
-  'link[rel="alternate"][type="application/rss+xml"], script[type="application/ld+json"]';
-
 function _extractWrap(html) {
   var doc = new DOMParser().parseFromString(html, 'text/html');
   var w = doc.querySelector('.wrap');
@@ -119,19 +115,7 @@ function _extractWrap(html) {
     html: w ? w.innerHTML : '',
     title: title ? title.textContent : document.title,
     prerendered: doc.querySelector('[data-prerendered]') !== null,
-    seo: Array.prototype.map.call(doc.head.querySelectorAll(_seoSelector), function(el) {
-      return el.outerHTML;
-    }),
   };
-}
-
-function _replaceSeo(page) {
-  document.head.querySelectorAll(_seoSelector).forEach(function(el) { el.remove(); });
-  (page.seo || []).forEach(function(html) {
-    var t = document.createElement('template');
-    t.innerHTML = html;
-    if (t.content.firstElementChild) document.head.appendChild(t.content.firstElementChild);
-  });
 }
 
 function _fetchAndCache(url, low) {
@@ -204,7 +188,6 @@ function _navigateTo(url, push) {
     var wrap = document.querySelector('.wrap');
     if (wrap) wrap.innerHTML = page.html;
     document.title = page.title;
-    _replaceSeo(page);
     window.__prerenderedPost = page.prerendered;
     if (push !== false) history.pushState(null, '', pathname);
     var key = _sectionKey(pathname);

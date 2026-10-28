@@ -31,13 +31,12 @@ and deploy one of your own.
 ```
 build.bat / build.sh   entry points, run from repo root
 config.json            site toggles: bootloader, theme, which pages ship
-seo.json               seo fields: url, twitter, locale, jsonLd, rss (url off)
 .scripts/              build tooling (node, dev-only)
   build.js             pipeline: validate -> bundle -> inline slugs -> prerender
   validate.js          data gate, fails the build on bad data
   frontmatter.js       discovers posts/*.md, parses frontmatter
   slugs.js             loads main/slugs/*.ini, builds the inlined data object
-  config.js            loads config.json + seo.json, fails the build when they are wrong
+  config.js            loads config.json, fails the build when it is wrong
   prerender.js         renders markdown to dist/blog/<slug>/
   package.json         devDeps only: esbuild
 main/                  source of the site
@@ -104,9 +103,9 @@ Runtime deps: none. `marked` + `highlight.js` are vendored under
 - Values can't contain tabs or newlines. The validator tells you
   the file and the field.
 - `config.json` gates the build too: unknown pages, wrong types,
-  a subtitle missing for an enabled page, or a bad `url` in
-  `seo.json` all fail before `dist/` is touched. Enabled pages
-  and their subtitles are listed in [docs/config.md](docs/config.md).
+  or a subtitle missing for an enabled page all fail before
+  `dist/` is touched. Enabled pages and their subtitles are
+  listed in [docs/config.md](docs/config.md).
 - Post lists and the post meta row read title/date from
   frontmatter (via generated `meta/posts`), not from any ini.
 - Code fences: unknown languages and `plaintext` / `nohighlight`

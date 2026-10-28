@@ -29,7 +29,6 @@ A green build looks like this:
      Bootloader: off
      Default theme: dark
      Site name: John Doe
-     Site URL: (seo off)
 ✓ 4 md files auto-discovered, frontmatter valid
 ✓ Slug data builds (4 posts, 3 projects, 14 skills, 1 work)
 ✨ Validation passed!
@@ -92,10 +91,7 @@ behavior in [features.md](features.md).
 
 What gets built is driven by `config.json` - bootloader screen,
 first-visit theme, site name, page subtitles, and which pages ship
-at all. `seo.json` drives the SEO output
-(meta tags, text-only share cards, JSON-LD, `sitemap.xml`,
-`feed.xml`); an empty `url` turns it all off. The full key
-reference lives in [config.md](config.md).
+at all. The full key reference lives in [config.md](config.md).
 
 One rule of thumb: fill in `main/slugs/` first, and only then flip
 a page to `true` in `config.json`. A page with no data behind it
